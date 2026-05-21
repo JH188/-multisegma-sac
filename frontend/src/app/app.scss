@@ -1,0 +1,321 @@
+/* =========================
+   HEADER EMPRESARIAL
+========================= */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.22);
+}
+
+.nav {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+/* =========================
+   MARCA
+========================= */
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  color: #ffffff;
+  min-width: 250px;
+}
+
+.brand-logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: #0f172a;
+  background: linear-gradient(135deg, #38bdf8, #f97316);
+  box-shadow: 0 12px 25px rgba(56, 189, 248, 0.28);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brand-text strong {
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+}
+
+.brand-text small {
+  margin-top: 0.25rem;
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+/* =========================
+   LINKS DEL MENÚ
+========================= */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.94rem;
+  font-weight: 600;
+  padding: 0.65rem 0.9rem;
+  border-radius: 999px;
+  transition: 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-links a:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-links a.active {
+  color: #ffffff;
+  background: rgba(56, 189, 248, 0.16);
+  border: 1px solid rgba(56, 189, 248, 0.24);
+}
+
+.admin-link {
+  color: #facc15 !important;
+  background: rgba(250, 204, 21, 0.1);
+  border: 1px solid rgba(250, 204, 21, 0.18);
+}
+
+/* =========================
+   ACCIONES DERECHA
+========================= */
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  min-width: 300px;
+}
+
+.cart-button,
+.order-link,
+.btn-login,
+.btn-logout {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 999px;
+  transition: 0.2s ease;
+  white-space: nowrap;
+}
+
+.cart-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.68rem 1rem;
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: #111827;
+  box-shadow: 0 12px 25px rgba(249, 115, 22, 0.28);
+}
+
+.cart-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(249, 115, 22, 0.34);
+}
+
+.cart-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 0.75rem;
+}
+
+.order-link {
+  padding: 0.65rem 0.95rem;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.order-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.btn-login {
+  padding: 0.68rem 1.05rem;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.btn-login:hover {
+  transform: translateY(-1px);
+  background: #e0f2fe;
+}
+
+.btn-logout {
+  padding: 0.68rem 1.05rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.btn-logout:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px rgba(239, 68, 68, 0.25);
+}
+
+/* =========================
+   CONTENIDO
+========================= */
+
+.main-layout {
+  min-height: calc(100vh - 78px);
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.09), transparent 34%),
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.08), transparent 32%),
+    #f8fafc;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.site-footer {
+  background: #0f172a;
+  color: #cbd5e1;
+  padding: 3rem 1rem 1.3rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.footer-grid {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 2rem;
+}
+
+.footer-grid h3,
+.footer-grid h4 {
+  color: #ffffff;
+  margin: 0 0 0.8rem;
+}
+
+.footer-grid h3 {
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+}
+
+.footer-grid h4 {
+  font-size: 1rem;
+}
+
+.footer-grid p {
+  margin: 0.45rem 0;
+  color: #94a3b8;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.footer-bottom {
+  width: min(1180px, calc(100% - 32px));
+  margin: 2rem auto 0;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.18);
+  color: #64748b;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 980px) {
+  .nav {
+    min-height: auto;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    min-width: auto;
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .nav-links {
+    order: 2;
+    flex: 1 1 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .nav-actions {
+    order: 3;
+    flex: 1 1 100%;
+    justify-content: center;
+    min-width: auto;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-text small {
+    display: none;
+  }
+
+  .nav-links a {
+    font-size: 0.85rem;
+    padding: 0.55rem 0.7rem;
+  }
+
+  .cart-button,
+  .order-link,
+  .btn-login,
+  .btn-logout {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer {
+    text-align: center;
+  }
+}

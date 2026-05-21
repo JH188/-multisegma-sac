@@ -1,0 +1,53 @@
+<h2>Contacto</h2>
+
+<div class="card">
+  <div
+    class="grid"
+    style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))"
+  >
+    <div>
+      <label>Nombre</label>
+      <input class="btn" name="nombre" [(ngModel)]="nombre" />
+    </div>
+
+    <div>
+      <label>Correo</label>
+      <input class="btn" name="correo" [(ngModel)]="correo" />
+    </div>
+
+    <div>
+      <label>Teléfono</label>
+      <input class="btn" name="telefono" [(ngModel)]="telefono" />
+    </div>
+
+    <div>
+      <label>Servicio</label>
+      <!-- AQUÍ EL CAMBIO -->
+      <select class="btn" name="servicio" [(ngModel)]="servicio" required>
+        <option value="" disabled selected>Selecciona un servicio</option>
+
+        <option value="Tintas para impresora">Tintas para impresora</option>
+        <option value="Tonners">Tonners</option>
+        <option value="Mantenimiento a máquinas">
+          Mantenimiento a máquinas
+        </option>
+        <option value="Instalación de software">Instalación de software</option>
+      </select>
+    </div>
+  </div>
+
+  <label>Mensaje</label>
+  <textarea
+    class="btn"
+    rows="4"
+    name="mensaje"
+    [(ngModel)]="mensaje"
+  ></textarea>
+
+  <div style="margin-top: 10px; display: flex; gap: 8px">
+    <button class="btn primary" (click)="send()">Enviar</button>
+  </div>
+
+  <span style="color: green" *ngIf="ok">{{ok}}</span>
+  <span style="color: crimson" *ngIf="err">{{err}}</span>
+</div>

@@ -1,0 +1,529 @@
+<div class="checkout-page" *ngIf="items.length; else sinItems">
+  <!-- ========================================= -->
+  <!-- COLUMNA IZQUIERDA: contenido por PASO     -->
+  <!-- ========================================= -->
+  <section class="checkout-main">
+    <!-- ============ PASO 1: DATOS DEL CLIENTE ============ -->
+    <ng-container *ngIf="paso === 'datos'">
+      <h1>Finalizar pedido</h1>
+      <p class="step-label">Paso 1 de 2 · Datos del cliente y envío</p>
+
+      <form #formCheckout="ngForm" (ngSubmit)="Continuar(formCheckout)">
+        <!-- Información de contacto -->
+        <section class="checkout-section">
+          <h2>Información de contacto</h2>
+          <p class="section-help">
+            Usaremos este correo y teléfono para enviarte el detalle del pedido
+            y coordinar tu proyecto.
+          </p>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="email">Correo electrónico</label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                [(ngModel)]="datosCliente.email"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="telefono">Teléfono</label>
+              <input
+                id="telefono"
+                type="tel"
+                name="telefono"
+                [(ngModel)]="datosCliente.telefono"
+                required
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- Dirección de envío / empresa -->
+        <section class="checkout-section">
+          <h2>Dirección de envío / empresa</h2>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="nombre">Nombre completo / empresa</label>
+              <input
+                id="nombre"
+                type="text"
+                name="nombre"
+                [(ngModel)]="datosCliente.nombre"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="departamento">Departamento</label>
+              <input
+                id="departamento"
+                type="text"
+                name="departamento"
+                [(ngModel)]="datosEnvio.departamento"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="provincia">Provincia</label>
+              <input
+                id="provincia"
+                type="text"
+                name="provincia"
+                [(ngModel)]="datosEnvio.provincia"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="distrito">Distrito</label>
+              <input
+                id="distrito"
+                type="text"
+                name="distrito"
+                [(ngModel)]="datosEnvio.distrito"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="direccion">Dirección exacta</label>
+            <input
+              id="direccion"
+              type="text"
+              name="direccion"
+              [(ngModel)]="datosEnvio.direccion"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="referencia">Referencia (opcional)</label>
+            <input
+              id="referencia"
+              type="text"
+              name="referencia"
+              [(ngModel)]="datosEnvio.referencia"
+            />
+          </div>
+        </section>
+
+        <!-- Opciones de pago -->
+        <section class="checkout-section">
+          <h2>Opciones de pago</h2>
+
+          <div class="radio-group">
+            <!-- SOLO YAPE / PLIN -->
+            <label class="radio-option" [class.active]="metodoPago === 'Yape'">
+              <input
+                type="radio"
+                name="metodoPago"
+                value="Yape"
+                [(ngModel)]="metodoPago"
+                required
+              />
+              <span>
+                <strong>Pago con Yape o Plin</strong><br />
+                <small>
+                  Te mostraremos el número / QR de LISUME para que realices el
+                  pago.
+                </small>
+              </span>
+              <div class="radio-badges">
+                <img src="assets/lisume/yape.png" alt="Yape" />
+                <img src="assets/lisume/plin.jpg" alt="Plin" />
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <!-- Acciones -->
+        <div class="checkout-actions">
+          <button type="button" class="btn-secondary" routerLink="/">
+            ⬅ Volver al catálogo
+          </button>
+
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="formCheckout.invalid || !metodoPago"
+          >
+            Continuar
+          </button>
+        </div>
+      </form>
+    </ng-container>
+
+    <!-- ============ PASO 2: BILLETERAS ELECTRÓNICAS ============ -->
+    <ng-container *ngIf="paso === 'wallet'">
+      <h1>Billeteras electrónicas</h1>
+      <p class="step-label">Paso 2 de 2 · Elige cómo pagar</p>
+
+      <section class="wallet-box">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="tipoDoc">Tipo de documento</label>
+            <select
+              id="tipoDoc"
+              name="tipoDoc"
+              [(ngModel)]="wallet.tipoDocumento"
+            >
+              <option value="DNI">DNI</option>
+              <option value="CE">Carné de extranjería</option>
+              <option value="RUC">RUC</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="numDoc">Número de documento</label>
+            <input
+              id="numDoc"
+              type="text"
+              name="numDoc"
+              [(ngModel)]="wallet.numeroDocumento"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cel">Número de celular</label>
+          <input
+            id="cel"
+            type="tel"
+            name="cel"
+            [(ngModel)]="wallet.celular"
+            required
+          />
+        </div>
+
+        <h2 class="wallet-subtitle">Elige alguna de las opciones de pago</h2>
+
+        <div class="wallet-options">
+          <!-- Yape -->
+          <button
+            type="button"
+            class="wallet-card"
+            [class.active]="billeteraSeleccionada === 'Yape'"
+            (click)="seleccionarWallet('Yape')"
+          >
+            <img src="assets/lisume/yape.png" alt="Yape" />
+            <span>Yape</span>
+          </button>
+
+          <!-- Plin -->
+          <button
+            type="button"
+            class="wallet-card"
+            [class.active]="billeteraSeleccionada === 'Plin'"
+            (click)="seleccionarWallet('Plin')"
+          >
+            <img src="assets/lisume/plin.jpg" alt="Plin" />
+            <span>Plin</span>
+          </button>
+        </div>
+
+        <p class="wallet-notes">
+          * No se hacen cambios ni devoluciones.<br />
+          * Toda la información de pago es segura.
+        </p>
+
+        <div class="checkout-actions">
+          <button type="button" class="btn-secondary" (click)="volverADatos()">
+            ⬅ Volver
+          </button>
+
+          <button type="button" class="btn-primary" (click)="irAPagoQR()">
+            Pagar
+          </button>
+        </div>
+      </section>
+    </ng-container>
+
+    <!-- ================= PASO 3: PAGO VÍA YAPE/PLIN ================= -->
+    <ng-container *ngIf="paso === 'qr'">
+      <!-- ========= YAPE ========= -->
+      <ng-container *ngIf="billeteraSeleccionada === 'Yape'">
+        <div class="qr-header">
+          <div class="qr-logo">
+            <img src="assets/lisume/yape.png" alt="Yape" />
+          </div>
+          <div class="qr-title">
+            <h1>Pago vía Yape</h1>
+            <p>
+              Total a pagar:
+              <span>S/ {{ total | number:'1.2-2' }}</span>
+            </p>
+          </div>
+        </div>
+
+        <section class="qr-content">
+          <!-- QR grande (Yape) -->
+          <div class="qr-main">
+            <img
+              src="assets/lisume/qr-ejemplo.jpeg"
+              alt="QR de pago Yape"
+              class="qr-image"
+            />
+
+            <p class="qr-wait" *ngIf="!esperandoPago">
+              Escanea el código con la app Yape y confirma el pago.
+            </p>
+            <p class="qr-wait" *ngIf="esperandoPago">Esperando el pago...</p>
+          </div>
+
+          <!-- Pasos Yape -->
+          <div class="qr-steps">
+            <div class="qr-step">
+              <img
+                src="assets/lisume/paso1-yape.jpeg"
+                alt="Paso 1 Yape"
+                class="qr-step-img"
+              />
+              <h3>Paso 1</h3>
+              <p>Ingresa a la app Yape e inicia sesión.</p>
+            </div>
+
+            <div class="qr-step">
+              <img
+                src="assets/lisume/paso2-yape.jpeg"
+                alt="Paso 2 Yape"
+                class="qr-step-img"
+              />
+              <h3>Paso 2</h3>
+              <p>Toca el botón <strong>“Escanear QR”</strong> en la app.</p>
+            </div>
+
+            <div class="qr-step">
+              <img
+                src="assets/lisume/paso3-yape.jpeg"
+                alt="Paso 3 Yape"
+                class="qr-step-img"
+              />
+              <h3>Paso 3</h3>
+              <p>Apunta la cámara de tu celular al código QR de LISUME.</p>
+            </div>
+
+            <div class="qr-step">
+              <img
+                src="assets/lisume/paso4-yape.jpeg"
+                alt="Paso 4 Yape"
+                class="qr-step-img"
+              />
+              <h3>Paso 4</h3>
+              <p>Verifica el monto y confirma el pago. ¡Yapeaste! 🎉</p>
+            </div>
+          </div>
+
+          <div class="qr-actions">
+            <button type="button" class="btn-secondary" (click)="cancelarPago()">
+              Cancelar compra
+            </button>
+
+            <button
+              type="button"
+              class="btn-primary"
+              (click)="confirmarPago()"
+              [disabled]="esperandoPago"
+            >
+              Ya realicé el pago
+            </button>
+          </div>
+        </section>
+      </ng-container>
+
+      <!-- ========= PLIN ========= -->
+      <ng-container *ngIf="billeteraSeleccionada === 'Plin'">
+        <div class="qr-header">
+          <div class="qr-logo">
+            <img src="assets/lisume/plin.jpg" alt="Plin" />
+          </div>
+          <div class="qr-title">
+            <h1>Pago vía Plin</h1>
+            <p>
+              Total a pagar:
+              <span>S/ {{ total | number:'1.2-2' }}</span>
+            </p>
+          </div>
+        </div>
+
+        <section class="qr-content">
+          <!-- QR grande (Plin) -->
+          <div class="qr-main">
+            <img
+              src="assets/lisume/qr-plin.jpeg"
+              alt="QR de pago Plin"
+              class="qr-image"
+            />
+
+            <p class="qr-wait" *ngIf="!esperandoPago">
+              Escanea el código con la opción
+              <strong>“Pagar con QR”</strong> de tu app bancaria con Plin.
+            </p>
+            <p class="qr-wait" *ngIf="esperandoPago">Esperando el pago...</p>
+          </div>
+
+          <!-- Pasos Plin -->
+          <div class="qr-steps">
+            <div class="qr-step">
+              <img
+                src="assets/lisume/plin-paso1.jpeg"
+                alt="Paso 1 Plin"
+                class="qr-step-img"
+              />
+              <h3>Paso 1</h3>
+              <p>Abre la app de tu banco y entra a Plin.</p>
+            </div>
+
+            <div class="qr-step">
+              <img
+                src="assets/lisume/plin-paso2.jpeg"
+                alt="Paso 2 Plin"
+                class="qr-step-img"
+              />
+              <h3>Paso 2</h3>
+              <p>
+                Elige la opción <strong>“Pagar con QR”</strong> y apunta al
+                código de LISUME.
+              </p>
+            </div>
+
+            <div class="qr-step">
+              <img
+                src="assets/lisume/plin-paso3.jpeg"
+                alt="Paso 3 Plin"
+                class="qr-step-img"
+              />
+              <h3>Paso 3</h3>
+              <p>
+                Confirma el pago y guarda tu comprobante desde la app Plin. ✅
+              </p>
+            </div>
+          </div>
+
+          <div class="qr-actions">
+            <button type="button" class="btn-secondary" (click)="cancelarPago()">
+              Cancelar compra
+            </button>
+
+            <button
+              type="button"
+              class="btn-primary"
+              (click)="confirmarPago()"
+              [disabled]="esperandoPago"
+            >
+              Ya realicé el pago
+            </button>
+          </div>
+        </section>
+      </ng-container>
+    </ng-container>
+
+    <!-- ============ PASO 4: PANTALLA FINAL (ÉXITO) ============ -->
+    <ng-container *ngIf="paso === 'exito'">
+      <div class="success-box">
+        <h1>¡Gracias, {{ datosCliente.nombre || 'cliente' }}! 🎉</h1>
+        <p>
+          Hemos registrado tu pedido en LISUME S.A.C. Tu pago será verificado y
+          te contactaremos por WhatsApp o correo para coordinar detalles
+          técnicos y tiempos de entrega.
+        </p>
+
+        <!-- Tarjeta tipo voucher -->
+        <div class="voucher-card" *ngIf="voucher">
+          <div class="voucher-header">
+            <div>
+              <h2>Comprobante de pedido</h2>
+              <p class="voucher-code">N.º {{ voucher.codigo }}</p>
+            </div>
+
+            <!-- 👇 AHORA USA EL ESTADO DINÁMICO -->
+            <span class="voucher-status" [ngClass]="estadoClase">
+              {{ estadoTexto }}
+            </span>
+          </div>
+
+          <div class="voucher-body">
+            <div class="voucher-row">
+              <span>Cliente</span>
+              <strong>{{ voucher.nombre }}</strong>
+            </div>
+            <div class="voucher-row">
+              <span>Fecha y hora</span>
+              <strong>{{ voucher.fecha | date:'dd/MM/yyyy, HH:mm' }}</strong>
+            </div>
+            <div class="voucher-row">
+              <span>Método de pago</span>
+              <strong>{{ voucher.metodo }}</strong>
+            </div>
+            <div class="voucher-row total">
+              <span>Total pagado</span>
+              <strong>S/ {{ voucher.total | number:'1.2-2' }}</strong>
+            </div>
+          </div>
+
+          <p class="voucher-help">
+            Guarda este comprobante. Si tienes alguna duda, podrás enviárnoslo
+            por WhatsApp junto con el voucher de Yape/Plin.
+          </p>
+        </div>
+
+        <div class="success-actions">
+          <button class="btn-primary" type="button" (click)="volverAlInicio()">
+            Volver al inicio
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </section>
+
+  <!-- ========================================= -->
+  <!-- COLUMNA DERECHA: RESUMEN DE PEDIDO        -->
+  <!-- ========================================= -->
+  <aside class="checkout-summary">
+    <h2>Resumen de pedido</h2>
+
+    <div class="summary-items">
+      <div class="summary-item" *ngFor="let it of items">
+        <div class="summary-thumb">
+          <img [src]="imageFor(it)" [alt]="it.name || it.nombre" />
+        </div>
+
+        <div class="summary-info">
+          <strong>{{ it.name || it.nombre }}</strong>
+          <div class="summary-qty">
+            Cant. {{ it.qty }} · S/
+            {{ (it.price || it.precio) | number:'1.2-2' }}
+          </div>
+        </div>
+
+        <div class="summary-subtotal">
+          S/ {{ (it.qty * (it.price || it.precio)) | number:'1.2-2' }}
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-total">
+      <span>Total</span>
+      <strong>S/ {{ total | number:'1.2-2' }}</strong>
+    </div>
+
+    <p class="summary-note">
+      LISUME S.A.C. revisará los requerimientos de tu proyecto y se pondrá en
+      contacto para confirmar tiempos y detalles técnicos.
+    </p>
+  </aside>
+</div>
+
+<ng-template #sinItems>
+  <div class="checkout-empty">
+    <p>Tu carrito está vacío.</p>
+    <button class="btn-primary" routerLink="/">Ver servicios</button>
+  </div>
+</ng-template>

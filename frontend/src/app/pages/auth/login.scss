@@ -1,0 +1,389 @@
+.login-page {
+  min-height: calc(100vh - 90px);
+  padding: 56px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top left, rgba(249, 115, 22, 0.16), transparent 32%),
+    linear-gradient(135deg, #f8fafc 0%, #eef4fb 45%, #ffffff 100%);
+}
+
+.login-shell {
+  width: 1080px;
+  max-width: 100%;
+  min-height: 560px;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  border-radius: 30px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+/* =========================
+   PANEL IZQUIERDO
+========================= */
+
+.login-brand {
+  position: relative;
+  padding: 44px;
+  color: #ffffff;
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.86), rgba(15, 23, 42, 0.92)),
+    url('/assets/lisume/portal-multisegma.jpeg') center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.login-brand::after {
+  content: "";
+  position: absolute;
+  inset: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  pointer-events: none;
+}
+
+.brand-top,
+.brand-content {
+  position: relative;
+  z-index: 1;
+}
+
+.brand-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+  flex-shrink: 0;
+}
+
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.brand-top h1 {
+  margin: 0;
+  font-size: 23px;
+  letter-spacing: 0.4px;
+}
+
+.brand-top p {
+  margin: 4px 0 0;
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.tag {
+  display: inline-flex;
+  width: fit-content;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(249, 115, 22, 0.16);
+  color: #fdba74;
+  border: 1px solid rgba(249, 115, 22, 0.32);
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+.brand-content h2 {
+  max-width: 560px;
+  margin: 0 0 18px;
+  font-size: 36px;
+  line-height: 1.12;
+  letter-spacing: -0.8px;
+}
+
+.brand-content p {
+  max-width: 520px;
+  margin: 0;
+  color: #cbd5e1;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.brand-features {
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.brand-features div {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.brand-features strong {
+  display: block;
+  color: #fb923c;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.brand-features span {
+  color: #e5e7eb;
+  font-size: 13px;
+}
+
+/* =========================
+   PANEL DERECHO
+========================= */
+
+.login-form-panel {
+  padding: 48px 42px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form-header {
+  margin-bottom: 28px;
+}
+
+.mini-label {
+  display: inline-flex;
+  margin-bottom: 12px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #ea580c;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.form-header h2 {
+  margin: 0;
+  font-size: 30px;
+  color: #0f172a;
+}
+
+.form-header p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.login-form,
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-form label,
+.admin-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.login-form input,
+.admin-form input {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 14px 16px;
+  outline: none;
+  color: #0f172a;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.login-form input:focus,
+.admin-form input:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12);
+  background: #ffffff;
+}
+
+.btn-login {
+  margin-top: 6px;
+  border: none;
+  border-radius: 16px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: #111827;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 14px 28px rgba(249, 115, 22, 0.26);
+}
+
+.btn-login:hover,
+.btn-outline:hover,
+.btn-admin:hover,
+.btn-admin-submit:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.form-actions {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn-outline,
+.btn-admin {
+  border-radius: 16px;
+  padding: 13px 14px;
+  cursor: pointer;
+  font-weight: 800;
+  transition: 0.2s ease;
+}
+
+.btn-outline {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.btn-admin {
+  border: none;
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* =========================
+   MODAL ADMIN
+========================= */
+
+.admin-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.admin-modal {
+  width: 440px;
+  max-width: 100%;
+  border-radius: 24px;
+  padding: 26px;
+  background: #ffffff;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
+
+.admin-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.admin-modal-header span {
+  color: #f97316;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.admin-modal-header h3 {
+  margin: 5px 0 0;
+  color: #0f172a;
+  font-size: 24px;
+}
+
+.admin-modal-close {
+  border: none;
+  background: #f1f5f9;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #0f172a;
+  font-weight: 900;
+}
+
+.btn-admin-submit {
+  margin-top: 4px;
+  border: none;
+  border-radius: 16px;
+  padding: 14px 18px;
+  background: #0f172a;
+  color: #ffffff;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-error {
+  color: #dc2626;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .login-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .login-brand {
+    min-height: 420px;
+  }
+
+  .brand-content h2 {
+    font-size: 30px;
+  }
+
+  .brand-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .login-page {
+    padding: 24px 12px;
+  }
+
+  .login-brand,
+  .login-form-panel {
+    padding: 28px 22px;
+  }
+
+  .brand-top h1 {
+    font-size: 18px;
+  }
+
+  .brand-content h2 {
+    font-size: 26px;
+  }
+
+  .form-actions {
+    grid-template-columns: 1fr;
+  }
+}

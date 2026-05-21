@@ -1,0 +1,57 @@
+<!-- src/app/pages/orders/orders.html -->
+<div class="order-page">
+  <!-- Caso 1: sí hay un pedido guardado -->
+  <ng-container *ngIf="hasOrder; else sinPedidos">
+
+    <section class="order-voucher">
+      <header class="voucher-header">
+        <h1>Último pedido realizado</h1>
+
+        <span class="badge" [ngClass]="estadoClase">
+          {{ estadoTexto }}
+        </span>
+      </header>
+
+      <div class="voucher-body">
+        <div class="voucher-info">
+          <p><strong>N.º de pedido:</strong> {{ lastOrder?.codigo }}</p>
+          <p><strong>Cliente:</strong> {{ lastOrder?.nombre }}</p>
+          <p><strong>Fecha y hora:</strong> {{ lastOrder?.fecha | date:'dd/MM/yyyy, HH:mm' }}</p>
+          <p><strong>Método de pago:</strong> {{ lastOrder?.metodo }}</p>
+          <p><strong>Total pagado:</strong> S/ {{ lastOrder?.total | number:'1.2-2' }}</p>
+        </div>
+      </div>
+
+      <footer class="voucher-footer">
+        <button class="btn-secondary" routerLink="/">Volver al catálogo</button>
+        <button class="btn-danger" type="button" (click)="cancelarPedido()">
+          Cancelar pedido
+        </button>
+      </footer>
+    </section>
+
+    <!-- Resumen de servicios del pedido -->
+    <aside class="order-summary" *ngIf="lastOrder?.items?.length">
+      <h2>Servicios del pedido</h2>
+      <div class="order-item" *ngFor="let it of lastOrder.items">
+        <img [src]="imageFor(it)" [alt]="it.name" />
+        <div class="order-item-info">
+          <p class="name">{{ it.name }}</p>
+          <p class="qty">Cant. {{ it.qty }}</p>
+        </div>
+        <div class="order-item-price">
+          S/ {{ it.price * it.qty | number:'1.2-2' }}
+        </div>
+      </div>
+    </aside>
+
+  </ng-container>
+
+  <!-- Caso 2: NO hay ningún pedido guardado -->
+  <ng-template #sinPedidos>
+    <div class="order-empty">
+      <p>Aún no tienes ningún pedido registrado.</p>
+      <button class="btn-primary" routerLink="/">Ver servicios</button>
+    </div>
+  </ng-template>
+</div>

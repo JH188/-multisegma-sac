@@ -1,0 +1,67 @@
+<div class="register-page">
+  <div class="register-card">
+    <div class="register-header">
+      <div class="logo">M</div>
+
+      <h2>Crear cuenta</h2>
+
+      <p>
+        Regístrate para guardar tus pedidos, consultar tu historial y continuar
+        con tus solicitudes en MULTISEGMA S.A.C.
+      </p>
+    </div>
+
+    <form class="register-form" (ngSubmit)="register()" autocomplete="off">
+      <label>
+        <span>Nombre completo</span>
+        <input
+          type="text"
+          [(ngModel)]="name"
+          name="name"
+          placeholder="Tu nombre completo"
+        />
+      </label>
+
+      <label>
+        <span>Correo electrónico</span>
+        <input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="usuario@correo.com"
+        />
+      </label>
+
+      <label>
+        <span>Contraseña</span>
+        <input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="Mínimo 6 caracteres"
+        />
+      </label>
+
+      <label>
+        <span>Confirmar contraseña</span>
+        <input
+          type="password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          placeholder="Repite tu contraseña"
+        />
+      </label>
+
+      <button type="submit">
+        Registrarse
+      </button>
+
+      <p class="success" *ngIf="success">{{ success }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </form>
+
+    <button type="button" class="btn-login" (click)="goLogin()">
+      ¿Ya tienes cuenta? Inicia sesión
+    </button>
+  </div>
+</div>

@@ -1,0 +1,308 @@
+<!-- Fondo oscuro -->
+<div class="cart-backdrop" (click)="close()"></div>
+
+<!-- Panel lateral derecho -->
+<aside class="cart-panel">
+
+  <header class="cart-header">
+    <div>
+      <span class="cart-kicker">MULTISEGMA S.A.C.</span>
+      <h2>Pedido en línea</h2>
+    </div>
+
+    <button class="close-btn" type="button" (click)="close()">✕</button>
+  </header>
+
+  <section class="cart-body">
+
+    <div *ngIf="items.length; else emptyCart">
+
+      <!-- INDICADOR DE PASOS -->
+      <div class="stepper">
+        <span [class.active]="checkoutPaso === 'resumen'">1</span>
+        <span [class.active]="checkoutPaso === 'datos'">2</span>
+        <span [class.active]="checkoutPaso === 'pago' || checkoutPaso === 'espera'">3</span>
+        <span [class.active]="checkoutPaso === 'exito'">4</span>
+      </div>
+
+      <!-- PASO 1: RESUMEN -->
+      <div *ngIf="checkoutPaso === 'resumen'" class="step-content">
+        <h3>Resumen del pedido</h3>
+        <p class="step-subtitle">
+          Revisa los productos antes de continuar con tus datos.
+        </p>
+
+        <div class="items-list">
+          <div class="cart-item" *ngFor="let it of items; let i = index">
+            <div class="item-avatar">
+              {{ (it.name || 'P').charAt(0) }}
+            </div>
+
+            <div class="item-info">
+              <div class="item-name">{{ it.name }}</div>
+              <div class="item-price">
+                S/ {{ it.price | number:'1.2-2' }} c/u
+              </div>
+            </div>
+
+            <div class="item-actions">
+              <button type="button" (click)="removeOne(i)">−</button>
+              <span>{{ it.qty }}</span>
+              <button type="button" (click)="addOne(i)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="cart-total">
+          <span>Total estimado</span>
+          <strong>S/ {{ total | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="cart-note">
+          El pedido quedará registrado para validación administrativa.
+        </div>
+
+        <div class="cart-actions">
+          <button type="button" class="btn-link" (click)="close()">
+            Seguir cotizando
+          </button>
+
+          <button type="button" class="btn-primary" (click)="irADatosEnvio()">
+            Continuar pedido
+          </button>
+        </div>
+      </div>
+
+      <!-- PASO 2: DATOS -->
+      <div *ngIf="checkoutPaso === 'datos'" class="step-content">
+        <h3>Datos del cliente</h3>
+        <p class="step-subtitle">
+          Completa la información para registrar tu pedido.
+        </p>
+
+        <form (ngSubmit)="irAFormaPago()" class="checkout-form">
+
+          <label>Nombre completo o razón social</label>
+          <input
+            type="text"
+            [(ngModel)]="datosEnvio.nombre"
+            name="nombre"
+            placeholder="Ej. Juan Pérez / Empresa S.A.C."
+            required
+          />
+
+          <label>Correo electrónico</label>
+          <input
+            type="email"
+            [(ngModel)]="datosEnvio.email"
+            name="email"
+            placeholder="cliente@correo.com"
+            required
+          />
+
+          <label>Teléfono</label>
+          <input
+            type="tel"
+            [(ngModel)]="datosEnvio.telefono"
+            name="telefono"
+            placeholder="999888777"
+            required
+          />
+
+          <div class="form-row">
+            <div>
+              <label>Departamento</label>
+              <input
+                type="text"
+                [(ngModel)]="datosEnvio.departamento"
+                name="departamento"
+                required
+              />
+            </div>
+
+            <div>
+              <label>Provincia</label>
+              <input
+                type="text"
+                [(ngModel)]="datosEnvio.provincia"
+                name="provincia"
+                required
+              />
+            </div>
+          </div>
+
+          <label>Distrito</label>
+          <input
+            type="text"
+            [(ngModel)]="datosEnvio.distrito"
+            name="distrito"
+            placeholder="Ej. Los Olivos"
+            required
+          />
+
+          <label>Dirección exacta</label>
+          <input
+            type="text"
+            [(ngModel)]="datosEnvio.direccion"
+            name="direccion"
+            placeholder="Av. / Jr. / Calle..."
+            required
+          />
+
+          <label>Referencia</label>
+          <input
+            type="text"
+            [(ngModel)]="datosEnvio.referencia"
+            name="referencia"
+            placeholder="Frente a..., cerca de..."
+          />
+
+          <div class="cart-actions">
+            <button
+              type="button"
+              class="btn-link"
+              (click)="checkoutPaso='resumen'"
+            >
+              Volver
+            </button>
+
+            <button type="submit" class="btn-primary">
+              Continuar a pago
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- PASO 3: PAGO -->
+      <div *ngIf="checkoutPaso === 'pago'" class="step-content">
+        <h3>Método de pago</h3>
+        <p class="step-subtitle">
+          Selecciona cómo deseas registrar el pago del pedido.
+        </p>
+
+        <div class="customer-summary">
+          <p><strong>Cliente:</strong> {{ datosEnvio.nombre }}</p>
+          <p><strong>Correo:</strong> {{ datosEnvio.email }}</p>
+          <p><strong>Total:</strong> S/ {{ total | number:'1.2-2' }}</p>
+        </div>
+
+        <div class="pay-badges">
+          <button
+            type="button"
+            class="pay-badge"
+            [class.active]="metodoPago === 'Yape'"
+            (click)="selectPayment('Yape')"
+          >
+            <img src="assets/lisume/yape.jpg" alt="Yape" />
+            <span>Yape</span>
+          </button>
+
+          <button
+            type="button"
+            class="pay-badge"
+            [class.active]="metodoPago === 'Plin'"
+            (click)="selectPayment('Plin')"
+          >
+            <img src="assets/lisume/plin.jpg" alt="Plin" />
+            <span>Plin</span>
+          </button>
+
+          <button
+            type="button"
+            class="pay-badge"
+            [class.active]="metodoPago === 'Transferencia'"
+            (click)="selectPayment('Transferencia')"
+          >
+            <img src="assets/lisume/bcp.jpg" alt="Transferencia" />
+            <span>Transferencia</span>
+          </button>
+        </div>
+
+        <div class="cart-actions">
+          <button type="button" class="btn-link" (click)="checkoutPaso='datos'">
+            Volver
+          </button>
+
+          <button type="button" class="btn-primary" (click)="confirmarMetodoPago()">
+            Continuar pago
+          </button>
+        </div>
+      </div>
+
+      <!-- PASO 4: ESPERA / QR -->
+      <div *ngIf="checkoutPaso === 'espera'" class="step-content">
+        <h3 *ngIf="metodoPago === 'Yape'">Pago vía Yape</h3>
+        <h3 *ngIf="metodoPago === 'Plin'">Pago vía Plin</h3>
+        <h3 *ngIf="metodoPago === 'Transferencia'">Transferencia bancaria</h3>
+
+        <p class="step-subtitle">
+          Monto a pagar:
+          <strong>S/ {{ total | number:'1.2-2' }}</strong>
+        </p>
+
+        <div class="qr-box" *ngIf="metodoPago === 'Yape' || metodoPago === 'Plin'">
+          <p>Escanea este código QR con tu app {{ metodoPago }}.</p>
+          <img src="assets/lisume/qr-ejemplo.png" alt="QR de pago" />
+        </div>
+
+        <div class="transfer-box" *ngIf="metodoPago === 'Transferencia'">
+          <p><strong>Banco:</strong> BCP</p>
+          <p><strong>Titular:</strong> MULTISEGMA S.A.C.</p>
+          <p><strong>Concepto:</strong> Pedido web</p>
+        </div>
+
+        <p class="small">
+          Al confirmar, el pedido quedará como pendiente para validación del administrador.
+        </p>
+
+        <div class="cart-actions">
+          <button type="button" class="btn-link" (click)="checkoutPaso='pago'">
+            Volver
+          </button>
+
+          <button type="button" class="btn-primary" (click)="simularPagoExitoso()">
+            Ya realicé el pago
+          </button>
+        </div>
+      </div>
+
+      <!-- PASO 5: ÉXITO -->
+      <div *ngIf="checkoutPaso === 'exito'" class="step-content success-step">
+        <div class="success-icon">✓</div>
+
+        <h3>Pedido registrado</h3>
+
+        <p>
+          Hemos recibido tu pedido correctamente. El administrador revisará el pago
+          y confirmará la atención.
+        </p>
+
+        <div class="success-card">
+          <p><strong>Cliente:</strong> {{ datosEnvio.nombre }}</p>
+          <p><strong>Correo:</strong> {{ datosEnvio.email }}</p>
+          <p><strong>Método:</strong> {{ metodoPago }}</p>
+          <p><strong>Total:</strong> S/ {{ total | number:'1.2-2' }}</p>
+        </div>
+
+        <button class="btn-primary" type="button" (click)="cerrarCarrito()">
+          Volver al inicio
+        </button>
+      </div>
+
+    </div>
+
+    <!-- CARRITO VACÍO -->
+    <ng-template #emptyCart>
+      <div class="empty-state">
+        <div class="empty-icon">🛒</div>
+        <h3>Tu carrito está vacío</h3>
+        <p>Agrega productos o servicios desde el catálogo de Multisegma.</p>
+
+        <button type="button" class="btn-primary" (click)="close()">
+          Ver productos
+        </button>
+      </div>
+    </ng-template>
+
+  </section>
+</aside>

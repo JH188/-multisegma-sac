@@ -1,0 +1,92 @@
+<div class="login-page">
+  <div class="login-shell">
+
+    <!-- LADO IZQUIERDO: PRESENTACIÓN EMPRESARIAL -->
+    <section class="login-brand">
+      <div class="brand-top">
+        <div class="brand-logo">
+          <img src="assets/lisume/portal-multisegma.jpeg" alt="Multisegma S.A.C.">
+        </div>
+
+        <div>
+          <h1>MULTISEGMA S.A.C.</h1>
+          <p>Soluciones tecnológicas empresariales</p>
+        </div>
+      </div>
+
+      <div class="brand-content">
+        <span class="tag">Portal de clientes</span>
+
+        <h2>
+          Accede a tu cuenta para confirmar pedidos y consultar tus solicitudes.
+        </h2>
+
+        <p>
+          Puedes revisar el catálogo sin iniciar sesión. Para confirmar un pedido,
+          registrar tus datos y hacer seguimiento, debes ingresar o crear una cuenta.
+        </p>
+
+        <div class="brand-features">
+          <div>
+            <strong>01</strong>
+            <span>Catálogo digital</span>
+          </div>
+
+          <div>
+            <strong>02</strong>
+            <span>Pedidos en línea</span>
+          </div>
+
+          <div>
+            <strong>03</strong>
+            <span>Seguimiento del pedido</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LADO DERECHO: LOGIN CLIENTE -->
+    <section class="login-form-panel">
+      <div class="form-header">
+        <span class="mini-label">Acceso seguro</span>
+        <h2>Iniciar sesión</h2>
+        <p>Ingresa con tu cuenta para continuar tu pedido.</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" autocomplete="off" class="login-form">
+        <label>
+          <span>Correo electrónico</span>
+          <input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="usuario@correo.com"
+          />
+        </label>
+
+        <label>
+          <span>Contraseña</span>
+          <input
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="********"
+          />
+        </label>
+
+        <button type="submit" class="btn-login">
+          Iniciar sesión
+        </button>
+
+        <p class="error" *ngIf="error">{{ error }}</p>
+      </form>
+
+      <div class="form-actions">
+        <button type="button" class="btn-outline" (click)="goRegister()">
+          Crear cuenta
+        </button>
+      </div>
+    </section>
+
+  </div>
+</div>

@@ -1,0 +1,3474 @@
+<div class="admin-layout">
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <div class="admin-logo">M</div>
+
+      <div>
+        <h3>Multisegma S.A.C.</h3>
+        <p>Panel administrador</p>
+      </div>
+    </div>
+
+    <nav class="admin-menu">
+      <span class="menu-title">GENERAL</span>
+
+      <button
+        type="button"
+        class="menu-item"
+        [class.active]="activeSection === 'dashboard'"
+        (click)="setSection('dashboard')"
+      >
+        📊 Dashboard
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeSection === 'products'"
+        (click)="setSection('products')"
+      >
+        🛒 Productos / Precios
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeSection === 'orders'"
+        (click)="setSection('orders')"
+      >
+        📦 Pedidos y pagos
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeSection === 'users'"
+        (click)="setSection('users')"
+      >
+        👥 Clientes registrados
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeSection === 'charts'"
+        (click)="setSection('charts')"
+      >
+        📈 Reportes
+      </button>
+
+      <span class="menu-title">EMPRESARIAL</span>
+
+      <button
+        type="button"
+        [class.active]="activeSection === 'files'"
+        (click)="setSection('files')"
+      >
+        📁 Archivos
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeSection === 'security'"
+        (click)="setSection('security')"
+      >
+        🔐 Seguridad
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeSection === 'settings'"
+        (click)="setSection('settings')"
+      >
+        ⚙️ Configuración
+      </button>
+    </nav>
+
+    <div class="admin-user-card">
+      <div class="avatar">A</div>
+      <div>
+        <strong>Administrador</strong>
+        <span>admin&#64;multisegma.com</span>
+        <small>● En línea</small>
+      </div>
+    </div>
+
+    <button type="button" class="admin-exit" (click)="logout()">Salir</button>
+  </aside>
+
+  <!-- CONTENIDO -->
+  <main class="admin-content">
+    <!-- DASHBOARD EMPRESARIAL -->
+    <section *ngIf="activeSection === 'dashboard'">
+      <!-- CABECERA DASHBOARD -->
+      <div class="dashboard-header">
+        <div>
+          <h1>Dashboard empresarial</h1>
+          <p>
+            Control central de ventas, pedidos, clientes y operaciones de
+            Multisegma S.A.C.
+          </p>
+        </div>
+
+        <div class="dashboard-actions">
+          <button
+            type="button"
+            class="btn-refresh"
+            (click)="refreshAdminData()"
+          >
+            🔄 Actualizar datos
+          </button>
+
+          <button
+            type="button"
+            class="btn-export"
+            (click)="exportDashboardReport()"
+          >
+            ⬇ Exportar
+          </button>
+
+          <div class="notification-wrapper">
+            <button
+              type="button"
+              class="btn-notification"
+              (click)="toggleNotifications()"
+            >
+              🔔
+              <span *ngIf="unreadNotifications > 0">{{ unreadNotifications }}</span>
+            </button>
+
+            <div class="notification-panel" *ngIf="showNotifications">
+              <div class="notification-header">
+                <strong>Notificaciones</strong>
+                <button type="button" (click)="markNotificationsAsRead()">
+                  Marcar leídas
+                </button>
+              </div>
+
+              <div
+                class="notification-list"
+                *ngIf="dashboardNotifications.length > 0"
+              >
+                <div
+                  class="notification-item"
+                  *ngFor="let n of dashboardNotifications"
+                >
+                  <span [ngClass]="n.type"></span>
+
+                  <div>
+                    <strong>{{ n.title }}</strong>
+                    <p>{{ n.message }}</p>
+                    <small>{{ formatDate(n.date) }}</small>
+                  </div>
+                </div>
+              </div>
+
+              <p
+                class="empty-notifications"
+                *ngIf="dashboardNotifications.length === 0"
+              >
+                No hay notificaciones nuevas.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPIS PRINCIPALES -->
+      <div class="executive-kpi-grid">
+        <article class="executive-kpi-card">
+          <div>
+            <span>Ventas del mes</span>
+            <strong>S/ {{ monthlySales | number:'1.2-2' }}</strong>
+            <small class="positive">▲ 28.6% vs. mes anterior</small>
+          </div>
+          <div class="kpi-circle blue">📈</div>
+        </article>
+
+        <article class="executive-kpi-card">
+          <div>
+            <span>Pedidos totales</span>
+            <strong>{{ totalOrders }}</strong>
+            <small class="positive">▲ 33.3% vs. mes anterior</small>
+          </div>
+          <div class="kpi-circle green">🛒</div>
+        </article>
+
+        <article class="executive-kpi-card">
+          <div>
+            <span>Clientes registrados</span>
+            <strong>{{ totalUsers }}</strong>
+            <small class="positive">▲ 100% vs. mes anterior</small>
+          </div>
+          <div class="kpi-circle purple">👥</div>
+        </article>
+
+        <article class="executive-kpi-card">
+          <div>
+            <span>Ingresos estimados</span>
+            <strong>S/ {{ totalRevenue | number:'1.2-2' }}</strong>
+            <small class="positive">▲ 28.6% vs. mes anterior</small>
+          </div>
+          <div class="kpi-circle orange">💰</div>
+        </article>
+
+        <article class="executive-kpi-card">
+          <div>
+            <span>Tasa de conversión</span>
+            <strong>{{ conversionRate | number:'1.0-1' }}%</strong>
+            <small class="positive">▲ 12.5% vs. mes anterior</small>
+          </div>
+          <div class="kpi-circle cyan">🎯</div>
+        </article>
+      </div>
+
+      <!-- ESTADOS -->
+      <div class="executive-status-grid">
+        <article class="executive-status-card pending">
+          <div class="status-icon">⏳</div>
+          <div>
+            <span>Pendientes</span>
+            <strong>{{ pendingOrders }}</strong>
+            <small>Sin cambios</small>
+          </div>
+        </article>
+
+        <article class="executive-status-card confirmed">
+          <div class="status-icon">✅</div>
+          <div>
+            <span>Confirmados</span>
+            <strong>{{ confirmedOrders }}</strong>
+            <small class="positive">▲ 50% vs. período anterior</small>
+          </div>
+        </article>
+
+        <article class="executive-status-card process">
+          <div class="status-icon">🔄</div>
+          <div>
+            <span>En proceso</span>
+            <strong>{{ processOrders }}</strong>
+            <small>Sin cambios</small>
+          </div>
+        </article>
+
+        <article class="executive-status-card cancelled">
+          <div class="status-icon">❌</div>
+          <div>
+            <span>Cancelados</span>
+            <strong>{{ cancelledOrders }}</strong>
+            <small class="negative">▼ 50% vs. período anterior</small>
+          </div>
+        </article>
+      </div>
+
+      <!-- ANALÍTICA PRINCIPAL -->
+      <div class="dashboard-analytics-grid">
+        <!-- GRÁFICO INGRESOS -->
+        <article class="dashboard-card sales-chart-card">
+          <div class="card-title-row">
+            <div>
+              <h2>Ingresos / Ventas</h2>
+              <p>Comportamiento de ingresos y pedidos recientes.</p>
+            </div>
+
+            <select>
+              <option>Últimos 7 días</option>
+              <option>Últimos 30 días</option>
+              <option>Este mes</option>
+            </select>
+          </div>
+
+          <div class="fake-line-chart">
+            <div class="chart-grid">
+              <span>S/ 1,000</span>
+              <span>S/ 800</span>
+              <span>S/ 600</span>
+              <span>S/ 400</span>
+              <span>S/ 200</span>
+              <span>S/ 0</span>
+            </div>
+
+            <div class="chart-line">
+              <span style="left: 3%; bottom: 8%"></span>
+              <span style="left: 18%; bottom: 15%"></span>
+              <span style="left: 34%; bottom: 78%"></span>
+              <span style="left: 50%; bottom: 62%"></span>
+              <span style="left: 66%; bottom: 66%"></span>
+              <span style="left: 82%; bottom: 60%"></span>
+              <span style="left: 96%; bottom: 22%"></span>
+            </div>
+
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <polyline
+                points="3,92 18,85 34,22 50,38 66,34 82,40 96,78"
+                fill="none"
+                stroke="#2563eb"
+                stroke-width="2.5"
+              />
+              <polyline
+                points="3,92 18,85 34,22 50,38 66,34 82,40 96,78 96,100 3,100"
+                fill="rgba(37, 99, 235, 0.12)"
+                stroke="none"
+              />
+            </svg>
+          </div>
+
+          <div class="chart-days">
+            <span>Lun</span>
+            <span>Mar</span>
+            <span>Mié</span>
+            <span>Jue</span>
+            <span>Vie</span>
+            <span>Sáb</span>
+            <span>Dom</span>
+          </div>
+        </article>
+
+        <!-- ESTADOS DE PEDIDOS -->
+        <article class="dashboard-card order-state-card">
+          <h2>Estados de pedidos</h2>
+
+          <div class="donut-layout">
+            <div class="donut-chart">
+              <div class="donut-center">
+                <strong>{{ totalOrders }}</strong>
+                <span>Total</span>
+              </div>
+            </div>
+
+            <div class="state-legend">
+              <p>
+                <span class="dot green"></span>
+                Confirmados
+                <strong>{{ confirmedOrders }}</strong>
+              </p>
+
+              <p>
+                <span class="dot blue"></span>
+                En proceso
+                <strong>{{ processOrders }}</strong>
+              </p>
+
+              <p>
+                <span class="dot orange"></span>
+                Pendientes
+                <strong>{{ pendingOrders }}</strong>
+              </p>
+
+              <p>
+                <span class="dot red"></span>
+                Cancelados
+                <strong>{{ cancelledOrders }}</strong>
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="link-button"
+            (click)="setSection('charts')"
+          >
+            Ver reporte completo →
+          </button>
+        </article>
+
+        <!-- ACTIVIDAD RECIENTE -->
+        <article class="dashboard-card activity-card">
+          <h2>Actividad reciente</h2>
+
+          <div class="activity-list">
+            <div class="activity-item" *ngFor="let act of recentActivities">
+              <div class="activity-icon" [ngClass]="act.type">
+                {{ act.icon }}
+              </div>
+
+              <div>
+                <strong>{{ act.title }}</strong>
+                <p>{{ act.user }}</p>
+              </div>
+
+              <span>{{ formatDate(act.date) }}</span>
+            </div>
+          </div>
+
+          <button type="button" class="link-button">
+            Ver todas las actividades →
+          </button>
+        </article>
+      </div>
+
+      <!-- PARTE INFERIOR -->
+      <div class="dashboard-bottom-grid">
+        <!-- PEDIDOS RECIENTES -->
+        <article class="dashboard-card recent-orders-card">
+          <div class="card-title-row">
+            <div>
+              <h2>Pedidos recientes</h2>
+              <p>Últimos pedidos registrados en la plataforma.</p>
+            </div>
+
+            <button
+              type="button"
+              class="link-button"
+              (click)="setSection('orders')"
+            >
+              Ver todos →
+            </button>
+          </div>
+
+          <div class="table-wrapper dashboard-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Método de pago</th>
+                  <th>Estado</th>
+                  <th>Fecha</th>
+                  <th>Total</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let o of recentOrders">
+                  <td>#{{ o.id }}</td>
+                  <td>{{ getOrderClient(o) }}</td>
+                  <td>{{ getOrderPayment(o) }}</td>
+                  <td>
+                    <span
+                      class="badge"
+                      [ngClass]="statusClass(getOrderStatus(o))"
+                    >
+                      {{ getOrderStatus(o) }}
+                    </span>
+                  </td>
+                  <td>{{ formatDate(getOrderDate(o)) }}</td>
+                  <td>S/ {{ o.total | number:'1.2-2' }}</td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn-small"
+                      (click)="setSection('orders'); openOrderDetail(o)"
+                    >
+                      Ver
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- TOP PRODUCTOS -->
+        <article class="dashboard-card top-products-card">
+          <h2>Top productos</h2>
+
+          <div class="top-product-item" *ngFor="let p of topProducts">
+            <div>
+              <strong>{{ p.name }}</strong>
+              <span>S/ {{ p.amount | number:'1.2-2' }}</span>
+            </div>
+
+            <div class="progress-bar">
+              <span [style.width.%]="p.percent"></span>
+            </div>
+
+            <small>{{ p.percent }}%</small>
+          </div>
+
+          <button
+            type="button"
+            class="link-button"
+            (click)="setSection('products')"
+          >
+            Ver catálogo completo →
+          </button>
+        </article>
+
+        <!-- RESUMEN FINANCIERO -->
+        <article class="dashboard-card finance-summary-card">
+          <h2>Resumen financiero</h2>
+
+          <div class="finance-row income">
+            <span>Ingresos del mes</span>
+            <strong>S/ {{ monthlySales | number:'1.2-2' }}</strong>
+          </div>
+
+          <div class="finance-row expense">
+            <span>Gasto estimado</span>
+            <strong>S/ {{ estimatedExpenses | number:'1.2-2' }}</strong>
+          </div>
+
+          <div class="finance-row profit">
+            <span>Utilidad neta</span>
+            <strong>S/ {{ netProfit | number:'1.2-2' }}</strong>
+          </div>
+
+          <div class="finance-row margin">
+            <span>Margen de utilidad</span>
+            <strong>{{ profitMargin | number:'1.0-1' }}%</strong>
+          </div>
+
+          <button
+            type="button"
+            class="link-button"
+            (click)="setSection('charts')"
+          >
+            Ver reporte financiero →
+          </button>
+        </article>
+      </div>
+    </section>
+
+    <!-- PRODUCTOS -->
+    <!-- PRODUCTOS / PRECIOS EMPRESARIAL -->
+    <section *ngIf="activeSection === 'products'">
+      <!-- CABECERA -->
+      <div class="products-header">
+        <div>
+          <h1>Gestión de productos y precios</h1>
+          <p>
+            Control total del catálogo: productos, precios, stock, imágenes,
+            categorías y descripciones.
+          </p>
+        </div>
+
+        <div class="products-actions">
+          <button
+            type="button"
+            class="btn-primary"
+            (click)="createNewProduct()"
+          >
+            + Nuevo producto
+          </button>
+
+          <button
+            type="button"
+            class="btn-outline"
+            (click)="triggerImportProducts()"
+          >
+            ⬆ Importar
+          </button>
+
+          <input
+            #productImportInput
+            type="file"
+            accept=".json"
+            hidden
+            (change)="importProductsFromFile($event)"
+          />
+
+          <button type="button" class="btn-outline" (click)="exportProducts()">
+            ⬇ Exportar catálogo
+          </button>
+
+          <button
+            type="button"
+            class="btn-primary"
+            (click)="saveProductChanges()"
+          >
+            💾 Guardar cambios
+          </button>
+        </div>
+      </div>
+
+      <!-- KPIS PRODUCTOS -->
+      <div class="product-kpi-grid">
+        <article class="product-kpi-card">
+          <div class="product-kpi-icon blue">📦</div>
+          <div>
+            <span>Productos activos</span>
+            <strong>{{ activeProductsCount }}</strong>
+            <small class="positive">↗ Catálogo disponible</small>
+          </div>
+        </article>
+
+        <article class="product-kpi-card">
+          <div class="product-kpi-icon orange">⚠️</div>
+          <div>
+            <span>Stock bajo</span>
+            <strong>{{ lowStockCount }}</strong>
+            <small>Requieren revisión</small>
+          </div>
+        </article>
+
+        <article class="product-kpi-card">
+          <div class="product-kpi-icon green">🧩</div>
+          <div>
+            <span>Categorías</span>
+            <strong>{{ productCategories.length }}</strong>
+            <small>Organización del catálogo</small>
+          </div>
+        </article>
+
+        <article class="product-kpi-card">
+          <div class="product-kpi-icon purple">🕒</div>
+          <div>
+            <span>Actualizados hoy</span>
+            <strong>{{ productsUpdatedToday }}</strong>
+            <small>Últimos cambios</small>
+          </div>
+        </article>
+      </div>
+
+      <!-- FILTROS -->
+      <div class="product-filters-card">
+        <label class="product-search">
+          Buscar producto
+          <input
+            type="text"
+            [(ngModel)]="productSearch"
+            placeholder="Buscar por nombre, SKU o categoría..."
+          />
+        </label>
+
+        <label>
+          Categoría
+          <select [(ngModel)]="filterProductCategory">
+            <option value="TODAS">Todas</option>
+            <option
+              *ngFor="let category of productCategories"
+              [value]="category"
+            >
+              {{ category }}
+            </option>
+          </select>
+        </label>
+
+        <label>
+          Estado
+          <select [(ngModel)]="filterProductStatus">
+            <option value="TODOS">Todos</option>
+            <option value="ACTIVO">Activo</option>
+            <option value="INACTIVO">Inactivo</option>
+          </select>
+        </label>
+
+        <label>
+          Stock
+          <select [(ngModel)]="filterProductStock">
+            <option value="TODOS">Todos</option>
+            <option value="DISPONIBLE">Disponible</option>
+            <option value="BAJO">Stock bajo</option>
+            <option value="SIN_STOCK">Sin stock</option>
+          </select>
+        </label>
+
+        <label>
+          Precio mínimo
+          <input
+            type="number"
+            min="0"
+            [(ngModel)]="filterMinPrice"
+            placeholder="S/ mínimo"
+          />
+        </label>
+
+        <label>
+          Precio máximo
+          <input
+            type="number"
+            min="0"
+            [(ngModel)]="filterMaxPrice"
+            placeholder="S/ máximo"
+          />
+        </label>
+
+        <button type="button" class="btn-clear" (click)="clearProductFilters()">
+          Limpiar
+        </button>
+      </div>
+
+      <!-- CONTENIDO PRINCIPAL -->
+      <div class="products-workspace">
+        <!-- TABLA / CATÁLOGO -->
+        <div class="products-main-panel">
+          <div class="products-panel-card">
+            <div class="panel-title-row">
+              <div>
+                <h2>Catálogo de productos</h2>
+                <p>
+                  Mostrando {{ filteredProducts.length }} de {{ products.length
+                  }} productos registrados.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="btn-refresh small"
+                (click)="loadProducts()"
+              >
+                Recargar
+              </button>
+            </div>
+
+            <div class="product-table-wrapper">
+              <table class="product-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Estado</th>
+                    <th>Última actualización</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr
+                    *ngFor="let p of filteredProducts"
+                    [class.selected-product-row]="selectedProduct?.id === p.id"
+                    (click)="selectProduct(p)"
+                  >
+                    <td>
+                      <input
+                        type="checkbox"
+                        [checked]="selectedProduct?.id === p.id"
+                        (click)="$event.stopPropagation(); selectProduct(p)"
+                      />
+                    </td>
+
+                    <td>
+                      <div class="product-cell">
+                        <img [src]="getProductImage(p)" [alt]="p.nombre" />
+
+                        <div>
+                          <strong>{{ getProductName(p) }}</strong>
+                          <span>{{ getProductSku(p) }}</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>{{ getProductCategory(p) }}</td>
+
+                    <td>
+                      <strong
+                        >S/ {{ getProductPrice(p) | number:'1.2-2' }}</strong
+                      >
+                    </td>
+
+                    <td>{{ getProductStock(p) }}</td>
+
+                    <td>
+                      <span
+                        class="product-status"
+                        [ngClass]="getProductStatusClass(p)"
+                      >
+                        {{ getProductStatus(p) }}
+                      </span>
+                    </td>
+
+                    <td>{{ formatDate(getProductUpdatedAt(p)) }}</td>
+
+                    <td>
+                      <button
+                        type="button"
+                        class="btn-small"
+                        (click)="$event.stopPropagation(); selectProduct(p)"
+                      >
+                        Editar
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p class="empty" *ngIf="filteredProducts.length === 0">
+              No hay productos que coincidan con los filtros aplicados.
+            </p>
+          </div>
+        </div>
+
+        <!-- EDITOR PRODUCTO -->
+        <aside class="product-editor-panel" *ngIf="selectedProduct">
+          <div class="product-editor-header">
+            <div>
+              <h2>Editar producto seleccionado</h2>
+              <p>
+                Modifica nombre, precio, descripción, stock, estado e imágenes.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="close-detail"
+              (click)="selectedProduct = null"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div class="unsaved-alert" *ngIf="hasProductChanges">
+            ● Cambios sin guardar
+          </div>
+
+          <!-- DATOS PRINCIPALES -->
+          <div class="editor-section">
+            <h3>Datos del producto</h3>
+
+            <label>
+              Nombre del producto
+              <input type="text" [(ngModel)]="selectedProduct.nombre" />
+            </label>
+
+            <label>
+              SKU
+              <input type="text" [(ngModel)]="selectedProduct.sku" />
+            </label>
+
+            <label>
+              Descripción corta
+              <textarea
+                rows="3"
+                [(ngModel)]="selectedProduct.descripcion"
+                placeholder="Describe brevemente el producto o servicio..."
+              ></textarea>
+            </label>
+
+            <div class="editor-grid-2">
+              <label>
+                Categoría
+                <select [(ngModel)]="selectedProduct.categoria">
+                  <option value="Tintas">Tintas</option>
+                  <option value="Tonners">Tonners</option>
+                  <option value="Servicios">Servicios</option>
+                  <option value="Software">Software</option>
+                  <option value="Accesorios">Accesorios</option>
+                  <option value="Repuestos">Repuestos</option>
+                </select>
+              </label>
+
+              <label>
+                Estado
+                <select [(ngModel)]="selectedProduct.estado">
+                  <option value="ACTIVO">Activo</option>
+                  <option value="INACTIVO">Inactivo</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="editor-grid-3">
+              <label>
+                Precio actual S/
+                <input
+                  type="number"
+                  min="0"
+                  [(ngModel)]="selectedProduct.precio"
+                />
+              </label>
+
+              <label>
+                Precio anterior S/
+                <input
+                  type="number"
+                  min="0"
+                  [(ngModel)]="selectedProduct.precioAnterior"
+                />
+              </label>
+
+              <label>
+                Stock
+                <input
+                  type="number"
+                  min="0"
+                  [(ngModel)]="selectedProduct.stock"
+                />
+              </label>
+            </div>
+
+            <label class="toggle-row">
+              <input type="checkbox" [(ngModel)]="selectedProduct.destacado" />
+              <span>Producto destacado en la tienda</span>
+            </label>
+          </div>
+
+          <!-- ETIQUETAS -->
+          <div class="editor-section">
+            <h3>Etiquetas</h3>
+
+            <div class="tag-list">
+              <span *ngFor="let tag of selectedProductTags">
+                {{ tag }}
+                <button type="button" (click)="removeProductTag(tag)">×</button>
+              </span>
+            </div>
+
+            <div class="tag-input-row">
+              <input
+                type="text"
+                [(ngModel)]="newProductTag"
+                placeholder="Nueva etiqueta..."
+                (keyup.enter)="addProductTag()"
+              />
+
+              <button
+                type="button"
+                class="btn-small dark"
+                (click)="addProductTag()"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+
+          <!-- TEXTO COMPLETO -->
+          <div class="editor-section">
+            <h3>Descripción completa</h3>
+
+            <div class="text-editor-tabs">
+              <button type="button" class="active">Descripción</button>
+              <button type="button">Detalles técnicos</button>
+              <button type="button">Texto promocional</button>
+            </div>
+
+            <textarea
+              rows="6"
+              [(ngModel)]="selectedProduct.descripcionCompleta"
+              placeholder="Escribe aquí la descripción larga del producto, beneficios, compatibilidad, características técnicas, etc."
+            ></textarea>
+
+            <small>
+              Conteo de palabras: {{
+              countWords(selectedProduct.descripcionCompleta) }}
+            </small>
+          </div>
+        </aside>
+
+        <!-- IMÁGENES DEL PRODUCTO -->
+        <aside class="product-images-panel" *ngIf="selectedProduct">
+          <div class="product-images-header">
+            <h2>Imágenes del producto</h2>
+
+            <div>
+              <button type="button" class="mini-icon-btn" (click)="triggerImageUpload()">‹</button>
+              <button type="button" class="mini-icon-btn" (click)="deleteProductImage()">×</button>
+            </div>
+          </div>
+
+          <div class="cover-preview">
+            <span>Portada</span>
+
+            <img
+              [src]="getProductImage(selectedProduct)"
+              [alt]="selectedProduct.nombre"
+            />
+
+            <button
+              type="button"
+              class="cover-btn"
+              (click)="triggerImageUpload()"
+            >
+              📷 Cambiar portada
+            </button>
+          </div>
+
+          <div class="gallery-grid">
+            <button
+              type="button"
+              class="gallery-thumb"
+              *ngFor="let img of getProductGallery(selectedProduct)"
+              [class.active]="getProductImage(selectedProduct) === img"
+              (click)="changeProductCover(img)"
+            >
+              <img [src]="img" alt="Imagen del producto" />
+            </button>
+          </div>
+
+          <div class="image-actions">
+            <button
+              type="button"
+              class="btn-outline full"
+              (click)="triggerImageUpload()"
+            >
+              ⬆ Subir imagen
+            </button>
+
+            <button
+              type="button"
+              class="btn-danger-outline full"
+              (click)="deleteProductImage()"
+            >
+              🗑 Eliminar
+            </button>
+          </div>
+
+          <input
+            #productImageInput
+            type="file"
+            accept="image/png, image/jpeg, image/webp"
+            hidden
+            (change)="uploadProductImage($event)"
+          />
+
+          <div
+            class="upload-zone"
+            (click)="triggerImageUpload()"
+            (dragover)="onDragOver($event)"
+            (drop)="onImageDrop($event)"
+          >
+            <div>☁️</div>
+            <strong>Arrastra imágenes aquí</strong>
+            <p>o haz clic para seleccionar</p>
+            <small>Formatos: JPG, PNG, WEBP. Máx. 5MB</small>
+          </div>
+
+          <!-- HISTORIAL -->
+          <div class="product-history-card">
+            <div class="history-title">
+              <h3>Historial de cambios</h3>
+              <button type="button">Ver todo</button>
+            </div>
+
+            <div class="history-list">
+              <div class="history-item" *ngFor="let h of productChangeHistory">
+                <span></span>
+                <div>
+                  <strong>{{ h.action }}</strong>
+                  <small>{{ formatDate(h.date) }}</small>
+                  <p>{{ h.user }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- PEDIDOS Y PAGOS EMPRESARIAL -->
+    <section *ngIf="activeSection === 'orders'">
+      <div class="admin-header">
+        <div>
+          <h1>Gestión de Procedimientos y Pedidos</h1>
+          <p>
+            Administra pedidos, pagos, vouchers, fechas, clientes, estados e
+            historial de cambios.
+          </p>
+        </div>
+
+        <button type="button" class="btn-refresh" (click)="loadOrders()">
+          Recargar pedidos
+        </button>
+      </div>
+
+      <!-- CONTROL DE FECHAS -->
+      <div class="date-control-card">
+        <button type="button" class="date-btn" (click)="previousWeek()">
+          ← Semana anterior
+        </button>
+
+        <div class="date-range-box">
+          <span>Rango de gestión</span>
+          <strong>{{ currentRangeLabel }}</strong>
+        </div>
+
+        <button type="button" class="date-btn" (click)="nextWeek()">
+          Semana siguiente →
+        </button>
+
+        <div class="quick-periods">
+          <button
+            type="button"
+            [class.active]="periodMode === 'today'"
+            (click)="setPeriod('today')"
+          >
+            Hoy
+          </button>
+
+          <button
+            type="button"
+            [class.active]="periodMode === 'week'"
+            (click)="setPeriod('week')"
+          >
+            Semana
+          </button>
+
+          <button
+            type="button"
+            [class.active]="periodMode === 'month'"
+            (click)="setPeriod('month')"
+          >
+            Mes
+          </button>
+        </div>
+      </div>
+
+      <!-- FILTROS -->
+      <div class="filters-card">
+        <label class="search-field">
+          Buscar pedido, cliente, producto o correo
+          <input
+            type="text"
+            [(ngModel)]="searchOrder"
+            placeholder="Ejemplo: Jonathan, Tintas, Yape, #1..."
+          />
+        </label>
+
+        <label>
+          Estado
+          <select [(ngModel)]="filterStatus">
+            <option value="TODOS">Todos</option>
+            <option value="PENDIENTE">Pendiente</option>
+            <option value="CONFIRMADO">Confirmado</option>
+            <option value="EN PROCESO">En proceso</option>
+            <option value="CANCELADO">Cancelado</option>
+          </select>
+        </label>
+
+        <label>
+          Método de pago
+          <select [(ngModel)]="filterPayment">
+            <option value="TODOS">Todos</option>
+            <option value="YAPE">Yape</option>
+            <option value="PLIN">Plin</option>
+            <option value="TRANSFERENCIA">Transferencia</option>
+            <option value="EFECTIVO">Efectivo</option>
+          </select>
+        </label>
+
+        <label>
+          Fecha exacta
+          <input type="date" [(ngModel)]="filterDate" />
+        </label>
+
+        <button type="button" class="btn-clear" (click)="clearOrderFilters()">
+          Limpiar filtros
+        </button>
+      </div>
+
+      <!-- KPI PEDIDOS -->
+      <div class="orders-kpi-grid">
+        <article class="order-kpi blue">
+          <div class="kpi-icon">📥</div>
+          <div>
+            <span>Pedidos de hoy</span>
+            <strong>{{ todayOrders }}</strong>
+            <small>Entradas registradas hoy</small>
+          </div>
+        </article>
+
+        <article class="order-kpi orange">
+          <div class="kpi-icon">⏳</div>
+          <div>
+            <span>Pendientes</span>
+            <strong>{{ pendingOrders }}</strong>
+            <small>Esperando validación</small>
+          </div>
+        </article>
+
+        <article class="order-kpi green">
+          <div class="kpi-icon">✅</div>
+          <div>
+            <span>Confirmados</span>
+            <strong>{{ confirmedOrders }}</strong>
+            <small>Pagos aceptados</small>
+          </div>
+        </article>
+
+        <article class="order-kpi purple">
+          <div class="kpi-icon">💰</div>
+          <div>
+            <span>Ingresos estimados</span>
+            <strong>S/ {{ totalRevenue | number:'1.2-2' }}</strong>
+            <small>Según pedidos registrados</small>
+          </div>
+        </article>
+
+        <article class="order-kpi red">
+          <div class="kpi-icon">🚫</div>
+          <div>
+            <span>Cancelados</span>
+            <strong>{{ cancelledOrders }}</strong>
+            <small>Pedidos anulados</small>
+          </div>
+        </article>
+      </div>
+
+      <!-- CUERPO PRINCIPAL DE PEDIDOS -->
+      <div class="orders-workspace">
+        <div class="orders-main">
+          <div class="admin-panel-card">
+            <div class="panel-title-row">
+              <div>
+                <h2>Pedidos registrados</h2>
+                <p>
+                  Mostrando {{ filteredOrders.length }} de {{ orders.length }}
+                  pedidos.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="btn-refresh small"
+                (click)="loadOrders()"
+              >
+                Actualizar
+              </button>
+            </div>
+
+            <div class="table-wrapper professional-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID Pedido</th>
+                    <th>Cliente</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Método de pago</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Voucher</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr
+                    *ngFor="let o of filteredOrders"
+                    [class.selected-row]="selectedOrder?.id === o.id"
+                  >
+                    <td><strong>#{{ o.id }}</strong></td>
+                    <td>{{ getOrderClient(o) }}</td>
+                    <td>{{ getOrderEmail(o) }}</td>
+                    <td>{{ getOrderPhone(o) }}</td>
+                    <td>{{ getOrderPayment(o) }}</td>
+                    <td>
+                      <strong>S/ {{ o.total | number:'1.2-2' }}</strong>
+                    </td>
+                    <td>
+                      <span
+                        class="badge"
+                        [ngClass]="statusClass(getOrderStatus(o))"
+                      >
+                        {{ getOrderStatus(o) }}
+                      </span>
+                    </td>
+                    <td>{{ formatOnlyDate(getOrderDate(o)) }}</td>
+                    <td>{{ formatOnlyTime(getOrderDate(o)) }}</td>
+                    <td>
+                      <span
+                        class="voucher-pill"
+                        [class.ok]="hasVoucher(o)"
+                        [class.empty-voucher]="!hasVoucher(o)"
+                      >
+                        {{ hasVoucher(o) ? 'Voucher' : 'Pendiente' }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="actions-inline">
+                        <button
+                          type="button"
+                          class="btn-small dark"
+                          (click)="openOrderDetail(o)"
+                        >
+                          Ver
+                        </button>
+
+                        <button
+                          type="button"
+                          class="btn-small"
+                          (click)="markEditing(o)"
+                        >
+                          Editar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p class="empty" *ngIf="filteredOrders.length === 0">
+              No hay pedidos que coincidan con los filtros aplicados.
+            </p>
+          </div>
+
+          <div class="admin-panel-card">
+            <h2>Detalle de productos vendidos</h2>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pedido</th>
+                    <th>Cliente</th>
+                    <th>Producto</th>
+                    <th>Estado</th>
+                    <th>Total pedido</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let item of filteredItemsView">
+                    <td>#{{ item.orderId }}</td>
+                    <td>{{ item.client }}</td>
+                    <td>{{ item.product }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="statusClass(item.status)">
+                        {{ item.status }}
+                      </span>
+                    </td>
+                    <td>S/ {{ item.total | number:'1.2-2' }}</td>
+                    <td>{{ formatDate(item.createdAt) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL DETALLE LATERAL -->
+        <aside class="order-detail-panel" *ngIf="selectedOrder">
+          <div class="detail-header">
+            <div>
+              <span
+                class="badge"
+                [ngClass]="statusClass(getOrderStatus(selectedOrder))"
+              >
+                {{ getOrderStatus(selectedOrder) }}
+              </span>
+              <h2>Pedido #{{ selectedOrder.id }}</h2>
+              <p>Detalle del procedimiento / pedido</p>
+            </div>
+
+            <button
+              type="button"
+              class="close-detail"
+              (click)="closeOrderDetail()"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div class="detail-section">
+            <h3>Información del cliente</h3>
+
+            <div class="detail-row">
+              <span>Cliente</span>
+              <strong>{{ getOrderClient(selectedOrder) }}</strong>
+            </div>
+
+            <div class="detail-row">
+              <span>Correo</span>
+              <strong>{{ getOrderEmail(selectedOrder) }}</strong>
+            </div>
+
+            <div class="detail-row">
+              <span>Teléfono</span>
+              <strong>{{ getOrderPhone(selectedOrder) }}</strong>
+            </div>
+
+            <div class="detail-row">
+              <span>Fecha</span>
+              <strong>{{ formatOnlyDate(getOrderDate(selectedOrder)) }}</strong>
+            </div>
+
+            <div class="detail-row">
+              <span>Hora</span>
+              <strong>{{ formatOnlyTime(getOrderDate(selectedOrder)) }}</strong>
+            </div>
+
+            <div class="detail-row">
+              <span>Método de pago</span>
+              <strong>{{ getOrderPayment(selectedOrder) }}</strong>
+            </div>
+
+            <div class="detail-row">
+              <span>Total</span>
+              <strong>S/ {{ selectedOrder.total | number:'1.2-2' }}</strong>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Dirección y referencia</h3>
+
+            <p class="detail-text">
+              <strong>Dirección:</strong>
+              {{ selectedOrder.direccion || selectedOrder.address || 'No
+              registrado' }}
+            </p>
+
+            <p class="detail-text">
+              <strong>Referencia:</strong>
+              {{ selectedOrder.referencia || selectedOrder.reference || 'No
+              registrado' }}
+            </p>
+          </div>
+
+          <div class="detail-section">
+            <h3>Detalle del pedido</h3>
+
+            <pre>
+{{ selectedOrder.detail || selectedOrder.detalle || 'Sin detalle registrado.' }}</pre
+            >
+          </div>
+
+          <div class="detail-section voucher-box">
+            <h3>Voucher / comprobante</h3>
+
+            <p>
+              {{ hasVoucher(selectedOrder) ? 'El cliente registró un comprobante
+              de pago.' : 'Todavía no se registró voucher para este pedido.' }}
+            </p>
+
+            <button type="button" class="btn-voucher">Ver voucher</button>
+          </div>
+
+          <div class="detail-section">
+            <h3>Cambiar estado</h3>
+
+            <div class="state-actions">
+              <button
+                type="button"
+                class="btn-pending"
+                (click)="changeEstado('PENDIENTE')"
+                [disabled]="savingEstado"
+              >
+                Pendiente
+              </button>
+
+              <button
+                type="button"
+                class="btn-process"
+                (click)="changeEstado('EN PROCESO')"
+                [disabled]="savingEstado"
+              >
+                En proceso
+              </button>
+
+              <button
+                type="button"
+                class="btn-confirm"
+                (click)="changeEstado('CONFIRMADO')"
+                [disabled]="savingEstado"
+              >
+                Confirmar
+              </button>
+
+              <button
+                type="button"
+                class="btn-cancel"
+                (click)="changeEstado('CANCELADO')"
+                [disabled]="savingEstado"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Historial de cambios</h3>
+
+            <div class="timeline">
+              <div
+                class="timeline-item"
+                *ngFor="let log of selectedOrderTimeline"
+              >
+                <span></span>
+                <div>
+                  <strong>{{ log.action }}</strong>
+                  <small>{{ formatDate(log.date) }}</small>
+                  <p>{{ log.user }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- USUARIOS -->
+ <!-- =========================
+     CLIENTES REGISTRADOS
+========================= -->
+<section *ngIf="activeSection === 'users'" class="customers-section">
+  <div class="section-header customers-header">
+    <div>
+      <h1>Clientes registrados</h1>
+      <p>
+        Gestión completa de clientes: datos, estado, historial, pedidos,
+        actividad y control administrativo.
+      </p>
+    </div>
+
+    <div class="customers-actions">
+      <button type="button" class="btn-refresh" (click)="loadUsers()">
+        🔄 Recargar clientes
+      </button>
+
+      <button type="button" class="btn-export" (click)="exportCustomers()">
+        ⬇ Exportar clientes
+      </button>
+    </div>
+  </div>
+
+  <!-- KPIS CLIENTES -->
+  <div class="customers-kpi-grid">
+    <div class="customers-kpi-card">
+      <div class="customers-kpi-icon blue">👥</div>
+      <div>
+        <span>Total clientes</span>
+        <strong>{{ totalUsers }}</strong>
+        <small>Registrados en la plataforma</small>
+      </div>
+    </div>
+
+    <div class="customers-kpi-card">
+      <div class="customers-kpi-icon green">✅</div>
+      <div>
+        <span>Clientes activos</span>
+        <strong>{{ activeCustomersCount }}</strong>
+        <small>Con cuenta habilitada</small>
+      </div>
+    </div>
+
+    <div class="customers-kpi-card">
+      <div class="customers-kpi-icon orange">🛒</div>
+      <div>
+        <span>Con pedidos</span>
+        <strong>{{ customersWithOrdersCount }}</strong>
+        <small>Compraron o solicitaron servicio</small>
+      </div>
+    </div>
+
+    <div class="customers-kpi-card">
+      <div class="customers-kpi-icon purple">🆕</div>
+      <div>
+        <span>Nuevos hoy</span>
+        <strong>{{ customersRegisteredToday }}</strong>
+        <small>Altas recientes</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="customers-filter-card">
+    <label class="customer-search">
+      Buscar cliente
+      <input
+        type="text"
+        placeholder="Buscar por nombre, correo, teléfono o rol..."
+        [(ngModel)]="customerSearch"
+      />
+    </label>
+
+    <label>
+      Rol
+      <select [(ngModel)]="filterCustomerRole">
+        <option value="TODOS">Todos</option>
+        <option value="admin">Administrador</option>
+        <option value="user">Cliente</option>
+      </select>
+    </label>
+
+    <label>
+      Estado
+      <select [(ngModel)]="filterCustomerStatus">
+        <option value="TODOS">Todos</option>
+        <option value="ACTIVO">Activo</option>
+        <option value="INACTIVO">Inactivo</option>
+        <option value="OBSERVADO">Observado</option>
+      </select>
+    </label>
+
+    <label>
+      Fecha
+      <input type="date" [(ngModel)]="filterCustomerDate" />
+    </label>
+
+    <button type="button" class="btn-clear" (click)="clearCustomerFilters()">
+      Limpiar
+    </button>
+  </div>
+
+  <!-- CUERPO PRINCIPAL -->
+  <div class="customers-workspace">
+    <!-- TABLA CLIENTES -->
+    <div class="customers-main-panel">
+      <div class="customers-table-card">
+        <div class="panel-title-row">
+          <div>
+            <h2>Base de clientes</h2>
+            <p>
+              Mostrando {{ filteredCustomers.length }} de {{ registeredUsers.length }}
+              clientes registrados.
+            </p>
+          </div>
+
+          <button type="button" class="btn-small dark" (click)="loadUsers()">
+            Recargar
+          </button>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="customers-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cliente</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Pedidos</th>
+                <th>Última actividad</th>
+                <th>Registro</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr
+                *ngFor="let user of filteredCustomers; let i = index"
+                [class.selected-customer-row]="selectedCustomer?.email === user.email"
+                (click)="selectCustomer(user)"
+              >
+                <td>{{ i + 1 }}</td>
+
+                <td>
+                  <div class="customer-cell">
+                    <div class="customer-avatar">
+                      {{ getCustomerInitials(user) }}
+                    </div>
+
+                    <div>
+                      <strong>{{ getCustomerName(user) }}</strong>
+                      <span>{{ getCustomerPhone(user) }}</span>
+                    </div>
+                  </div>
+                </td>
+
+                <td>{{ user.email || '-' }}</td>
+
+                <td>
+                  <span class="role-badge" [class.admin]="user.role === 'admin'">
+                    {{ user.role === 'admin' ? 'Administrador' : 'Cliente' }}
+                  </span>
+                </td>
+
+                <td>
+                  <span
+                    class="customer-status"
+                    [ngClass]="getCustomerStatusClass(user)"
+                  >
+                    {{ getCustomerStatus(user) }}
+                  </span>
+                </td>
+
+                <td>
+                  <strong>{{ getCustomerOrdersCount(user) }}</strong>
+                </td>
+
+                <td>{{ formatDate(getCustomerLastActivity(user)) }}</td>
+
+                <td>{{ formatDate(user.createdAt) }}</td>
+
+                <td>
+                  <button
+                    type="button"
+                    class="btn-action"
+                    (click)="selectCustomer(user); $event.stopPropagation()"
+                  >
+                    Ver detalle
+                  </button>
+                </td>
+              </tr>
+
+              <tr *ngIf="filteredCustomers.length === 0">
+                <td colspan="9">
+                  <p class="empty">
+                    No se encontraron clientes con los filtros seleccionados.
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL DERECHO CLIENTE -->
+    <aside class="customer-detail-panel" *ngIf="selectedCustomer">
+      <div class="customer-detail-header">
+        <div class="customer-detail-profile">
+          <div class="customer-detail-avatar">
+            {{ getCustomerInitials(selectedCustomer) }}
+          </div>
+
+          <div>
+            <h2>{{ getCustomerName(selectedCustomer) }}</h2>
+            <p>{{ selectedCustomer.email }}</p>
+          </div>
+        </div>
+
+        <button type="button" class="close-detail" (click)="selectedCustomer = null">
+          ×
+        </button>
+      </div>
+
+      <div class="customer-state-box">
+        <span
+          class="customer-status"
+          [ngClass]="getCustomerStatusClass(selectedCustomer)"
+        >
+          {{ getCustomerStatus(selectedCustomer) }}
+        </span>
+
+        <strong>
+          {{ selectedCustomer.role === 'admin' ? 'Administrador' : 'Cliente' }}
+        </strong>
+
+        <small>
+          Registrado: {{ formatDate(selectedCustomer.createdAt) }}
+        </small>
+      </div>
+
+      <div class="customer-detail-section">
+        <h3>Datos del cliente</h3>
+
+        <div class="customer-info-list">
+          <div>
+            <span>Nombre</span>
+            <strong>{{ getCustomerName(selectedCustomer) }}</strong>
+          </div>
+
+          <div>
+            <span>Correo</span>
+            <strong>{{ selectedCustomer.email || '-' }}</strong>
+          </div>
+
+          <div>
+            <span>Teléfono</span>
+            <strong>{{ getCustomerPhone(selectedCustomer) }}</strong>
+          </div>
+
+          <div>
+            <span>Rol</span>
+            <strong>{{ selectedCustomer.role || 'user' }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="customer-detail-section">
+        <h3>Resumen comercial</h3>
+
+        <div class="customer-mini-stats">
+          <div>
+            <span>Pedidos</span>
+            <strong>{{ getCustomerOrdersCount(selectedCustomer) }}</strong>
+          </div>
+
+          <div>
+            <span>Total comprado</span>
+            <strong>S/ {{ getCustomerTotalSpent(selectedCustomer) | number:'1.2-2' }}</strong>
+          </div>
+
+          <div>
+            <span>Último pedido</span>
+            <strong>{{ formatDate(getCustomerLastOrderDate(selectedCustomer)) }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="customer-detail-section">
+        <h3>Acciones administrativas</h3>
+
+        <div class="customer-action-grid">
+          <button
+            type="button"
+            class="btn-outline full"
+            (click)="toggleCustomerStatus(selectedCustomer)"
+          >
+            Cambiar estado
+          </button>
+
+          <button
+            type="button"
+            class="btn-outline full"
+            (click)="viewCustomerOrders(selectedCustomer)"
+          >
+            Ver pedidos
+          </button>
+
+          <button
+            type="button"
+            class="btn-danger-outline full"
+            (click)="deleteCustomerVisual(selectedCustomer)"
+          >
+            Eliminar visual
+          </button>
+        </div>
+      </div>
+
+      <div class="customer-detail-section">
+        <div class="history-title">
+          <h3>Actividad reciente</h3>
+          <button type="button">Ver todo</button>
+        </div>
+
+        <div class="history-list">
+          <div
+            class="history-item"
+            *ngFor="let item of getCustomerActivity(selectedCustomer)"
+          >
+            <span></span>
+
+            <div>
+              <strong>{{ item.action }}</strong>
+              <small>{{ formatDate(item.date) }}</small>
+              <p>{{ item.detail }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- PANEL DERECHO VACÍO -->
+    <aside class="customer-detail-panel empty-customer-panel" *ngIf="!selectedCustomer">
+      <div class="empty-customer-icon">👤</div>
+      <h2>Selecciona un cliente</h2>
+      <p>
+        Haz clic en un cliente de la tabla para ver su información completa,
+        pedidos, historial y acciones administrativas.
+      </p>
+    </aside>
+  </div>
+</section>
+    <!-- REPORTES -->
+ <!-- =========================
+     REPORTES EMPRESARIALES
+========================= -->
+<section *ngIf="activeSection === 'charts'" class="reports-section">
+  <div class="section-header reports-header">
+    <div>
+      <h1>Reportes empresariales</h1>
+      <p>
+        Análisis general de ventas, pedidos, clientes, pagos, consultas,
+        productos vendidos y actividad administrativa.
+      </p>
+    </div>
+
+    <div class="reports-actions">
+      <button type="button" class="btn-refresh" (click)="refreshAdminData()">
+        🔄 Actualizar datos
+      </button>
+
+      <button type="button" class="btn-export" (click)="exportReports()">
+        ⬇ Exportar reporte
+      </button>
+    </div>
+  </div>
+
+  <!-- FILTROS DE REPORTES -->
+  <div class="reports-filter-card">
+    <label>
+      Rango de análisis
+      <select [(ngModel)]="reportPeriod">
+        <option value="today">Hoy</option>
+        <option value="week">Esta semana</option>
+        <option value="month">Este mes</option>
+        <option value="all">Todo el historial</option>
+      </select>
+    </label>
+
+    <label>
+      Desde
+      <input type="date" [(ngModel)]="reportDateFrom" />
+    </label>
+
+    <label>
+      Hasta
+      <input type="date" [(ngModel)]="reportDateTo" />
+    </label>
+
+    <label>
+      Estado
+      <select [(ngModel)]="reportStatus">
+        <option value="TODOS">Todos</option>
+        <option value="PENDIENTE">Pendiente</option>
+        <option value="CONFIRMADO">Confirmado</option>
+        <option value="EN PROCESO">En proceso</option>
+        <option value="CANCELADO">Cancelado</option>
+      </select>
+    </label>
+
+    <button type="button" class="btn-clear" (click)="clearReportFilters()">
+      Limpiar
+    </button>
+  </div>
+
+  <!-- KPIS DE REPORTES -->
+  <div class="reports-kpi-grid">
+    <div class="reports-kpi-card">
+      <div class="reports-kpi-icon blue">💰</div>
+      <div>
+        <span>Ingresos estimados</span>
+        <strong>S/ {{ reportTotalRevenue | number:'1.2-2' }}</strong>
+        <small>Según pedidos filtrados</small>
+      </div>
+    </div>
+
+    <div class="reports-kpi-card">
+      <div class="reports-kpi-icon green">🛒</div>
+      <div>
+        <span>Pedidos analizados</span>
+        <strong>{{ reportTotalOrders }}</strong>
+        <small>Órdenes dentro del rango</small>
+      </div>
+    </div>
+
+    <div class="reports-kpi-card">
+      <div class="reports-kpi-icon orange">👥</div>
+      <div>
+        <span>Clientes registrados</span>
+        <strong>{{ totalUsers }}</strong>
+        <small>Usuarios en la plataforma</small>
+      </div>
+    </div>
+
+    <div class="reports-kpi-card">
+      <div class="reports-kpi-icon purple">📩</div>
+      <div>
+        <span>Consultas recibidas</span>
+        <strong>{{ totalContacts }}</strong>
+        <small>Mensajes del formulario</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID PRINCIPAL -->
+  <div class="reports-dashboard-grid">
+    <!-- GRÁFICO DE VENTAS -->
+    <div class="reports-card reports-sales-card">
+      <div class="card-title-row">
+        <div>
+          <h2>Comportamiento de ventas</h2>
+          <p>Ingresos estimados por periodo seleccionado.</p>
+        </div>
+
+        <select [(ngModel)]="reportChartMode">
+          <option value="sales">Ventas</option>
+          <option value="orders">Pedidos</option>
+          <option value="clients">Clientes</option>
+        </select>
+      </div>
+
+      <div class="report-chart-box">
+        <div class="report-chart-lines"></div>
+
+        <div class="report-chart-bars">
+          <div
+            class="report-bar"
+            *ngFor="let item of reportSalesChart"
+            [style.height.%]="item.percent"
+          >
+            <span>S/ {{ item.amount | number:'1.0-0' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-chart-labels">
+        <span *ngFor="let item of reportSalesChart">
+          {{ item.label }}
+        </span>
+      </div>
+    </div>
+
+    <!-- PEDIDOS POR ESTADO -->
+    <div class="reports-card">
+      <div class="card-title-row">
+        <div>
+          <h2>Pedidos por estado</h2>
+          <p>Distribución actual de las órdenes.</p>
+        </div>
+      </div>
+
+      <div class="report-status-list">
+        <div class="report-status-row">
+          <div>
+            <span class="dot orange"></span>
+            Pendientes
+          </div>
+          <strong>{{ pendingOrders }}</strong>
+        </div>
+
+        <div class="report-progress">
+          <div
+            class="orange"
+            [style.width.%]="getReportStatusPercent(pendingOrders)"
+          ></div>
+        </div>
+
+        <div class="report-status-row">
+          <div>
+            <span class="dot green"></span>
+            Confirmados
+          </div>
+          <strong>{{ confirmedOrders }}</strong>
+        </div>
+
+        <div class="report-progress">
+          <div
+            class="green"
+            [style.width.%]="getReportStatusPercent(confirmedOrders)"
+          ></div>
+        </div>
+
+        <div class="report-status-row">
+          <div>
+            <span class="dot blue"></span>
+            En proceso
+          </div>
+          <strong>{{ processOrders }}</strong>
+        </div>
+
+        <div class="report-progress">
+          <div
+            class="blue"
+            [style.width.%]="getReportStatusPercent(processOrders)"
+          ></div>
+        </div>
+
+        <div class="report-status-row">
+          <div>
+            <span class="dot red"></span>
+            Cancelados
+          </div>
+          <strong>{{ cancelledOrders }}</strong>
+        </div>
+
+        <div class="report-progress">
+          <div
+            class="red"
+            [style.width.%]="getReportStatusPercent(cancelledOrders)"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESUMEN ECONÓMICO -->
+    <div class="reports-card">
+      <div class="card-title-row">
+        <div>
+          <h2>Resumen económico</h2>
+          <p>Ingresos, gastos y utilidad estimada.</p>
+        </div>
+      </div>
+
+      <div class="report-finance-list">
+        <div class="report-finance-row income">
+          <span>Ingresos</span>
+          <strong>S/ {{ reportTotalRevenue | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="report-finance-row expense">
+          <span>Gasto estimado</span>
+          <strong>S/ {{ estimatedExpenses | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="report-finance-row profit">
+          <span>Utilidad neta</span>
+          <strong>S/ {{ netProfit | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="report-finance-row margin">
+          <span>Margen</span>
+          <strong>{{ profitMargin | number:'1.1-1' }}%</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID SECUNDARIO -->
+  <div class="reports-bottom-grid">
+    <!-- MÉTODOS DE PAGO -->
+    <div class="reports-card">
+      <div class="card-title-row">
+        <div>
+          <h2>Métodos de pago</h2>
+          <p>Distribución por Yape, Plin, transferencia u otros.</p>
+        </div>
+      </div>
+
+      <div class="payment-report-list">
+        <div class="payment-report-item" *ngFor="let payment of reportPaymentMethods">
+          <div>
+            <strong>{{ payment.name }}</strong>
+            <span>{{ payment.count }} pedido(s)</span>
+          </div>
+
+          <div class="payment-percent">
+            <div [style.width.%]="payment.percent"></div>
+          </div>
+
+          <b>{{ payment.percent }}%</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP PRODUCTOS -->
+    <div class="reports-card">
+      <div class="card-title-row">
+        <div>
+          <h2>Productos más vendidos</h2>
+          <p>Productos o servicios con mayor movimiento.</p>
+        </div>
+      </div>
+
+      <div class="report-products-list">
+        <div class="report-product-item" *ngFor="let product of topProducts">
+          <div>
+            <strong>{{ product.name }}</strong>
+            <span>S/ {{ product.amount | number:'1.2-2' }}</span>
+          </div>
+
+          <div class="report-progress">
+            <div class="blue" [style.width.%]="product.percent"></div>
+          </div>
+
+          <small>{{ product.percent }}% participación</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSULTAS -->
+    <div class="reports-card">
+      <div class="card-title-row">
+        <div>
+          <h2>Clientes y consultas</h2>
+          <p>Resumen de interacción comercial.</p>
+        </div>
+      </div>
+
+      <div class="report-customer-summary">
+        <div>
+          <span>Clientes registrados</span>
+          <strong>{{ totalUsers }}</strong>
+        </div>
+
+        <div>
+          <span>Consultas recibidas</span>
+          <strong>{{ totalContacts }}</strong>
+        </div>
+
+        <div>
+          <span>Tasa de conversión</span>
+          <strong>{{ conversionRate | number:'1.1-1' }}%</strong>
+        </div>
+
+        <div>
+          <span>Clientes con pedidos</span>
+          <strong>{{ customersWithOrdersCount }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLAS FINALES -->
+  <div class="reports-table-grid">
+    <!-- PEDIDOS RECIENTES -->
+    <div class="reports-card">
+      <div class="card-title-row">
+        <div>
+          <h2>Pedidos recientes</h2>
+          <p>Últimas operaciones registradas en la tienda.</p>
+        </div>
+
+        <button type="button" class="link-button" (click)="setSection('orders')">
+          Ver pedidos →
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Pago</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let order of recentOrders">
+              <td>#{{ order.id }}</td>
+              <td>{{ getOrderClient(order) }}</td>
+              <td>{{ getOrderPayment(order) }}</td>
+              <td>
+                <span class="badge" [ngClass]="statusClass(getOrderStatus(order))">
+                  {{ getOrderStatus(order) }}
+                </span>
+              </td>
+              <td>{{ formatDate(getOrderDate(order)) }}</td>
+              <td>S/ {{ order.total | number:'1.2-2' }}</td>
+            </tr>
+
+            <tr *ngIf="recentOrders.length === 0">
+              <td colspan="6">
+                <p class="empty">Todavía no hay pedidos registrados.</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ACTIVIDAD RECIENTE -->
+    <div class="reports-card">
+      <div class="card-title-row">
+        <div>
+          <h2>Actividad reciente</h2>
+          <p>Movimientos importantes dentro del sistema.</p>
+        </div>
+      </div>
+
+      <div class="report-activity-list">
+        <div class="report-activity-item" *ngFor="let item of recentActivities">
+          <div class="report-activity-icon">
+            {{ item.icon }}
+          </div>
+
+          <div>
+            <strong>{{ item.title }}</strong>
+            <p>{{ item.user }}</p>
+            <small>{{ formatDate(item.date) }}</small>
+          </div>
+        </div>
+
+        <p class="empty" *ngIf="recentActivities.length === 0">
+          No hay actividad reciente.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- =========================
+     GESTIÓN DE ARCHIVOS
+========================= -->
+<section *ngIf="activeSection === 'files'" class="files-section">
+  <div class="section-header files-header">
+    <div>
+      <h1>Gestión de archivos</h1>
+      <p>
+        Administración de catálogos, manuales, vouchers, reportes, comprobantes,
+        documentos internos y PDF de pedidos confirmados.
+      </p>
+    </div>
+
+    <div class="files-actions">
+      <button type="button" class="btn-refresh" (click)="refreshAdminData()">
+        🔄 Actualizar datos
+      </button>
+
+      <button type="button" class="btn-outline" (click)="triggerAdminFileUpload()">
+        ⬆ Subir archivo
+      </button>
+
+      <button type="button" class="btn-primary" (click)="createVisualFile()">
+        + Nuevo archivo
+      </button>
+
+      <input
+        #adminFileInput
+        type="file"
+        hidden
+        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.xlsx,.xls"
+        (change)="uploadAdminFile($event)"
+      />
+    </div>
+  </div>
+
+  <!-- KPIS ARCHIVOS -->
+  <div class="files-kpi-grid">
+    <div class="files-kpi-card">
+      <div class="files-kpi-icon blue">📁</div>
+      <div>
+        <span>Total archivos</span>
+        <strong>{{ uploadedFiles.length }}</strong>
+        <small>Documentos registrados</small>
+      </div>
+    </div>
+
+    <div class="files-kpi-card">
+      <div class="files-kpi-icon green">📄</div>
+      <div>
+        <span>PDF / Reportes</span>
+        <strong>{{ pdfFilesCount }}</strong>
+        <small>Comprobantes y reportes</small>
+      </div>
+    </div>
+
+    <div class="files-kpi-card">
+      <div class="files-kpi-icon orange">🧾</div>
+      <div>
+        <span>Vouchers</span>
+        <strong>{{ voucherFilesCount }}</strong>
+        <small>Pagos y evidencias</small>
+      </div>
+    </div>
+
+    <div class="files-kpi-card">
+      <div class="files-kpi-icon purple">✅</div>
+      <div>
+        <span>Pedidos confirmados</span>
+        <strong>{{ confirmedOrders }}</strong>
+        <small>Listos para PDF</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="files-filter-card">
+    <label class="file-search">
+      Buscar archivo
+      <input
+        type="text"
+        placeholder="Buscar por nombre, tipo, área o cliente..."
+        [(ngModel)]="fileSearch"
+      />
+    </label>
+
+    <label>
+      Tipo
+      <select [(ngModel)]="filterFileType">
+        <option value="TODOS">Todos</option>
+        <option value="PDF">PDF</option>
+        <option value="Documento">Documento</option>
+        <option value="Imagen">Imagen</option>
+        <option value="Excel">Excel</option>
+        <option value="Voucher">Voucher</option>
+        <option value="Pedido">Pedido confirmado</option>
+      </select>
+    </label>
+
+    <label>
+      Área
+      <select [(ngModel)]="filterFileArea">
+        <option value="TODAS">Todas</option>
+        <option value="Ventas">Ventas</option>
+        <option value="Pagos">Pagos</option>
+        <option value="Soporte">Soporte</option>
+        <option value="Catálogo">Catálogo</option>
+        <option value="Administración">Administración</option>
+      </select>
+    </label>
+
+    <label>
+      Fecha
+      <input type="date" [(ngModel)]="filterFileDate" />
+    </label>
+
+    <button type="button" class="btn-clear" (click)="clearFileFilters()">
+      Limpiar
+    </button>
+  </div>
+
+  <!-- CUERPO PRINCIPAL -->
+  <div class="files-workspace">
+    <!-- LISTA DE ARCHIVOS -->
+    <div class="files-main-panel">
+      <div class="files-table-card">
+        <div class="panel-title-row">
+          <div>
+            <h2>Archivos registrados</h2>
+            <p>
+              Mostrando {{ filteredAdminFiles.length }} de {{ uploadedFiles.length }}
+              archivos del sistema.
+            </p>
+          </div>
+
+          <button type="button" class="btn-small dark" (click)="exportFilesList()">
+            Exportar lista
+          </button>
+        </div>
+
+        <div
+          class="files-upload-zone"
+          (dragover)="onAdminFileDragOver($event)"
+          (drop)="onAdminFileDrop($event)"
+          (click)="triggerAdminFileUpload()"
+        >
+          <div>☁️</div>
+          <strong>Arrastra archivos aquí o haz clic para subir</strong>
+          <p>PDF, Word, Excel, imágenes, vouchers o documentos del pedido.</p>
+          <small>Formatos permitidos: PDF, DOCX, PNG, JPG, WEBP, XLSX</small>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="files-table">
+            <thead>
+              <tr>
+                <th>Archivo</th>
+                <th>Tipo</th>
+                <th>Área</th>
+                <th>Relacionado</th>
+                <th>Fecha</th>
+                <th>Tamaño</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr
+                *ngFor="let file of filteredAdminFiles"
+                [class.selected-file-row]="selectedAdminFile?.name === file.name"
+                (click)="selectAdminFile(file)"
+              >
+                <td>
+                  <div class="file-cell">
+                    <div class="file-icon-box" [ngClass]="getFileTypeClass(file)">
+                      {{ getFileIcon(file) }}
+                    </div>
+
+                    <div>
+                      <strong>{{ file.name }}</strong>
+                      <span>{{ file.description || 'Archivo empresarial' }}</span>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="file-type-badge" [ngClass]="getFileTypeClass(file)">
+                    {{ file.type }}
+                  </span>
+                </td>
+
+                <td>{{ file.area }}</td>
+
+                <td>{{ file.relatedTo || '-' }}</td>
+
+                <td>{{ formatDate(file.date) }}</td>
+
+                <td>{{ file.size || '-' }}</td>
+
+                <td>
+                  <div class="file-actions-mini">
+                    <button
+                      type="button"
+                      class="btn-action"
+                      (click)="selectAdminFile(file); $event.stopPropagation()"
+                    >
+                      Ver
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-action"
+                      (click)="downloadAdminFile(file); $event.stopPropagation()"
+                    >
+                      Descargar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="filteredAdminFiles.length === 0">
+                <td colspan="7">
+                  <p class="empty">
+                    No se encontraron archivos con los filtros seleccionados.
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PEDIDOS CONFIRMADOS PARA PDF -->
+      <div class="files-table-card confirmed-orders-files">
+        <div class="panel-title-row">
+          <div>
+            <h2>PDF de pedidos confirmados</h2>
+            <p>
+              Cuando confirmes un pedido, aquí podrás generar el comprobante en PDF
+              con los datos del cliente, productos, fecha, pago y total.
+            </p>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="files-table">
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>Pago</th>
+                <th>Fecha y hora</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>PDF</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let order of confirmedOrdersForFiles">
+                <td>#{{ order.id }}</td>
+                <td>
+                  <strong>{{ getOrderClient(order) }}</strong>
+                  <span class="muted-block">{{ getOrderEmail(order) }}</span>
+                </td>
+                <td>{{ getOrderPayment(order) }}</td>
+                <td>{{ formatDate(getOrderDate(order)) }}</td>
+                <td>S/ {{ order.total | number:'1.2-2' }}</td>
+                <td>
+                  <span class="badge confirmado">
+                    {{ getOrderStatus(order) }}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn-primary small"
+                    (click)="generateOrderPdfVisual(order)"
+                  >
+                    Generar PDF
+                  </button>
+                </td>
+              </tr>
+
+              <tr *ngIf="confirmedOrdersForFiles.length === 0">
+                <td colspan="7">
+                  <p class="empty">
+                    Aún no tienes pedidos confirmados para generar PDF.
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL DERECHO -->
+    <aside class="file-detail-panel" *ngIf="selectedAdminFile">
+      <div class="file-detail-header">
+        <div>
+          <div class="file-detail-icon" [ngClass]="getFileTypeClass(selectedAdminFile)">
+            {{ getFileIcon(selectedAdminFile) }}
+          </div>
+
+          <h2>{{ selectedAdminFile.name }}</h2>
+          <p>{{ selectedAdminFile.description || 'Documento registrado en el sistema.' }}</p>
+        </div>
+
+        <button type="button" class="close-detail" (click)="selectedAdminFile = null">
+          ×
+        </button>
+      </div>
+
+      <div class="file-preview-box" *ngIf="isImageFile(selectedAdminFile)">
+        <img [src]="selectedAdminFile.url" alt="Vista previa del archivo" />
+      </div>
+
+      <div class="file-preview-box file-preview-empty" *ngIf="!isImageFile(selectedAdminFile)">
+        <div>{{ getFileIcon(selectedAdminFile) }}</div>
+        <strong>Vista previa no disponible</strong>
+        <p>Este archivo puede descargarse o gestionarse desde el panel.</p>
+      </div>
+
+      <div class="file-detail-section">
+        <h3>Información del archivo</h3>
+
+        <div class="file-info-list">
+          <div>
+            <span>Tipo</span>
+            <strong>{{ selectedAdminFile.type }}</strong>
+          </div>
+
+          <div>
+            <span>Área</span>
+            <strong>{{ selectedAdminFile.area }}</strong>
+          </div>
+
+          <div>
+            <span>Relacionado con</span>
+            <strong>{{ selectedAdminFile.relatedTo || '-' }}</strong>
+          </div>
+
+          <div>
+            <span>Fecha de registro</span>
+            <strong>{{ formatDate(selectedAdminFile.date) }}</strong>
+          </div>
+
+          <div>
+            <span>Tamaño</span>
+            <strong>{{ selectedAdminFile.size || '-' }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="file-detail-section">
+        <h3>Acciones</h3>
+
+        <div class="file-action-grid">
+          <button
+            type="button"
+            class="btn-primary full"
+            (click)="downloadAdminFile(selectedAdminFile)"
+          >
+            Descargar archivo
+          </button>
+
+          <button
+            type="button"
+            class="btn-outline full"
+            (click)="duplicateAdminFileVisual(selectedAdminFile)"
+          >
+            Duplicar visual
+          </button>
+
+          <button
+            type="button"
+            class="btn-danger-outline full"
+            (click)="deleteAdminFileVisual(selectedAdminFile)"
+          >
+            Eliminar visual
+          </button>
+        </div>
+      </div>
+
+      <div class="file-detail-section">
+        <div class="history-title">
+          <h3>Actividad del archivo</h3>
+          <button type="button">Ver todo</button>
+        </div>
+
+        <div class="history-list">
+          <div
+            class="history-item"
+            *ngFor="let item of getFileActivity(selectedAdminFile)"
+          >
+            <span></span>
+
+            <div>
+              <strong>{{ item.action }}</strong>
+              <small>{{ formatDate(item.date) }}</small>
+              <p>{{ item.detail }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- PANEL DERECHO VACÍO -->
+    <aside class="file-detail-panel empty-file-panel" *ngIf="!selectedAdminFile">
+      <div class="empty-file-icon">📂</div>
+      <h2>Selecciona un archivo</h2>
+      <p>
+        Elige un archivo de la tabla para ver su información, descargarlo,
+        duplicarlo o eliminarlo visualmente.
+      </p>
+
+      <div class="quick-file-actions">
+        <button type="button" class="btn-primary full" (click)="triggerAdminFileUpload()">
+          Subir archivo
+        </button>
+
+        <button type="button" class="btn-outline full" (click)="createVisualFile()">
+          Crear archivo visual
+        </button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+   <!-- =========================
+     SEGURIDAD Y CONTROL TÉCNICO
+========================= -->
+<section *ngIf="activeSection === 'security'" class="security-section">
+  <div class="section-header security-header">
+    <div>
+      <h1>Seguridad y control técnico</h1>
+      <p>
+        Monitoreo de accesos, certificado SSL, backups, auditoría, base de datos,
+        almacenamiento y estado general del sistema empresarial.
+      </p>
+    </div>
+
+    <div class="security-actions">
+      <button type="button" class="btn-refresh" (click)="runSecurityCheck()">
+        🔍 Verificar sistema
+      </button>
+
+      <button type="button" class="btn-outline" (click)="exportAuditLogs()">
+        ⬇ Exportar auditoría
+      </button>
+
+      <button type="button" class="btn-primary" (click)="refreshAdminData()">
+        🔄 Actualizar datos
+      </button>
+    </div>
+  </div>
+
+  <!-- KPIS DE SEGURIDAD -->
+  <div class="security-kpi-grid">
+    <div class="security-kpi-card">
+      <div class="security-kpi-icon green">🔐</div>
+      <div>
+        <span>Nivel de seguridad</span>
+        <strong>{{ securityScore }}%</strong>
+        <small>{{ securityScoreLabel }}</small>
+      </div>
+    </div>
+
+    <div class="security-kpi-card">
+      <div class="security-kpi-icon blue">👤</div>
+      <div>
+        <span>Usuarios registrados</span>
+        <strong>{{ totalUsers }}</strong>
+        <small>Control de acceso al sistema</small>
+      </div>
+    </div>
+
+    <div class="security-kpi-card">
+      <div class="security-kpi-icon orange">📝</div>
+      <div>
+        <span>Eventos de auditoría</span>
+        <strong>{{ auditLogs.length }}</strong>
+        <small>Cambios registrados</small>
+      </div>
+    </div>
+
+    <div class="security-kpi-card">
+      <div class="security-kpi-icon purple">🕒</div>
+      <div>
+        <span>Última revisión</span>
+        <strong>{{ formatOnlyDate(lastSecurityCheck) }}</strong>
+        <small>{{ formatDate(lastSecurityCheck) }}</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL PRINCIPAL -->
+  <div class="security-dashboard-grid">
+    <!-- ESTADO DE SEGURIDAD -->
+    <div class="security-card security-main-card">
+      <div class="panel-title-row">
+        <div>
+          <h2>Estado de seguridad</h2>
+          <p>Revisión de controles técnicos principales del sistema.</p>
+        </div>
+
+        <span class="security-global-badge" [ngClass]="securityScoreClass">
+          {{ securityScoreLabel }}
+        </span>
+      </div>
+
+      <div class="security-check-list">
+        <div
+          class="security-check-item"
+          *ngFor="let item of securityChecks"
+          [ngClass]="getSecurityStatusClass(item.status)"
+        >
+          <div class="security-check-icon">
+            {{ getSecurityIcon(item.status) }}
+          </div>
+
+          <div class="security-check-content">
+            <div>
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.detail }}</p>
+            </div>
+
+            <span class="security-status-badge" [ngClass]="getSecurityStatusClass(item.status)">
+              {{ item.status }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTADO DEL SISTEMA -->
+    <div class="security-card">
+      <div class="panel-title-row">
+        <div>
+          <h2>Estado del sistema</h2>
+          <p>Indicadores técnicos del panel administrador.</p>
+        </div>
+      </div>
+
+      <div class="system-status-list">
+        <div class="system-status-item" *ngFor="let item of systemStatus">
+          <div>
+            <span>{{ item.name }}</span>
+            <strong>{{ item.value }}</strong>
+          </div>
+
+          <b [ngClass]="getSecurityStatusClass(item.status)">
+            {{ item.status }}
+          </b>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCESOS -->
+    <div class="security-card">
+      <div class="panel-title-row">
+        <div>
+          <h2>Control de accesos</h2>
+          <p>Administradores, usuarios y permisos del sistema.</p>
+        </div>
+      </div>
+
+      <div class="access-summary">
+        <div>
+          <span>Administrador activo</span>
+          <strong>admin&#64;multisegma.com</strong>
+          <small>Sesión actual del panel</small>
+        </div>
+
+        <div>
+          <span>Usuarios cliente</span>
+          <strong>{{ totalUsers }}</strong>
+          <small>Registrados en la plataforma</small>
+        </div>
+
+        <div>
+          <span>Ruta protegida</span>
+          <strong>/admin</strong>
+          <small>Acceso solo con credenciales admin</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID SECUNDARIO -->
+  <div class="security-bottom-grid">
+    <!-- AUDITORÍA -->
+    <div class="security-card">
+      <div class="panel-title-row">
+        <div>
+          <h2>Registro de auditoría</h2>
+          <p>Historial de acciones importantes realizadas en el sistema.</p>
+        </div>
+
+        <button type="button" class="btn-small dark" (click)="exportAuditLogs()">
+          Exportar
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="security-table">
+          <thead>
+            <tr>
+              <th>Acción</th>
+              <th>Usuario</th>
+              <th>Fecha</th>
+              <th>Tipo</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let log of auditLogs">
+              <td>
+                <strong>{{ log.action }}</strong>
+              </td>
+
+              <td>{{ log.user }}</td>
+
+              <td>{{ formatDate(log.date) }}</td>
+
+              <td>
+                <span class="audit-type-badge">
+                  {{ getAuditType(log.action) }}
+                </span>
+              </td>
+            </tr>
+
+            <tr *ngIf="auditLogs.length === 0">
+              <td colspan="4">
+                <p class="empty">
+                  Todavía no hay registros de auditoría.
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RECOMENDACIONES -->
+    <div class="security-card">
+      <div class="panel-title-row">
+        <div>
+          <h2>Recomendaciones técnicas</h2>
+          <p>Acciones sugeridas para una página empresarial real.</p>
+        </div>
+      </div>
+
+      <div class="security-recommendations">
+        <div
+          class="security-recommendation-item"
+          *ngFor="let item of securityRecommendations"
+        >
+          <div class="recommendation-icon">
+            {{ item.icon }}
+          </div>
+
+          <div>
+            <strong>{{ item.title }}</strong>
+            <p>{{ item.description }}</p>
+            <span [ngClass]="getSecurityPriorityClass(item.priority)">
+              {{ item.priority }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKUPS Y BASE DE DATOS -->
+  <div class="security-card backup-card">
+    <div class="panel-title-row">
+      <div>
+        <h2>Backups, base de datos y continuidad</h2>
+        <p>
+          Control visual de copias de seguridad, restauración, conexión MySQL
+          y protección de información empresarial.
+        </p>
+      </div>
+
+      <button type="button" class="btn-primary" (click)="simulateBackup()">
+        Crear backup visual
+      </button>
+    </div>
+
+    <div class="backup-grid">
+      <div class="backup-item">
+        <span>Último backup</span>
+        <strong>{{ formatDate(lastBackupDate) }}</strong>
+        <small>Simulado desde el panel administrador</small>
+      </div>
+
+      <div class="backup-item">
+        <span>Base de datos</span>
+        <strong>MySQL - lisumesac</strong>
+        <small>Pedidos, usuarios, productos y pagos</small>
+      </div>
+
+      <div class="backup-item">
+        <span>Servidor backend</span>
+        <strong>Spring Boot :8080</strong>
+        <small>API empresarial conectada al frontend</small>
+      </div>
+
+      <div class="backup-item">
+        <span>Frontend</span>
+        <strong>Angular :4201</strong>
+        <small>Panel administrador y tienda empresarial</small>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- =========================
+     CONFIGURACIÓN DEL SITIO
+========================= -->
+<section *ngIf="activeSection === 'settings'" class="settings-section">
+  <div class="section-header settings-header">
+    <div>
+      <h1>Configuración empresarial</h1>
+      <p>
+        Control general de datos de la empresa, contacto, redes sociales, SEO,
+        apariencia, textos visibles y parámetros del sistema.
+      </p>
+    </div>
+
+    <div class="settings-actions">
+      <button type="button" class="btn-refresh" (click)="previewSettings()">
+        👁 Vista previa
+      </button>
+
+      <button type="button" class="btn-outline" (click)="exportSettings()">
+        ⬇ Exportar
+      </button>
+
+      <button type="button" class="btn-primary" (click)="saveSettings()">
+        💾 Guardar cambios
+      </button>
+    </div>
+  </div>
+
+  <!-- KPIS CONFIGURACIÓN -->
+  <div class="settings-kpi-grid">
+    <div class="settings-kpi-card">
+      <div class="settings-kpi-icon blue">🏢</div>
+      <div>
+        <span>Empresa</span>
+        <strong>{{ siteTitle }}</strong>
+        <small>Nombre visible en la web</small>
+      </div>
+    </div>
+
+    <div class="settings-kpi-card">
+      <div class="settings-kpi-icon green">📞</div>
+      <div>
+        <span>WhatsApp</span>
+        <strong>{{ whatsappNumber }}</strong>
+        <small>Canal principal de atención</small>
+      </div>
+    </div>
+
+    <div class="settings-kpi-card">
+      <div class="settings-kpi-icon orange">🌐</div>
+      <div>
+        <span>SEO</span>
+        <strong>{{ seoScore }}%</strong>
+        <small>{{ seoScoreLabel }}</small>
+      </div>
+    </div>
+
+    <div class="settings-kpi-card">
+      <div class="settings-kpi-icon purple">⚙️</div>
+      <div>
+        <span>Estado</span>
+        <strong>{{ systemMode }}</strong>
+        <small>Modo actual del sistema</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-layout">
+    <!-- COLUMNA PRINCIPAL -->
+    <div class="settings-main">
+      <!-- DATOS DE EMPRESA -->
+      <div class="settings-card">
+        <div class="panel-title-row">
+          <div>
+            <h2>Datos generales de la empresa</h2>
+            <p>Información principal visible en la página empresarial.</p>
+          </div>
+
+          <span class="settings-badge">Principal</span>
+        </div>
+
+        <div class="settings-form-grid">
+          <label>
+            Nombre de empresa
+            <input
+              type="text"
+              [(ngModel)]="siteTitle"
+              placeholder="MULTISEGMA S.A.C."
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label>
+            RUC
+            <input
+              type="text"
+              [(ngModel)]="companyRuc"
+              placeholder="Ejemplo: 20600000000"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label class="full">
+            Subtítulo empresarial
+            <input
+              type="text"
+              [(ngModel)]="siteSubtitle"
+              placeholder="Soluciones tecnológicas empresariales"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label class="full">
+            Descripción de la empresa
+            <textarea
+              rows="4"
+              [(ngModel)]="companyDescription"
+              placeholder="Describe qué hace la empresa, experiencia, servicios y valor diferencial."
+              (ngModelChange)="markSettingsChanged()"
+            ></textarea>
+          </label>
+        </div>
+      </div>
+
+      <!-- CONTACTO -->
+      <div class="settings-card">
+        <div class="panel-title-row">
+          <div>
+            <h2>Contacto y atención al cliente</h2>
+            <p>Datos que usarán los clientes para comunicarse con la empresa.</p>
+          </div>
+        </div>
+
+        <div class="settings-form-grid">
+          <label>
+            WhatsApp de atención
+            <input
+              type="text"
+              [(ngModel)]="whatsappNumber"
+              placeholder="51998311743"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label>
+            Correo empresarial
+            <input
+              type="email"
+              [(ngModel)]="companyEmail"
+              placeholder="contacto@multisegma.com"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label>
+            Teléfono fijo / celular
+            <input
+              type="text"
+              [(ngModel)]="companyPhone"
+              placeholder="+51 999 999 999"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label>
+            Horario de atención
+            <input
+              type="text"
+              [(ngModel)]="businessHours"
+              placeholder="Lunes a sábado de 8:00 a.m. a 6:00 p.m."
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label class="full">
+            Dirección
+            <input
+              type="text"
+              [(ngModel)]="companyAddress"
+              placeholder="Lima, Perú"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- TEXTOS DE LA WEB -->
+      <div class="settings-card">
+        <div class="panel-title-row">
+          <div>
+            <h2>Textos principales de la web</h2>
+            <p>Contenido visible en la portada, catálogo y llamadas a la acción.</p>
+          </div>
+        </div>
+
+        <div class="settings-form-grid">
+          <label class="full">
+            Título del banner principal
+            <input
+              type="text"
+              [(ngModel)]="heroTitle"
+              placeholder="Soluciones tecnológicas para empresas"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label class="full">
+            Mensaje del banner
+            <textarea
+              rows="3"
+              [(ngModel)]="heroDescription"
+              placeholder="Describe el mensaje principal que verá el cliente al entrar."
+              (ngModelChange)="markSettingsChanged()"
+            ></textarea>
+          </label>
+
+          <label>
+            Texto del botón principal
+            <input
+              type="text"
+              [(ngModel)]="primaryButtonText"
+              placeholder="Consultar por WhatsApp"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label>
+            Texto del botón secundario
+            <input
+              type="text"
+              [(ngModel)]="secondaryButtonText"
+              placeholder="Ver catálogo"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- SEO -->
+      <div class="settings-card">
+        <div class="panel-title-row">
+          <div>
+            <h2>SEO y publicación en Google</h2>
+            <p>Datos para que la página tenga mejor presentación en buscadores.</p>
+          </div>
+
+          <span class="settings-badge seo">
+            SEO {{ seoScore }}%
+          </span>
+        </div>
+
+        <div class="settings-form-grid">
+          <label class="full">
+            Título SEO
+            <input
+              type="text"
+              [(ngModel)]="seoTitle"
+              placeholder="Multisegma S.A.C. | Soluciones tecnológicas"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label class="full">
+            Descripción SEO
+            <textarea
+              rows="3"
+              [(ngModel)]="seoDescription"
+              placeholder="Descripción corta que aparecerá en Google."
+              (ngModelChange)="markSettingsChanged()"
+            ></textarea>
+          </label>
+
+          <label class="full">
+            Palabras clave
+            <input
+              type="text"
+              [(ngModel)]="seoKeywords"
+              placeholder="tintas, tonners, mantenimiento, software, soporte técnico"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL DERECHO -->
+    <aside class="settings-side">
+      <!-- VISTA PREVIA -->
+      <div class="settings-preview-card">
+        <div class="preview-cover">
+          <div class="preview-logo">M</div>
+          <div>
+            <h3>{{ siteTitle }}</h3>
+            <p>{{ siteSubtitle }}</p>
+          </div>
+        </div>
+
+        <div class="preview-body">
+          <h2>{{ heroTitle }}</h2>
+          <p>{{ heroDescription }}</p>
+
+          <div class="preview-buttons">
+            <button type="button">{{ primaryButtonText }}</button>
+            <button type="button" class="outline">{{ secondaryButtonText }}</button>
+          </div>
+        </div>
+
+        <div class="preview-info">
+          <div>
+            <span>WhatsApp</span>
+            <strong>{{ whatsappNumber }}</strong>
+          </div>
+
+          <div>
+            <span>Correo</span>
+            <strong>{{ companyEmail }}</strong>
+          </div>
+
+          <div>
+            <span>Horario</span>
+            <strong>{{ businessHours }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- APARIENCIA -->
+      <div class="settings-card compact">
+        <div class="panel-title-row">
+          <div>
+            <h2>Apariencia</h2>
+            <p>Colores y modo visual del sitio.</p>
+          </div>
+        </div>
+
+        <div class="settings-form-grid one">
+          <label>
+            Color principal
+            <input
+              type="color"
+              [(ngModel)]="primaryColor"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label>
+            Color secundario
+            <input
+              type="color"
+              [(ngModel)]="secondaryColor"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label>
+            Modo del sistema
+            <select [(ngModel)]="systemMode" (ngModelChange)="markSettingsChanged()">
+              <option value="Producción">Producción</option>
+              <option value="Mantenimiento">Mantenimiento</option>
+              <option value="Pruebas">Pruebas</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <!-- REDES SOCIALES -->
+      <div class="settings-card compact">
+        <div class="panel-title-row">
+          <div>
+            <h2>Redes sociales</h2>
+            <p>Enlaces visibles en la página.</p>
+          </div>
+        </div>
+
+        <div class="settings-form-grid one">
+          <label>
+            Facebook
+            <input
+              type="text"
+              [(ngModel)]="facebookUrl"
+              placeholder="https://facebook.com/..."
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label>
+            Instagram
+            <input
+              type="text"
+              [(ngModel)]="instagramUrl"
+              placeholder="https://instagram.com/..."
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label>
+            TikTok
+            <input
+              type="text"
+              [(ngModel)]="tiktokUrl"
+              placeholder="https://tiktok.com/@..."
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- SISTEMA -->
+      <div class="settings-card compact">
+        <div class="panel-title-row">
+          <div>
+            <h2>Sistema</h2>
+            <p>Opciones administrativas.</p>
+          </div>
+        </div>
+
+        <div class="settings-switch-list">
+          <label>
+            <div>
+              <strong>Permitir pedidos</strong>
+              <span>Los clientes pueden enviar pedidos desde la web.</span>
+            </div>
+            <input
+              type="checkbox"
+              [(ngModel)]="allowOrders"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label>
+            <div>
+              <strong>Mostrar precios</strong>
+              <span>Los precios serán visibles en el catálogo.</span>
+            </div>
+            <input
+              type="checkbox"
+              [(ngModel)]="showPrices"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+
+          <label>
+            <div>
+              <strong>Enviar correos</strong>
+              <span>Preparado para confirmaciones por email.</span>
+            </div>
+            <input
+              type="checkbox"
+              [(ngModel)]="emailNotifications"
+              (ngModelChange)="markSettingsChanged()"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- IMPORTAR CONFIG -->
+      <div class="settings-card compact">
+        <div class="panel-title-row">
+          <div>
+            <h2>Importar configuración</h2>
+            <p>Cargar configuración desde archivo JSON.</p>
+          </div>
+        </div>
+
+        <input
+          #settingsImportInput
+          type="file"
+          hidden
+          accept=".json"
+          (change)="importSettings($event)"
+        />
+
+        <button type="button" class="btn-outline full" (click)="triggerImportSettings()">
+          ⬆ Importar JSON
+        </button>
+
+        <button type="button" class="btn-danger-outline full" (click)="resetSettingsVisual()">
+          Restaurar visual
+        </button>
+      </div>
+
+      <!-- ESTADO DE CAMBIOS -->
+      <div class="settings-status-card" [class.changed]="settingsChanged">
+        <div>
+          <strong>
+            {{ settingsChanged ? 'Cambios sin guardar' : 'Configuración actualizada' }}
+          </strong>
+
+          <p>
+            {{
+              settingsChanged
+                ? 'Guarda los cambios para registrar esta configuración.'
+                : 'Los datos visuales están guardados en el panel.'
+            }}
+          </p>
+        </div>
+
+        <button type="button" class="btn-primary full" (click)="saveSettings()">
+          Guardar configuración
+        </button>
+      </div>
+    </aside>
+  </div>
+</section>
+  </main>
+</div>

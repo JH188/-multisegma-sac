@@ -1,0 +1,47 @@
+<section class="admin-login-page">
+  <div class="admin-login-card">
+    <div class="admin-brand">
+      <div class="logo">M</div>
+
+      <h1>MULTISEGMA S.A.C.</h1>
+      <p>Acceso exclusivo para administración</p>
+    </div>
+
+    <form class="admin-form" (ngSubmit)="ingresarAdmin()" autocomplete="off">
+      <h2>Panel administrativo</h2>
+      <p class="subtitle">
+        Ingresa para gestionar productos, pedidos, pagos y clientes.
+      </p>
+
+      <label>
+        Correo administrador
+        <input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="admin@multisegma.com"
+        />
+      </label>
+
+      <label>
+        Contraseña
+        <input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="********"
+        />
+      </label>
+
+      <button type="submit">
+        Ingresar al panel
+      </button>
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+
+      <a routerLink="/" class="volver">
+        Volver a la tienda
+      </a>
+    </form>
+  </div>
+</section>
