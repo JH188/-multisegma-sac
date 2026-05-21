@@ -32,7 +32,7 @@ export interface CheckoutData {
 export class CartService {
   // Si tienes proxy.conf.json, deja /api.
   // Si NO usas proxy, cambia por: https://multisegma-sac-production.up.railway.app/api
-  private base = '/api';
+  private base = 'https://multisegma-sac-production.up.railway.app/api';
 
   private _items = signal<CartItem[]>([]);
 
