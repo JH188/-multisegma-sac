@@ -28,7 +28,7 @@ export interface ProductRequest {
   providedIn: 'root',
 })
 export class ProductService {
-  private API = 'http://localhost:8080/api/products';
+  private API = 'https://multisegma-sac-production.up.railway.app/api/products';
 
   constructor(private http: HttpClient) {}
 

@@ -14,7 +14,7 @@ export type OrderStatus =
   providedIn: 'root',
 })
 export class OrderService {
-  private apiUrl = 'http://localhost:8080/api/orders';
+  private apiUrl = 'https://multisegma-sac-production.up.railway.app/api/orders';
 
   constructor(private http: HttpClient) {}
 
