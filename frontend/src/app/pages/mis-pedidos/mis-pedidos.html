@@ -1,0 +1,94 @@
+<section class="orders-page">
+  <div class="orders-header">
+    <div>
+      <span class="label">MULTISEGMA S.A.C.</span>
+      <h1>Mis pedidos</h1>
+      <p>
+        Aquí puedes revisar los pedidos que ya realizaste y ver si el
+        administrador los confirmó, canceló o aún están pendientes.
+      </p>
+    </div>
+
+    <a routerLink="/" class="btn-home">Volver al inicio</a>
+  </div>
+
+  <div *ngIf="loading" class="state-card">Cargando tus pedidos...</div>
+
+  <div *ngIf="!loading && error" class="state-card error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && pedidos.length === 0" class="state-card">
+    <h2>Aún no tienes pedidos registrados</h2>
+    <p>Agrega productos al carrito y realiza tu primer pedido.</p>
+    <a routerLink="/" class="btn-primary">Ver productos</a>
+  </div>
+
+  <div *ngIf="!loading && !error && pedidos.length > 0" class="orders-list">
+    <article class="order-card" *ngFor="let pedido of pedidos">
+      <div class="order-top">
+        <div>
+          <h2>Pedido #{{ pedido.id }}</h2>
+          <p>{{ formatoFecha(pedido.createdAt) }}</p>
+        </div>
+
+        <span class="status" [ngClass]="estadoClase(pedido.status)">
+          {{ pedido.status || 'PENDIENTE' }}
+        </span>
+      </div>
+
+      <div class="order-grid">
+        <div>
+          <small>Cliente</small>
+          <strong>{{ pedido.customerName }}</strong>
+        </div>
+
+        <div>
+          <small>Correo</small>
+          <strong>{{ pedido.customerEmail }}</strong>
+        </div>
+
+        <div>
+          <small>Método de pago</small>
+          <strong>{{ pedido.paymentMethod }}</strong>
+        </div>
+
+        <div>
+          <small>Total</small>
+          <strong>S/ {{ pedido.total | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <div class="detail-box" *ngIf="pedido.detail">
+        <small>Detalle del pedido</small>
+        <pre>{{ pedido.detail }}</pre>
+      </div>
+
+      <div
+        class="message pendiente"
+        *ngIf="estadoClase(pedido.status) === 'pendiente'"
+      >
+        Tu pedido está pendiente. El administrador revisará el pago.
+      </div>
+
+      <div
+        class="message confirmado"
+        *ngIf="estadoClase(pedido.status) === 'confirmado'"
+      >
+        Tu pedido fue confirmado por el administrador.
+      </div>
+
+      <div
+        class="message proceso"
+        *ngIf="estadoClase(pedido.status) === 'proceso'"
+      >
+        Tu pedido está en proceso de atención.
+      </div>
+
+      <div
+        class="message cancelado"
+        *ngIf="estadoClase(pedido.status) === 'cancelado'"
+      >
+        Tu pedido fue cancelado. Comunícate con la empresa para más información.
+      </div>
+    </article>
+  </div>
+</section>

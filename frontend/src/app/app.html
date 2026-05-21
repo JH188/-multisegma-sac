@@ -23,22 +23,15 @@
         Inicio
       </a>
 
-      <a routerLink="/" fragment="productos">
-        Productos
-      </a>
+      <a routerLink="/" fragment="productos"> Productos </a>
 
-      <a routerLink="/" fragment="servicios">
-        Servicios
-      </a>
+      <a routerLink="/" fragment="servicios"> Servicios </a>
 
-      <a routerLink="/contacto" routerLinkActive="active">
-        Contacto
-      </a>
+      <a routerLink="/contacto" routerLinkActive="active"> Contacto </a>
     </div>
 
     <!-- Acciones derecha -->
     <div class="nav-actions">
-
       <!-- Carrito solo en la tienda, no en login/registro/admin -->
       <button
         *ngIf="!isPublicFormRoute()"
@@ -48,16 +41,14 @@
       >
         <span>Carrito</span>
 
-        <span class="cart-badge" *ngIf="cartCount > 0">
-          {{ cartCount }}
-        </span>
+        <span class="cart-badge" *ngIf="cartCount > 0"> {{ cartCount }} </span>
       </button>
 
       <!-- Ver pedido solo si no estás en login/registro/admin -->
       <a
         *ngIf="!isPublicFormRoute()"
         class="order-link"
-        routerLink="/checkout"
+        routerLink="/mis-pedidos"
       >
         Ver pedido
       </a>
@@ -73,15 +64,10 @@
       </button>
 
       <ng-template #loginButton>
-        <a
-          *ngIf="!isAuthRoute()"
-          class="btn-login"
-          routerLink="/auth"
-        >
+        <a *ngIf="!isAuthRoute()" class="btn-login" routerLink="/auth">
           Ingresar
         </a>
       </ng-template>
-
     </div>
   </nav>
 </header>

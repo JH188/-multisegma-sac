@@ -18,7 +18,7 @@ export class OrderService {
 
   constructor(private http: HttpClient) {}
 
-  // Crear pedido desde el checkout
+  // Crear pedido desde el checkout o carrito
   create(body: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, body);
   }
@@ -31,6 +31,18 @@ export class OrderService {
   // Obtener pedido por ID
   getById(orderId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${orderId}`);
+  }
+
+  // Obtener pedidos del cliente por correo
+  getByCustomerEmail(email: string): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.apiUrl}/customer/${encodeURIComponent(email)}`
+    );
+  }
+
+  // Obtener productos de un pedido
+  getItems(orderId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${orderId}/items`);
   }
 
   // Cambiar estado del pedido desde el admin
