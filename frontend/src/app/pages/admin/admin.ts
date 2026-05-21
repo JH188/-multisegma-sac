@@ -264,7 +264,7 @@ export class AdminComponent implements OnInit {
     },
     {
       name: "Backend Spring Boot",
-      value: "localhost:8080",
+      value: "https://multisegma-sac-production.up.railway.app",
       status: "Activo",
     },
     {
