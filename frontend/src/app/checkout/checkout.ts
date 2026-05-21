@@ -248,27 +248,28 @@ export class CheckoutComponent implements OnInit {
     const totalActual = this.total;
     const itemsSnapshot = this.items.map((it: any) => ({ ...it }));
 
-    const body = {
-      nombre: this.datosCliente.nombre,
-      correo: this.datosCliente.email,
-      telefono: this.datosCliente.telefono,
-      empresa: '',
-      provincia: this.datosEnvio.departamento || this.datosEnvio.provincia,
-      distrito: this.datosEnvio.distrito,
-      direccion: this.datosEnvio.direccion,
-      referencia: this.datosEnvio.referencia,
-      tipoDocumento: this.wallet.tipoDocumento,
-      numeroDocumento: this.wallet.numeroDocumento,
-      celularPago: this.wallet.celular,
-      metodoPago: `${this.metodoPago} - ${this.billeteraSeleccionada}`,
-      total: totalActual,
-      items: itemsSnapshot.map((it: any) => ({
-        nombre: it.name || it.title,
-        cantidad: it.qty,
-        precio: it.price
-      }))
-    };
+ const body = {
+  customerName: this.datosCliente.nombre,
+  customerEmail: this.datosCliente.email,
+  customerPhone: this.datosCliente.telefono,
 
+  departamento: this.datosEnvio.departamento || '',
+  provincia: this.datosEnvio.provincia || this.datosEnvio.departamento || '',
+  distrito: this.datosEnvio.distrito || '',
+  direccion: this.datosEnvio.direccion || '',
+  referencia: this.datosEnvio.referencia || '',
+
+  paymentMethod: `${this.metodoPago} - ${this.billeteraSeleccionada}`,
+  total: totalActual,
+
+  items: itemsSnapshot.map((it: any) => ({
+    productId: it.id || null,
+    nombre: it.name || it.title || it.nombre || 'Producto',
+    cantidad: it.qty || it.quantity || 1,
+    precio: it.price || it.precio || 0,
+    subtotal: (it.price || it.precio || 0) * (it.qty || it.quantity || 1)
+  }))
+};
     this.orders.create(body).subscribe({
       next: (res: any) => {
         this.esperandoPago = false;
