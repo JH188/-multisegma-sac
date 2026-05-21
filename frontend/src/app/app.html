@@ -32,6 +32,9 @@
 
     <!-- Acciones derecha -->
     <div class="nav-actions">
+      <div class="welcome-user" *ngIf="auth.isLoggedIn() && !auth.isAdmin()">
+        Bienvenido, {{ auth.getUserName() }}
+      </div>
       <!-- Carrito solo en la tienda, no en login/registro/admin -->
       <button
         *ngIf="!isPublicFormRoute()"
@@ -52,7 +55,6 @@
       >
         Ver pedido
       </a>
-
       <!-- Botón login / salir -->
       <button
         *ngIf="auth.isLoggedIn(); else loginButton"

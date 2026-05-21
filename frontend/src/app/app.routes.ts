@@ -10,6 +10,7 @@ import { RegisterComponent } from './pages/auth/register';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { CheckoutComponent } from './checkout/checkout';
+import { MisPedidosComponent } from './pages/mis-pedidos/mis-pedidos';
 
 export const routes: Routes = [
   // Página pública principal
@@ -26,7 +27,7 @@ export const routes: Routes = [
   // Carrito y checkout protegidos para cliente
   { path: 'carrito', component: CartComponent, canActivate: [AuthGuard] },
   { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
-
+  { path: 'mis-pedidos', component: MisPedidosComponent, canActivate: [AuthGuard] },
   // Panel administrador protegido
   { path: 'admin', component: AdminComponent, canActivate: [AdminGuard] },
 
