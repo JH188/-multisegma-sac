@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/orders")
-@CrossOrigin(origins = { "http://localhost:4200", "http://localhost:4201" })
+@CrossOrigin(originPatterns = "*")
 public class OrderController {
 
     private final OrderRepository orderRepository;
@@ -38,11 +38,16 @@ public class OrderController {
     }
 
     // LISTAR PEDIDOS PARA ADMIN
-    @GetMapping
-    public List<Order> list() {
-        return orderRepository.findAll();
-    }
+@GetMapping
+public List<Order> list() {
+    return orderRepository.findAllByOrderByIdAsc();
+}
 
+// LISTAR PEDIDOS POR CORREO DEL CLIENTE
+@GetMapping("/customer/{email}")
+public List<Order> getByCustomerEmail(@PathVariable String email) {
+    return orderRepository.findByCustomerEmailOrderByIdDesc(email);
+}
     // VER PEDIDO POR ID
     @GetMapping("/{id}")
     public ResponseEntity<Order> getById(@PathVariable Long id) {

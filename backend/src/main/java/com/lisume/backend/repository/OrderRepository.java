@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    // Para listar ordenado por id (como en tu tabla)
     List<Order> findAllByOrderByIdAsc();
+
+    List<Order> findByCustomerEmailOrderByIdDesc(String customerEmail);
 }
