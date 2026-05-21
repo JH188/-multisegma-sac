@@ -6,6 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 
 import { CartService } from '../services/cart.service';
 import { OrderService } from '../services/order.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-checkout',
@@ -66,18 +67,25 @@ export class CheckoutComponent implements OnInit {
   } | null = null;
 
   constructor(
-    public cart: CartService,
-    private router: Router,
-    private orders: OrderService
-  ) {}
+  public cart: CartService,
+  private router: Router,
+  private orders: OrderService,
+  private auth: AuthService
+) {}
 
   // =====================================================
   //  INICIO: restaurar estado guardado
   // =====================================================
   ngOnInit(): void {
-    this.restoreState();
-  }
+  this.restoreState();
 
+  const user = this.auth.getCurrentUser();
+
+  if (user) {
+    this.datosCliente.nombre = this.datosCliente.nombre || user.name || '';
+    this.datosCliente.email = user.email || this.datosCliente.email || '';
+  }
+}
   // Guardar en localStorage
   private saveState(): void {
     const state = {
@@ -248,9 +256,11 @@ export class CheckoutComponent implements OnInit {
     const totalActual = this.total;
     const itemsSnapshot = this.items.map((it: any) => ({ ...it }));
 
- const body = {
-  customerName: this.datosCliente.nombre,
-  customerEmail: this.datosCliente.email,
+const user = this.auth.getCurrentUser();
+
+const body = {
+  customerName: user?.name || this.datosCliente.nombre,
+  customerEmail: user?.email || this.datosCliente.email,
   customerPhone: this.datosCliente.telefono,
 
   departamento: this.datosEnvio.departamento || '',
@@ -287,7 +297,7 @@ export class CheckoutComponent implements OnInit {
           fecha: fechaComprobante,
           metodo: `${this.metodoPago} / ${this.billeteraSeleccionada}`,
           total: totalActual,
-          nombre: this.datosCliente.nombre,
+          nombre: user?.name || this.datosCliente.nombre,
           estado: res?.estado || 'PENDIENTE',
           orderId: res?.id
         };
