@@ -14,14 +14,15 @@ public class CorsConfig {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-            .allowedOriginPatterns(
-                "http://localhost:4200",
-                "http://localhost:4201",
-                "https://*.up.railway.app"
-            )
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            .allowedHeaders("*")
-            .allowCredentials(false);
+                .allowedOrigins(
+                        "http://localhost:4200",
+                        "http://localhost:4201",
+                        "https://desirable-motivation-production-a993.up.railway.app",
+                        "https://multisegma-sac-production.up.railway.app"
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(false);
       }
     };
   }
