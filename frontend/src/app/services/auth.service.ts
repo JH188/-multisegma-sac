@@ -92,40 +92,54 @@ export class AuthService {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
   }
 
-  register(name: string, email: string, password: string): boolean {
-    const list = this.users;
+register(name: string, email: string, password: string): boolean {
+  const list = this.users;
 
-    if (list.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
-      return false;
-    }
+  const cleanName = (name || '').trim();
+  const cleanEmail = (email || '').trim().toLowerCase();
+  const cleanPassword = (password || '').trim();
 
-    const nuevo: User = {
-      name,
-      email,
-      password,
-      role: 'user',
-      createdAt: new Date().toISOString(),
-    };
-
-    list.push(nuevo);
-    this.users = list;
-    return true;
+  if (!cleanName || !cleanEmail || !cleanPassword) {
+    return false;
   }
 
-  login(email: string, password: string): boolean {
-    const user = this.users.find(
-      (u) =>
-        u.email.toLowerCase() === email.toLowerCase() &&
-        u.password === password
-    );
-
-    if (!user) {
-      return false;
-    }
-
-    localStorage.setItem(this.CURRENT_KEY, JSON.stringify(user));
-    return true;
+  if (list.some((u) => u.email.toLowerCase().trim() === cleanEmail)) {
+    return false;
   }
+
+  const nuevo: User = {
+    name: cleanName,
+    email: cleanEmail,
+    password: cleanPassword,
+    role: 'user',
+    createdAt: new Date().toISOString(),
+  };
+
+  list.push(nuevo);
+  this.users = list;
+
+  localStorage.setItem(this.CURRENT_KEY, JSON.stringify(nuevo));
+
+  return true;
+}
+
+login(email: string, password: string): boolean {
+  const cleanEmail = (email || '').trim().toLowerCase();
+  const cleanPassword = (password || '').trim();
+
+  const user = this.users.find(
+    (u) =>
+      u.email.toLowerCase().trim() === cleanEmail &&
+      String(u.password || '').trim() === cleanPassword
+  );
+
+  if (!user) {
+    return false;
+  }
+
+  localStorage.setItem(this.CURRENT_KEY, JSON.stringify(user));
+  return true;
+}
 
   logout(): void {
     localStorage.removeItem(this.CURRENT_KEY);

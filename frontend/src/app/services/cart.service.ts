@@ -10,6 +10,7 @@ export interface CartItem {
   name: string;
   price: number;
   qty: number;
+  image?: string;
 }
 
 export interface CheckoutData {
@@ -88,14 +89,15 @@ export class CartService {
       }
 
       this._items.set(
-        data.map((it: any) => ({
-          id: it.id,
-          productId: it.productId ?? Number(it.id) ?? null,
-          name: it.name,
-          price: Number(it.price || 0),
-          qty: Number(it.qty || 1),
-        }))
-      );
+  data.map((it: any) => ({
+    id: it.id,
+    productId: it.productId ?? Number(it.id) ?? null,
+    name: it.name,
+    price: Number(it.price || 0),
+    qty: Number(it.qty || 1),
+    image: it.image || this.imageFor(it),
+  }))
+);
     } catch (error) {
       console.error('Error leyendo carrito:', error);
       this._items.set([]);
@@ -125,6 +127,48 @@ export class CartService {
   total(): number {
     return this._items().reduce((sum, item) => sum + item.price * item.qty, 0);
   }
+  private imageFor(product: any): string {
+  const name = (product?.nombre || product?.name || '').toLowerCase();
+
+  const img =
+    product?.image ||
+    product?.imageUrl ||
+    product?.imagen;
+
+  if (img) {
+    if (
+      img.startsWith('http://') ||
+      img.startsWith('https://') ||
+      img.startsWith('assets/')
+    ) {
+      return img;
+    }
+
+    return `assets/lisume/${img}`;
+  }
+
+  if (name.includes('tinta')) {
+    return 'assets/lisume/tintas-para-impresora.jpeg';
+  }
+
+  if (name.includes('tonner') || name.includes('toner')) {
+    return 'assets/lisume/tonners.jpeg';
+  }
+
+  if (name.includes('mantenimiento')) {
+    return 'assets/lisume/mantenimiento.jpeg';
+  }
+
+  if (
+    name.includes('software') ||
+    name.includes('instalación') ||
+    name.includes('instalacion')
+  ) {
+    return 'assets/lisume/software.jpeg';
+  }
+
+  return 'assets/lisume/portal-multisegma.jpeg';
+}
 
   add(product: any): void {
     const arr = [...this._items()];
@@ -133,42 +177,46 @@ export class CartService {
     const productId = Number(product.id ?? product.productId ?? 0) || null;
     const name = product.name ?? product.nombre ?? 'Producto / Servicio';
     const price = Number(product.price ?? product.precio ?? 0);
+    const image = this.imageFor(product);
 
     const index = arr.findIndex((item) => item.id === id);
 
     if (index >= 0) {
       arr[index] = {
-        ...arr[index],
-        qty: arr[index].qty + 1,
-      };
+  ...arr[index],
+  qty: arr[index].qty + 1,
+  image: arr[index].image || image,
+};
     } else {
       arr.push({
-        id,
-        productId,
-        name,
-        price,
-        qty: 1,
-      });
+  id,
+  productId,
+  name,
+  price,
+  qty: 1,
+  image,
+});
     }
 
     this._items.set(arr);
     this.saveToStorage();
   }
 
-  increase(index: number): void {
-    const arr = [...this._items()];
-    const item = arr[index];
+ increase(index: number): void {
+  const arr = [...this._items()];
+  const item = arr[index];
 
-    if (!item) return;
+  if (!item) return;
 
-    arr[index] = {
-      ...item,
-      qty: item.qty + 1,
-    };
+  arr[index] = {
+    ...item,
+    qty: item.qty + 1,
+    image: item.image || this.imageFor(item),
+  };
 
-    this._items.set(arr);
-    this.saveToStorage();
-  }
+  this._items.set(arr);
+  this.saveToStorage();
+}
 
   decrease(index: number): void {
     const arr = [...this._items()];
@@ -180,6 +228,7 @@ export class CartService {
       arr[index] = {
         ...item,
         qty: item.qty - 1,
+        image: item.image || this.imageFor(item),
       };
     } else {
       arr.splice(index, 1);

@@ -806,8 +806,22 @@ refreshAdminData(): void {
   }
 
   getProductImage(p: any): string {
-    return p?.imageUrl || p?.imagen || this.imageFor(p);
+  const img = p?.imageUrl || p?.imagen || p?.image || '';
+
+  if (img) {
+    if (
+      img.startsWith('http://') ||
+      img.startsWith('https://') ||
+      img.startsWith('assets/')
+    ) {
+      return img;
+    }
+
+    return `assets/lisume/${img}`;
   }
+
+  return this.imageFor(p);
+}
 
   getProductGallery(p: any): string[] {
     const gallery = Array.isArray(p?.gallery) ? p.gallery : [];
@@ -926,6 +940,7 @@ refreshAdminData(): void {
 
         this.calculateOrderStats();
         this.buildItemsView();
+        this.loadUsers();
       },
       error: (err) => {
         console.error("Error cargando pedidos:", err);
@@ -1288,37 +1303,95 @@ changeEstado(nuevoEstado: OrderStatus): void {
   // CLIENTES
   // ================================
   loadUsers(): void {
-    const raw = localStorage.getItem("lisume-users");
+  let users: any[] = [];
 
-    let users: any[] = [];
+  // 1. Leer usuarios registrados en este navegador/dominio
+  try {
+    const raw = localStorage.getItem('lisume-users');
+    users = raw ? JSON.parse(raw) : [];
+  } catch (error) {
+    console.error('Error leyendo usuarios del localStorage:', error);
+    users = [];
+  }
 
-    try {
-      users = raw ? JSON.parse(raw) : [];
-    } catch {
-      users = [];
+  // 2. Leer también desde AuthService
+  try {
+    if (this.auth && typeof (this.auth as any).getAllUsers === 'function') {
+      const authUsers = (this.auth as any).getAllUsers() || [];
+
+      for (const u of authUsers) {
+        const email = String(u.email || '').toLowerCase();
+
+        if (email && !users.some((x) => String(x.email || '').toLowerCase() === email)) {
+          users.push(u);
+        }
+      }
     }
+  } catch (error) {
+    console.error('Error leyendo usuarios desde AuthService:', error);
+  }
 
-    if (this.auth && typeof (this.auth as any).getAllUsers === "function") {
-      users = (this.auth as any).getAllUsers() || users;
-    }
+  // 3. Crear clientes automáticamente desde pedidos reales
+  for (const order of this.orders || []) {
+    const email = this.getOrderEmail(order).toLowerCase();
+    const name = this.getOrderClient(order);
+    const phone = this.getOrderPhone(order);
+    const createdAt = this.getOrderDate(order);
 
-    this.registeredUsers = users.map((user: any) => ({
-      ...user,
-      role: user.role || "user",
-      status: user.status || "ACTIVO",
-      phone: user.phone || user.telefono || user.customerPhone || "-",
-      createdAt: user.createdAt || new Date().toISOString(),
-      lastActivity:
-        user.lastActivity || user.createdAt || new Date().toISOString(),
-    }));
+    if (!email) continue;
 
-    this.totalUsers = this.registeredUsers.length;
+    const exists = users.some(
+      (u) => String(u.email || '').toLowerCase() === email
+    );
 
-    if (!this.selectedCustomer && this.registeredUsers.length > 0) {
-      this.selectedCustomer = this.registeredUsers[0];
+    if (!exists) {
+      users.push({
+        name: name || 'Cliente',
+        email,
+        phone: phone || '-',
+        role: 'user',
+        status: 'ACTIVO',
+        createdAt: createdAt || new Date().toISOString(),
+        lastActivity: createdAt || new Date().toISOString(),
+      });
     }
   }
 
+  // 4. Normalizar datos
+  this.registeredUsers = users.map((user: any) => ({
+    ...user,
+    name: user.name || user.nombre || user.customerName || 'Cliente sin nombre',
+    email: String(user.email || '').toLowerCase(),
+    role: user.role || 'user',
+    status: user.status || user.estado || 'ACTIVO',
+    phone: user.phone || user.telefono || user.customerPhone || '-',
+    createdAt: user.createdAt || new Date().toISOString(),
+    lastActivity:
+      user.lastActivity ||
+      user.updatedAt ||
+      user.createdAt ||
+      new Date().toISOString(),
+  }));
+
+  // 5. Quitar duplicados por correo
+  const map = new Map<string, any>();
+
+  for (const user of this.registeredUsers) {
+    const email = String(user.email || '').toLowerCase();
+    if (!email) continue;
+
+    if (!map.has(email)) {
+      map.set(email, user);
+    }
+  }
+
+  this.registeredUsers = Array.from(map.values());
+  this.totalUsers = this.registeredUsers.length;
+
+  if (!this.selectedCustomer && this.registeredUsers.length > 0) {
+    this.selectedCustomer = this.registeredUsers[0];
+  }
+}
   get filteredCustomers(): any[] {
     const search = this.customerSearch.trim().toLowerCase();
 
@@ -1371,8 +1444,8 @@ changeEstado(nuevoEstado: OrderStatus): void {
   }
 
   selectCustomer(user: any): void {
-    this.selectedCustomer = { ...user };
-  }
+  this.selectedCustomer = { ...user };
+}
 
   clearCustomerFilters(): void {
     this.customerSearch = "";

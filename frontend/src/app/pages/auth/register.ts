@@ -57,15 +57,15 @@ export class RegisterComponent {
     const created = this.auth.register(name, email, password);
 
     if (!created) {
-      this.error = 'Este correo ya está registrado.';
+      this.error = 'Ya existe una cuenta registrada con este correo. Inicia sesión.';
       return;
     }
 
-    this.success = 'Cuenta creada correctamente. Ahora inicia sesión.';
+    this.success = 'Cuenta creada correctamente. Ingresando a tu cuenta...';
 
     setTimeout(() => {
-      this.router.navigate(['/auth']);
-    }, 1200);
+      this.router.navigate(['/']);
+    }, 800);
   }
 
   goLogin(): void {

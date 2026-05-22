@@ -23,10 +23,11 @@
   </div>
 
   <div *ngIf="!loading && !error && pedidos.length > 0" class="orders-list">
-    <article class="order-card" *ngFor="let pedido of pedidos">
+    <article class="order-card" *ngFor="let pedido of pedidos; let i = index">
       <div class="order-top">
         <div>
-          <h2>Pedido #{{ pedido.id }}</h2>
+          <h2>Mi pedido #{{ pedidos.length - i }}</h2>
+          <p class="pedido-codigo">Código interno: #{{ pedido.id }}</p>
           <p>{{ formatoFecha(pedido.createdAt) }}</p>
         </div>
 

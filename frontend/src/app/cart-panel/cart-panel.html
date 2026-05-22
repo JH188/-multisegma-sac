@@ -3,7 +3,6 @@
 
 <!-- Panel lateral derecho -->
 <aside class="cart-panel">
-
   <header class="cart-header">
     <div>
       <span class="cart-kicker">MULTISEGMA S.A.C.</span>
@@ -14,14 +13,15 @@
   </header>
 
   <section class="cart-body">
-
     <div *ngIf="items.length; else emptyCart">
-
       <!-- INDICADOR DE PASOS -->
       <div class="stepper">
         <span [class.active]="checkoutPaso === 'resumen'">1</span>
         <span [class.active]="checkoutPaso === 'datos'">2</span>
-        <span [class.active]="checkoutPaso === 'pago' || checkoutPaso === 'espera'">3</span>
+        <span
+          [class.active]="checkoutPaso === 'pago' || checkoutPaso === 'espera'"
+          >3</span
+        >
         <span [class.active]="checkoutPaso === 'exito'">4</span>
       </div>
 
@@ -35,7 +35,9 @@
         <div class="items-list">
           <div class="cart-item" *ngFor="let it of items; let i = index">
             <div class="item-avatar">
-              {{ (it.name || 'P').charAt(0) }}
+              <img *ngIf="it.image" [src]="it.image" [alt]="it.name" />
+
+              <span *ngIf="!it.image"> {{ (it.name || 'P').charAt(0) }} </span>
             </div>
 
             <div class="item-info">
@@ -81,7 +83,6 @@
         </p>
 
         <form (ngSubmit)="irAFormaPago()" class="checkout-form">
-
           <label>Nombre completo o razón social</label>
           <input
             type="text"
@@ -166,9 +167,7 @@
               Volver
             </button>
 
-            <button type="submit" class="btn-primary">
-              Continuar a pago
-            </button>
+            <button type="submit" class="btn-primary">Continuar a pago</button>
           </div>
         </form>
       </div>
@@ -193,7 +192,7 @@
             [class.active]="metodoPago === 'Yape'"
             (click)="selectPayment('Yape')"
           >
-            <img src="assets/lisume/yape.jpg" alt="Yape" />
+            <img src="assets/lisume/yape.png" alt="Yape" />
             <span>Yape</span>
           </button>
 
@@ -223,7 +222,11 @@
             Volver
           </button>
 
-          <button type="button" class="btn-primary" (click)="confirmarMetodoPago()">
+          <button
+            type="button"
+            class="btn-primary"
+            (click)="confirmarMetodoPago()"
+          >
             Continuar pago
           </button>
         </div>
@@ -240,19 +243,31 @@
           <strong>S/ {{ total | number:'1.2-2' }}</strong>
         </p>
 
-        <div class="qr-box" *ngIf="metodoPago === 'Yape' || metodoPago === 'Plin'">
-          <p>Escanea este código QR con tu app {{ metodoPago }}.</p>
-          <img src="assets/lisume/qr-ejemplo.png" alt="QR de pago" />
+        <div class="qr-box" *ngIf="metodoPago === 'Yape'">
+          <p>Escanea este código QR con tu app Yape.</p>
+          <img src="assets/lisume/qr-ejemplo.jpeg" alt="QR de pago Yape" />
+        </div>
+
+        <div class="qr-box" *ngIf="metodoPago === 'Plin'">
+          <p>Escanea este código QR con tu app Plin.</p>
+          <img src="assets/lisume/qr-plin.jpeg" alt="QR de pago Plin" />
         </div>
 
         <div class="transfer-box" *ngIf="metodoPago === 'Transferencia'">
           <p><strong>Banco:</strong> BCP</p>
           <p><strong>Titular:</strong> MULTISEGMA S.A.C.</p>
-          <p><strong>Concepto:</strong> Pedido web</p>
+          <p><strong>Cuenta:</strong> 19175917361000</p>
+          <p><strong>CCI:</strong> 00219117591736100057</p>
+          <p><strong>Concepto:</strong> Pedido web - {{ datosEnvio.nombre }}</p>
+          <p class="small">
+            Luego de transferir, conserva tu comprobante para validación
+            administrativa.
+          </p>
         </div>
 
         <p class="small">
-          Al confirmar, el pedido quedará como pendiente para validación del administrador.
+          Al confirmar, el pedido quedará como pendiente para validación del
+          administrador.
         </p>
 
         <div class="cart-actions">
@@ -260,7 +275,11 @@
             Volver
           </button>
 
-          <button type="button" class="btn-primary" (click)="simularPagoExitoso()">
+          <button
+            type="button"
+            class="btn-primary"
+            (click)="simularPagoExitoso()"
+          >
             Ya realicé el pago
           </button>
         </div>
@@ -273,8 +292,8 @@
         <h3>Pedido registrado</h3>
 
         <p>
-          Hemos recibido tu pedido correctamente. El administrador revisará el pago
-          y confirmará la atención.
+          Hemos recibido tu pedido correctamente. El administrador revisará el
+          pago y confirmará la atención.
         </p>
 
         <div class="success-card">
@@ -288,7 +307,6 @@
           Volver al inicio
         </button>
       </div>
-
     </div>
 
     <!-- CARRITO VACÍO -->
@@ -303,6 +321,5 @@
         </button>
       </div>
     </ng-template>
-
   </section>
 </aside>
