@@ -52,33 +52,46 @@ export class HomeComponent implements OnInit {
     this.cart.add(product);
   }
 
-  imageFor(product: any): string {
-    const name = (product?.nombre || product?.name || '').toLowerCase();
+ imageFor(product: any): string {
+  const name = (product?.nombre || product?.name || '').toLowerCase();
 
-    if (product?.imageUrl || product?.imagen) {
-      return product.imageUrl || product.imagen;
-    }
+  const img = product?.imageUrl || product?.imagen;
 
-    if (name.includes('tinta')) {
-      return 'assets/lisume/tintas-para-impresora.jpeg';
-    }
-
-    if (name.includes('tonner') || name.includes('toner')) {
-      return 'assets/lisume/tonners.jpeg';
-    }
-
-    if (name.includes('mantenimiento')) {
-      return 'assets/lisume/mantenimiento.jpeg';
-    }
-
+  if (img) {
+    // Si ya viene con ruta completa o assets, la respeta
     if (
-      name.includes('software') ||
-      name.includes('instalación') ||
-      name.includes('instalacion')
+      img.startsWith('http://') ||
+      img.startsWith('https://') ||
+      img.startsWith('assets/')
     ) {
-      return 'assets/lisume/software.jpeg';
+      return img;
     }
 
-    return 'assets/lisume/portal-multisegma.jpeg';
+    // Si viene solo el nombre del archivo desde MySQL/backend,
+    // le agregamos la carpeta correcta
+    return `assets/lisume/${img}`;
   }
+
+  if (name.includes('tinta')) {
+    return 'assets/lisume/tintas-para-impresora.jpeg';
+  }
+
+  if (name.includes('tonner') || name.includes('toner')) {
+    return 'assets/lisume/tonners.jpeg';
+  }
+
+  if (name.includes('mantenimiento')) {
+    return 'assets/lisume/mantenimiento.jpeg';
+  }
+
+  if (
+    name.includes('software') ||
+    name.includes('instalación') ||
+    name.includes('instalacion')
+  ) {
+    return 'assets/lisume/software.jpeg';
+  }
+
+  return 'assets/lisume/portal-multisegma.jpeg';
+}
 }
