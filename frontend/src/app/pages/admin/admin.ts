@@ -1090,7 +1090,7 @@ refreshAdminData(): void {
     this.openOrderDetail(order);
     this.addLog(`Se abrió edición visual del pedido #${order.id}`);
   }
-changeEstado(nuevoEstado: OrderStatus): void {
+changeEstado(nuevoEstado: any): void {
   if (!this.selectedOrder) {
     alert('Primero selecciona un pedido.');
     return;
@@ -1103,12 +1103,18 @@ changeEstado(nuevoEstado: OrderStatus): void {
     return;
   }
 
+  const estadoBackend =
+    nuevoEstado === 'EN PROCESO' ? 'EN_PROCESO' : nuevoEstado;
+
+  const estadoVista =
+    estadoBackend === 'EN_PROCESO' ? 'EN PROCESO' : estadoBackend;
+
   this.savingEstado = true;
 
   const updatedLocalOrder = {
     ...this.selectedOrder,
-    status: nuevoEstado,
-    estado: nuevoEstado,
+    status: estadoVista,
+    estado: estadoVista,
     updatedAt: new Date().toISOString(),
   };
 
@@ -1122,20 +1128,17 @@ changeEstado(nuevoEstado: OrderStatus): void {
   this.calculateOrderStats();
   this.buildItemsView();
 
-  const estadoBackend =
-  nuevoEstado === 'EN PROCESO' ? 'EN_PROCESO' : nuevoEstado;
-
-this.orderApi.updateStatus(orderId, estadoBackend as any).subscribe({
+  this.orderApi.updateStatus(orderId, estadoBackend as any).subscribe({
     next: (updated: any) => {
+      const statusFinal = this.normalizeStatus(
+        updated?.status || updated?.estado || estadoBackend
+      );
+
       const finalUpdated = {
         ...updatedLocalOrder,
         ...updated,
-        status: this.normalizeStatus(
-          updated?.status || updated?.estado || nuevoEstado
-        ),
-        estado: this.normalizeStatus(
-          updated?.status || updated?.estado || nuevoEstado
-        ),
+        status: statusFinal,
+        estado: statusFinal,
       };
 
       const finalIndex = this.orders.findIndex((o: any) => o.id === orderId);
@@ -1148,20 +1151,16 @@ this.orderApi.updateStatus(orderId, estadoBackend as any).subscribe({
       this.calculateOrderStats();
       this.buildItemsView();
 
-      this.addLog(`Pedido #${orderId} cambió a ${nuevoEstado}`);
+      this.addLog(`Pedido #${orderId} cambió a ${statusFinal}`);
       this.savingEstado = false;
     },
     error: (err) => {
       console.error('Error cambiando estado en backend:', err);
 
-      this.addLog(
-        `Pedido #${orderId} cambió visualmente a ${nuevoEstado}, pero falta revisar backend.`
-      );
-
       this.savingEstado = false;
 
       alert(
-        'El pedido cambió visualmente, pero el backend no confirmó el cambio. Revisaremos OrderService / Spring Boot.'
+        'No se pudo cambiar el estado en backend. Revisa la consola o el endpoint de Spring Boot.'
       );
     },
   });
@@ -2291,17 +2290,18 @@ Descripción: ${file.description || "-"}
     return "Detalle del pedido no registrado.";
   }
 
-  normalizeStatus(value: any): OrderStatus {
-    const text = String(value || "")
-      .toUpperCase()
-      .trim();
+normalizeStatus(value: any): OrderStatus {
+  const status = String(value || 'PENDIENTE').toUpperCase().trim();
 
-    if (text.includes("CONFIRM")) return "CONFIRMADO";
-    if (text.includes("CANCEL")) return "CANCELADO";
-    if (text.includes("PROCES")) return "EN PROCESO";
-
-    return "PENDIENTE";
+  if (status === 'EN_PROCESO' || status === 'EN PROCESO') {
+    return 'EN PROCESO' as any;
   }
+
+  if (status === 'CONFIRMADO') return 'CONFIRMADO';
+  if (status === 'CANCELADO') return 'CANCELADO';
+
+  return 'PENDIENTE';
+}
 
   statusClass(status: string): string {
     const s = this.normalizeStatus(status);
