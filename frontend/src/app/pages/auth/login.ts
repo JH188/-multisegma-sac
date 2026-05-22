@@ -35,7 +35,7 @@ export class LoginComponent {
   }
 
   // login normal (usuarios)
-  onSubmit(): void {
+onSubmit(): void {
   this.error = '';
 
   const email = String(this.email || '').trim().toLowerCase();
@@ -46,15 +46,20 @@ export class LoginComponent {
     return;
   }
 
-  const ok = this.auth.login(email, password);
+  this.auth.loginBackend(email, password).subscribe({
+    next: (ok) => {
+      if (!ok) {
+        this.error = 'Credenciales incorrectas.';
+        return;
+      }
 
-  if (!ok) {
-    this.error = 'Credenciales incorrectas.';
-    return;
-  }
-
-  this.cart.loadFromStorageForCurrentUser();
-  this.router.navigate(['/']);
+      this.cart.loadFromStorageForCurrentUser();
+      this.router.navigate(['/']);
+    },
+    error: () => {
+      this.error = 'No se pudo iniciar sesión. Intenta nuevamente.';
+    },
+  });
 }
 
   // ====== ADMIN: abrir / cerrar modal ======

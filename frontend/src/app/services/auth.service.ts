@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map, catchError, of, tap } from 'rxjs';
+
 
 export interface User {
   name: string;
@@ -12,7 +15,8 @@ export interface User {
 export class AuthService {
   private STORAGE_KEY = 'lisume-users';
   private CURRENT_KEY = 'lisume-current-user';
-
+  private API_URL = 'https://multisegma-sac-production.up.railway.app/api/auth';
+  constructor(private http: HttpClient) {}
   private DEFAULT_ADMIN: User = {
     name: 'Administrador Multisegma',
     email: 'admin@multisegma.com',
@@ -96,30 +100,47 @@ export class AuthService {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(normalized));
   }
 
-  register(name: string, email: string, password: string): boolean {
-    const list = this.users;
-    const cleanEmail = String(email).trim().toLowerCase();
+ registerBackend(name: string, email: string, password: string): Observable<boolean> {
+  const body = {
+    name: String(name || '').trim(),
+    nombre: String(name || '').trim(),
+    email: String(email || '').trim().toLowerCase(),
+    correo: String(email || '').trim().toLowerCase(),
+    password: String(password || '').trim(),
+  };
 
-    if (list.some((u) => u.email.toLowerCase() === cleanEmail)) {
-      return false;
-    }
+  return this.http.post<any>(`${this.API_URL}/register`, body).pipe(
+    tap((user) => {
+      const normalized = this.normalizeUser(user);
+      localStorage.setItem(this.CURRENT_KEY, JSON.stringify(normalized));
+    }),
+    map(() => true),
+    catchError((error) => {
+      console.error('Error registrando usuario en backend:', error);
+      return of(false);
+    })
+  );
+}
 
-    const nuevo: User = {
-      name: name.trim(),
-      email: cleanEmail,
-      password: password.trim(),
-      role: 'user',
-      createdAt: new Date().toISOString(),
-    };
+loginBackend(email: string, password: string): Observable<boolean> {
+  const body = {
+    email: String(email || '').trim().toLowerCase(),
+    correo: String(email || '').trim().toLowerCase(),
+    password: String(password || '').trim(),
+  };
 
-    list.push(nuevo);
-    this.users = list;
-
-    // IMPORTANTE: deja logueado al usuario al registrarse
-    localStorage.setItem(this.CURRENT_KEY, JSON.stringify(nuevo));
-
-    return true;
-  }
+  return this.http.post<any>(`${this.API_URL}/login`, body).pipe(
+    tap((user) => {
+      const normalized = this.normalizeUser(user);
+      localStorage.setItem(this.CURRENT_KEY, JSON.stringify(normalized));
+    }),
+    map(() => true),
+    catchError((error) => {
+      console.error('Error iniciando sesión en backend:', error);
+      return of(false);
+    })
+  );
+}
 
   login(email: string, password: string): boolean {
     const cleanEmail = String(email).trim().toLowerCase();
