@@ -1103,9 +1103,13 @@ changeEstado(nuevoEstado: any): void {
     return;
   }
 
+  // Para backend: guardar con guion bajo
   const estadoBackend =
-    nuevoEstado === 'EN PROCESO' ? 'EN_PROCESO' : nuevoEstado;
+    nuevoEstado === 'EN PROCESO' || nuevoEstado === 'EN_PROCESO'
+      ? 'EN_PROCESO'
+      : nuevoEstado;
 
+  // Para pantalla: mostrar bonito
   const estadoVista =
     estadoBackend === 'EN_PROCESO' ? 'EN PROCESO' : estadoBackend;
 
