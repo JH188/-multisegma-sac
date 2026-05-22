@@ -33,7 +33,18 @@ export class MisPedidosComponent implements OnInit {
 
     const currentUser = this.auth.getCurrentUser();
 
-    if (!currentUser || !currentUser.email) {
+    const emailUsuario = this.normalizarCorreo(
+      currentUser?.email ||
+      currentUser?.correo ||
+      currentUser?.customerEmail ||
+      currentUser?.clienteCorreo ||
+      ''
+    );
+
+    console.log('USUARIO LOGUEADO:', currentUser);
+    console.log('CORREO DEL USUARIO LOGUEADO:', emailUsuario);
+
+    if (!currentUser || !emailUsuario) {
       this.user = null;
       this.pedidos = [];
       this.loading = false;
@@ -43,63 +54,91 @@ export class MisPedidosComponent implements OnInit {
 
     this.user = {
       ...currentUser,
-      email: String(currentUser.email).trim().toLowerCase(),
+      email: emailUsuario,
+      correo: emailUsuario,
+      name: currentUser.name || currentUser.nombre || 'Cliente',
+      nombre: currentUser.nombre || currentUser.name || 'Cliente',
     };
 
     this.cargarPedidos();
   }
 
-cargarPedidos(): void {
-  if (!this.user?.email) {
-    this.loading = false;
-    this.error = 'No se encontró el correo del usuario.';
-    return;
+  cargarPedidos(): void {
+    if (!this.user?.email) {
+      this.loading = false;
+      this.error = 'No se encontró el correo del usuario.';
+      return;
+    }
+
+    this.loading = true;
+    this.error = '';
+
+    const emailUsuario = this.normalizarCorreo(this.user.email);
+
+    this.orderService.getAll().subscribe({
+      next: (res: any[]) => {
+        const data = res || [];
+
+        console.log('TODOS LOS PEDIDOS RECIBIDOS:', data);
+        console.log('BUSCANDO PEDIDOS PARA:', emailUsuario);
+
+        this.pedidos = data
+          .filter((pedido: any) => {
+            const correoPedido = this.obtenerCorreoPedido(pedido);
+
+            console.log('COMPARANDO PEDIDO:', {
+              pedidoId: pedido?.id,
+              correoPedido,
+              emailUsuario,
+              coincide: correoPedido === emailUsuario,
+            });
+
+            return correoPedido === emailUsuario;
+          })
+          .sort((a: any, b: any) => {
+            const fechaA = new Date(a.createdAt || a.fecha || 0).getTime();
+            const fechaB = new Date(b.createdAt || b.fecha || 0).getTime();
+            return fechaB - fechaA;
+          });
+
+        console.log('PEDIDOS DEL USUARIO:', this.pedidos);
+
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando pedidos del usuario:', err);
+        this.pedidos = [];
+        this.error = 'No se pudieron cargar tus pedidos.';
+        this.loading = false;
+      },
+    });
   }
 
-  this.loading = true;
-  this.error = '';
+  private obtenerCorreoPedido(pedido: any): string {
+    return this.normalizarCorreo(
+      pedido?.correo ||
+      pedido?.email ||
+      pedido?.customerEmail ||
+      pedido?.clienteCorreo ||
+      pedido?.clienteEmail ||
+      pedido?.emailCliente ||
+      pedido?.correoCliente ||
+      pedido?.contactEmail ||
+      pedido?.contactoEmail ||
+      pedido?.cliente?.correo ||
+      pedido?.cliente?.email ||
+      pedido?.customer?.email ||
+      pedido?.customer?.correo ||
+      ''
+    );
+  }
 
-  const emailUsuario = String(this.user.email).trim().toLowerCase();
-
-  this.orderService.getAll().subscribe({
-    next: (res: any[]) => {
-      const data = res || [];
-
-      this.pedidos = data
-        .filter((pedido: any) => {
-          const correoPedido = String(
-            pedido?.correo ||
-            pedido?.email ||
-            pedido?.customerEmail ||
-            pedido?.clienteCorreo ||
-            pedido?.cliente?.correo ||
-            pedido?.cliente?.email ||
-            ''
-          )
-            .trim()
-            .toLowerCase();
-
-          return correoPedido === emailUsuario;
-        })
-        .sort((a: any, b: any) => {
-          const fechaA = new Date(a.createdAt || a.fecha || 0).getTime();
-          const fechaB = new Date(b.createdAt || b.fecha || 0).getTime();
-          return fechaB - fechaA;
-        });
-
-      this.loading = false;
-    },
-    error: (err) => {
-      console.error('Error cargando pedidos del usuario:', err);
-      this.pedidos = [];
-      this.error = 'No se pudieron cargar tus pedidos.';
-      this.loading = false;
-    },
-  });
-}
+  private normalizarCorreo(value: any): string {
+    return String(value || '').trim().toLowerCase();
+  }
 
   estadoClase(status: string): string {
-    const estado = (status || '').toUpperCase();
+    const estado = String(status || '').toUpperCase().replace('_', ' ');
 
     if (estado === 'CONFIRMADO') return 'confirmado';
     if (estado === 'CANCELADO') return 'cancelado';
@@ -109,30 +148,30 @@ cargarPedidos(): void {
   }
 
   private parseDatePeru(value: any): Date | null {
-  if (!value) return null;
+    if (!value) return null;
 
-  let text = String(value).trim();
+    let text = String(value).trim();
 
-  if (
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(text) &&
-    !text.endsWith('Z') &&
-    !/[+-]\d{2}:\d{2}$/.test(text)
-  ) {
-    text = text + 'Z';
+    if (
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(text) &&
+      !text.endsWith('Z') &&
+      !/[+-]\d{2}:\d{2}$/.test(text)
+    ) {
+      text = text + 'Z';
+    }
+
+    const date = new Date(text);
+    return isNaN(date.getTime()) ? null : date;
   }
 
-  const date = new Date(text);
-  return isNaN(date.getTime()) ? null : date;
-}
+  formatoFecha(fecha: string): string {
+    const date = this.parseDatePeru(fecha);
+    if (!date) return '-';
 
-formatoFecha(fecha: string): string {
-  const date = this.parseDatePeru(fecha);
-  if (!date) return '-';
-
-  return date.toLocaleString('es-PE', {
-    timeZone: 'America/Lima',
-    dateStyle: 'short',
-    timeStyle: 'short',
-  });
-}
+    return date.toLocaleString('es-PE', {
+      timeZone: 'America/Lima',
+      dateStyle: 'short',
+      timeStyle: 'short',
+    });
+  }
 }
