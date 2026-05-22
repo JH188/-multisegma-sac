@@ -36,26 +36,26 @@ export class LoginComponent {
 
   // login normal (usuarios)
   onSubmit(): void {
-    this.error = '';
+  this.error = '';
 
-    if (!this.email || !this.password) {
-      this.error = 'Ingresa tu correo y contraseña.';
-      return;
-    }
+  const email = String(this.email || '').trim().toLowerCase();
+  const password = String(this.password || '').trim();
 
-    const ok = this.auth.login(this.email, this.password);
-
-    if (!ok) {
-      this.error = 'Credenciales incorrectas.';
-      return;
-    }
-
-    // 👉 cargar carrito propio de este usuario
-    this.cart.loadFromStorageForCurrentUser();
-
-    // si todo ok -> al inicio
-    this.router.navigate(['/']);
+  if (!email || !password) {
+    this.error = 'Ingresa tu correo y contraseña.';
+    return;
   }
+
+  const ok = this.auth.login(email, password);
+
+  if (!ok) {
+    this.error = 'Credenciales incorrectas.';
+    return;
+  }
+
+  this.cart.loadFromStorageForCurrentUser();
+  this.router.navigate(['/']);
+}
 
   // ====== ADMIN: abrir / cerrar modal ======
   openAdminModal(): void {
@@ -71,25 +71,26 @@ export class LoginComponent {
 
   // envío del formulario de ADMIN
   submitAdmin(): void {
-    this.adminError = '';
+  this.adminError = '';
 
-    if (!this.adminEmail || !this.adminPassword) {
-      this.adminError = 'Completa correo y contraseña.';
-      return;
-    }
+  const email = String(this.adminEmail || '').trim().toLowerCase();
+  const password = String(this.adminPassword || '').trim();
 
-    const ok = this.auth.login(this.adminEmail, this.adminPassword);
-
-    if (!ok) {
-      this.adminError = 'Credenciales de administrador incorrectas.';
-      return;
-    }
-
-    // 👉 también cargamos el carrito del admin (si tuviera)
-    this.cart.loadFromStorageForCurrentUser();
-
-    alert('👑 Bienvenido Administrador');
-    this.showAdminModal = false;
-    this.router.navigate(['/admin']);
+  if (!email || !password) {
+    this.adminError = 'Completa correo y contraseña.';
+    return;
   }
+
+  const ok = this.auth.login(email, password);
+
+  if (!ok) {
+    this.adminError = 'Credenciales de administrador incorrectas.';
+    return;
+  }
+
+  this.cart.loadFromStorageForCurrentUser();
+
+  this.showAdminModal = false;
+  this.router.navigate(['/admin']);
+}
 }
