@@ -8,7 +8,7 @@ export type OrderStatus =
   | 'PENDIENTE'
   | 'CONFIRMADO'
   | 'CANCELADO'
-  | 'EN PROCESO';
+  | 'EN_PROCESO';
 
 @Injectable({
   providedIn: 'root',

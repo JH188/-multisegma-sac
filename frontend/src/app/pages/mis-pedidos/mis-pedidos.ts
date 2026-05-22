@@ -49,38 +49,54 @@ export class MisPedidosComponent implements OnInit {
     this.cargarPedidos();
   }
 
-  cargarPedidos(): void {
-    if (!this.user?.email) {
-      this.loading = false;
-      this.error = 'No se encontró el correo del usuario.';
-      return;
-    }
+cargarPedidos(): void {
+  if (!this.user?.email) {
+    this.loading = false;
+    this.error = 'No se encontró el correo del usuario.';
+    return;
+  }
 
-    this.loading = true;
-    this.error = '';
+  this.loading = true;
+  this.error = '';
 
-    const email = String(this.user.email).trim().toLowerCase();
+  const emailUsuario = String(this.user.email).trim().toLowerCase();
 
-    this.orderService.getByCustomerEmail(email).subscribe({
-      next: (res) => {
-        const data = res || [];
+  this.orderService.getAll().subscribe({
+    next: (res: any[]) => {
+      const data = res || [];
 
-        this.pedidos = data.sort((a: any, b: any) => {
+      this.pedidos = data
+        .filter((pedido: any) => {
+          const correoPedido = String(
+            pedido?.correo ||
+            pedido?.email ||
+            pedido?.customerEmail ||
+            pedido?.clienteCorreo ||
+            pedido?.cliente?.correo ||
+            pedido?.cliente?.email ||
+            ''
+          )
+            .trim()
+            .toLowerCase();
+
+          return correoPedido === emailUsuario;
+        })
+        .sort((a: any, b: any) => {
           const fechaA = new Date(a.createdAt || a.fecha || 0).getTime();
           const fechaB = new Date(b.createdAt || b.fecha || 0).getTime();
           return fechaB - fechaA;
         });
 
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error cargando pedidos del usuario:', err);
-        this.pedidos = [];
-        this.error = 'No se pudieron cargar tus pedidos.';
-        this.loading = false;
-      },
-    });
-  }
+      this.loading = false;
+    },
+    error: (err) => {
+      console.error('Error cargando pedidos del usuario:', err);
+      this.pedidos = [];
+      this.error = 'No se pudieron cargar tus pedidos.';
+      this.loading = false;
+    },
+  });
+}
 
   estadoClase(status: string): string {
     const estado = (status || '').toUpperCase();

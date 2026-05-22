@@ -1122,7 +1122,10 @@ changeEstado(nuevoEstado: OrderStatus): void {
   this.calculateOrderStats();
   this.buildItemsView();
 
-  this.orderApi.updateStatus(orderId, nuevoEstado as any).subscribe({
+  const estadoBackend =
+  nuevoEstado === 'EN PROCESO' ? 'EN_PROCESO' : nuevoEstado;
+
+this.orderApi.updateStatus(orderId, estadoBackend as any).subscribe({
     next: (updated: any) => {
       const finalUpdated = {
         ...updatedLocalOrder,
