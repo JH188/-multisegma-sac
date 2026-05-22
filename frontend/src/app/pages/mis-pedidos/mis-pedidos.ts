@@ -31,15 +31,15 @@ export class MisPedidosComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    const currentUser = this.auth.getCurrentUser();
+   const currentUser: any = this.auth.getCurrentUser();
 
-    const emailUsuario = this.normalizarCorreo(
-      currentUser?.email ||
-      currentUser?.correo ||
-      currentUser?.customerEmail ||
-      currentUser?.clienteCorreo ||
-      ''
-    );
+const emailUsuario = this.normalizarCorreo(
+  currentUser?.email ||
+  currentUser?.correo ||
+  currentUser?.customerEmail ||
+  currentUser?.clienteCorreo ||
+  ''
+);
 
     console.log('USUARIO LOGUEADO:', currentUser);
     console.log('CORREO DEL USUARIO LOGUEADO:', emailUsuario);
