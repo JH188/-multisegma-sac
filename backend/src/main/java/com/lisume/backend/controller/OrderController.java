@@ -151,10 +151,11 @@ public List<Order> getByCustomerEmail(@PathVariable String email) {
     ) {
         return orderRepository.findById(id)
                 .map(order -> {
-                    String nuevoEstado = estado.toUpperCase();
+                    String nuevoEstado = estado.trim().toUpperCase().replace(" ", "_");
 
                     if (!nuevoEstado.equals("PENDIENTE")
                             && !nuevoEstado.equals("CONFIRMADO")
+                            && !nuevoEstado.equals("EN_PROCESO")
                             && !nuevoEstado.equals("CANCELADO")) {
                         nuevoEstado = "PENDIENTE";
                     }
@@ -185,6 +186,7 @@ public List<Order> getByCustomerEmail(@PathVariable String email) {
 
         if (!nuevoStatus.equals("PENDIENTE")
                 && !nuevoStatus.equals("CONFIRMADO")
+                && !nuevoStatus.equals("EN_PROCESO")
                 && !nuevoStatus.equals("RECHAZADO")) {
             nuevoStatus = "PENDIENTE";
         }
