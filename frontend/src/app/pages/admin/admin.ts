@@ -1331,95 +1331,98 @@ this.orderApi.updateStatus(orderId, estadoBackend as any).subscribe({
   // ================================
   // CLIENTES
   // ================================
-  loadUsers(): void {
-  let users: any[] = [];
+loadUsers(): void {
+  this.auth.getBackendUsers().subscribe({
+    next: (users: any[]) => {
+      const pedidos = this.orders || [];
 
-  // 1. Leer usuarios registrados en este navegador/dominio
-  try {
-    const raw = localStorage.getItem('lisume-users');
-    users = raw ? JSON.parse(raw) : [];
-  } catch (error) {
-    console.error('Error leyendo usuarios del localStorage:', error);
-    users = [];
-  }
+      this.registeredUsers = (users || []).map((user: any) => {
+        const email = String(
+          user.email ||
+          user.correo ||
+          ''
+        ).trim().toLowerCase();
 
-  // 2. Leer también desde AuthService
-  try {
-    if (this.auth && typeof (this.auth as any).getAllUsers === 'function') {
-      const authUsers = (this.auth as any).getAllUsers() || [];
+        const pedidosDelUsuario = pedidos.filter((order: any) => {
+          const orderEmail = String(
+            order.correo ||
+            order.email ||
+            order.customerEmail ||
+            order.clienteCorreo ||
+            order.cliente?.correo ||
+            order.cliente?.email ||
+            ''
+          ).trim().toLowerCase();
 
-      for (const u of authUsers) {
-        const email = String(u.email || '').toLowerCase();
+          return orderEmail === email;
+        });
 
-        if (email && !users.some((x) => String(x.email || '').toLowerCase() === email)) {
-          users.push(u);
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error leyendo usuarios desde AuthService:', error);
-  }
+        const ultimoPedido = pedidosDelUsuario
+          .slice()
+          .sort((a: any, b: any) => {
+            const fechaA = new Date(a.createdAt || a.fecha || 0).getTime();
+            const fechaB = new Date(b.createdAt || b.fecha || 0).getTime();
+            return fechaB - fechaA;
+          })[0];
 
-  // 3. Crear clientes automáticamente desde pedidos reales
-  for (const order of this.orders || []) {
-    const email = this.getOrderEmail(order).toLowerCase();
-    const name = this.getOrderClient(order);
-    const phone = this.getOrderPhone(order);
-    const createdAt = this.getOrderDate(order);
+        return {
+          ...user,
 
-    if (!email) continue;
+          id: user.id,
+          name: user.name || user.nombre || 'Cliente sin nombre',
+          nombre: user.nombre || user.name || 'Cliente sin nombre',
 
-    const exists = users.some(
-      (u) => String(u.email || '').toLowerCase() === email
-    );
+          email: email,
+          correo: email,
 
-    if (!exists) {
-      users.push({
-        name: name || 'Cliente',
-        email,
-        phone: phone || '-',
-        role: 'user',
-        status: 'ACTIVO',
-        createdAt: createdAt || new Date().toISOString(),
-        lastActivity: createdAt || new Date().toISOString(),
+          phone:
+            user.phone ||
+            user.telefono ||
+            user.celular ||
+            '-',
+
+          telefono:
+            user.telefono ||
+            user.phone ||
+            user.celular ||
+            '-',
+
+          role: user.role || user.rol || 'user',
+          rol: user.rol || user.role || 'user',
+
+          status: user.status || user.estado || 'ACTIVO',
+          estado: user.estado || user.status || 'ACTIVO',
+
+          pedidos: pedidosDelUsuario.length,
+          ordersCount: pedidosDelUsuario.length,
+
+          createdAt:
+            user.createdAt ||
+            user.fechaRegistro ||
+            new Date().toISOString(),
+
+          lastActivity:
+            ultimoPedido?.createdAt ||
+            ultimoPedido?.fecha ||
+            user.createdAt ||
+            new Date().toISOString(),
+        };
       });
-    }
-  }
 
-  // 4. Normalizar datos
-  this.registeredUsers = users.map((user: any) => ({
-    ...user,
-    name: user.name || user.nombre || user.customerName || 'Cliente sin nombre',
-    email: String(user.email || '').toLowerCase(),
-    role: user.role || 'user',
-    status: user.status || user.estado || 'ACTIVO',
-    phone: user.phone || user.telefono || user.customerPhone || '-',
-    createdAt: user.createdAt || new Date().toISOString(),
-    lastActivity:
-      user.lastActivity ||
-      user.updatedAt ||
-      user.createdAt ||
-      new Date().toISOString(),
-  }));
+      this.totalUsers = this.registeredUsers.length;
 
-  // 5. Quitar duplicados por correo
-  const map = new Map<string, any>();
+      if (!this.selectedCustomer && this.registeredUsers.length > 0) {
+        this.selectedCustomer = this.registeredUsers[0];
+      }
 
-  for (const user of this.registeredUsers) {
-    const email = String(user.email || '').toLowerCase();
-    if (!email) continue;
-
-    if (!map.has(email)) {
-      map.set(email, user);
-    }
-  }
-
-  this.registeredUsers = Array.from(map.values());
-  this.totalUsers = this.registeredUsers.length;
-
-  if (!this.selectedCustomer && this.registeredUsers.length > 0) {
-    this.selectedCustomer = this.registeredUsers[0];
-  }
+      console.log('CLIENTES REGISTRADOS DESDE MYSQL:', this.registeredUsers);
+    },
+    error: (err) => {
+      console.error('Error cargando usuarios desde backend:', err);
+      this.registeredUsers = [];
+      this.totalUsers = 0;
+    },
+  });
 }
   get filteredCustomers(): any[] {
     const search = this.customerSearch.trim().toLowerCase();

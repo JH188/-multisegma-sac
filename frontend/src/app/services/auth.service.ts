@@ -216,6 +216,9 @@ loginBackend(email: string, password: string): Observable<boolean> {
   getUserEmail(): string {
     return this.getCurrentUser()?.email || '';
   }
+  getBackendUsers(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.API_URL}/users`);
+}
 
   getAllUsers(): User[] {
     return this.users;
