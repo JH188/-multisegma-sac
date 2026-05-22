@@ -1439,11 +1439,49 @@
             <h3>Voucher / comprobante</h3>
 
             <p>
-              {{ hasVoucher(selectedOrder) ? 'El cliente registró un comprobante
-              de pago.' : 'Todavía no se registró voucher para este pedido.' }}
+              {{ hasVoucher(selectedOrder) ? 'El cliente registró información de
+              pago para este pedido.' : 'Todavía no se registró voucher para
+              este pedido.' }}
             </p>
 
-            <button type="button" class="btn-voucher">Ver voucher</button>
+            <div class="detail-row">
+              <span>Método</span>
+              <strong>{{ getVoucherMethod(selectedOrder) }}</strong>
+            </div>
+
+            <div class="detail-row">
+              <span>Operación</span>
+              <strong>{{ getVoucherOperation(selectedOrder) }}</strong>
+            </div>
+
+            <div class="detail-row">
+              <span>Monto pagado</span>
+              <strong
+                >S/ {{ getVoucherAmount(selectedOrder) | number:'1.2-2'
+                }}</strong
+              >
+            </div>
+
+            <div class="detail-row">
+              <span>Fecha pago</span>
+              <strong>{{ formatDate(getVoucherDate(selectedOrder)) }}</strong>
+            </div>
+
+            <button
+              type="button"
+              class="btn-voucher"
+              (click)="viewVoucher(selectedOrder)"
+            >
+              Ver voucher
+            </button>
+
+            <button
+              type="button"
+              class="btn-voucher"
+              (click)="downloadOrderPdf(selectedOrder)"
+            >
+              Descargar PDF
+            </button>
           </div>
 
           <div class="detail-section">

@@ -2833,15 +2833,96 @@ Enviar correos: ${this.emailNotifications ? "Sí" : "No"}
   // ================================
   // MÉTODOS PUENTE PARA EL HTML AVANZADO
   // ================================
-  hasVoucher(order: any): boolean {
-    return Boolean(
-      order?.voucher ||
-        order?.voucherUrl ||
-        order?.comprobante ||
-        order?.comprobanteUrl ||
-        order?.archivoVoucher,
-    );
+hasVoucher(order: any): boolean {
+  const payment = this.getOrderPayment(order);
+
+  return Boolean(
+    order?.voucher ||
+      order?.voucherUrl ||
+      order?.comprobante ||
+      order?.comprobanteUrl ||
+      order?.archivoVoucher ||
+      order?.operationCode ||
+      order?.operation_code ||
+      order?.codigoOperacion ||
+      order?.paymentOperationCode ||
+      order?.amount ||
+      order?.paymentAmount ||
+      order?.montoPagado ||
+      (payment && payment !== 'No registrado')
+  );
+}
+
+getVoucherMethod(order: any): string {
+  return this.getOrderPayment(order);
+}
+
+getVoucherOperation(order: any): string {
+  return (
+    order?.operationCode ||
+    order?.operation_code ||
+    order?.codigoOperacion ||
+    order?.paymentOperationCode ||
+    order?.payment?.operationCode ||
+    order?.payment?.operation_code ||
+    'No registrado'
+  );
+}
+
+getVoucherAmount(order: any): number {
+  return Number(
+    order?.amount ||
+      order?.paymentAmount ||
+      order?.montoPagado ||
+      order?.payment?.amount ||
+      order?.total ||
+      0
+  );
+}
+
+getVoucherDate(order: any): any {
+  return (
+    order?.confirmedAt ||
+    order?.confirmed_at ||
+    order?.payment?.confirmedAt ||
+    order?.payment?.confirmed_at ||
+    order?.createdAt ||
+    order?.created_at ||
+    new Date().toISOString()
+  );
+}
+
+viewVoucher(order: any): void {
+  if (!order) {
+    alert('Primero selecciona un pedido.');
+    return;
   }
+
+  const pedidoId = order.id || 'SIN-ID';
+  const cliente = this.getOrderClient(order);
+  const correo = this.getOrderEmail(order);
+  const metodo = this.getVoucherMethod(order);
+  const operacion = this.getVoucherOperation(order);
+  const monto = this.getVoucherAmount(order).toFixed(2);
+  const fecha = this.formatDate(this.getVoucherDate(order));
+  const estado = this.getOrderStatus(order);
+
+  alert(
+    `COMPROBANTE / VOUCHER\n\n` +
+      `Pedido: #${pedidoId}\n` +
+      `Cliente: ${cliente}\n` +
+      `Correo: ${correo}\n` +
+      `Método de pago: ${metodo}\n` +
+      `Código / operación: ${operacion}\n` +
+      `Monto pagado: S/ ${monto}\n` +
+      `Fecha: ${fecha}\n` +
+      `Estado del pedido: ${estado}`
+  );
+}
+
+downloadOrderPdf(order: any): void {
+  this.generateOrderPdfVisual(order);
+}
   markNotificationsAsRead(): void {
     this.markNotificationsRead();
   }
