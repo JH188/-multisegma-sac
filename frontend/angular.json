@@ -19,7 +19,12 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              {
+                "glob": "**/*",
+                "input": "public",
+                "output": "/"
+              }
             ],
             "styles": [
               "src/styles.scss"
@@ -42,8 +47,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-           "browserTarget": "lisume-web:build",
-           "proxyConfig": "proxy.conf.json"
+            "browserTarget": "lisume-web:build",
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {
@@ -60,7 +65,12 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              {
+                "glob": "**/*",
+                "input": "public",
+                "output": "/"
+              }
             ],
             "styles": [
               "src/styles.scss"
