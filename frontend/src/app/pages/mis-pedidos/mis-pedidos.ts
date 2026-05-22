@@ -92,12 +92,31 @@ export class MisPedidosComponent implements OnInit {
     return 'pendiente';
   }
 
-  formatoFecha(fecha: string): string {
-    if (!fecha) return '-';
+  private parseDatePeru(value: any): Date | null {
+  if (!value) return null;
 
-    return new Date(fecha).toLocaleString('es-PE', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
+  let text = String(value).trim();
+
+  if (
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(text) &&
+    !text.endsWith('Z') &&
+    !/[+-]\d{2}:\d{2}$/.test(text)
+  ) {
+    text = text + 'Z';
   }
+
+  const date = new Date(text);
+  return isNaN(date.getTime()) ? null : date;
+}
+
+formatoFecha(fecha: string): string {
+  const date = this.parseDatePeru(fecha);
+  if (!date) return '-';
+
+  return date.toLocaleString('es-PE', {
+    timeZone: 'America/Lima',
+    dateStyle: 'short',
+    timeStyle: 'short',
+  });
+}
 }

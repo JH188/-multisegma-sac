@@ -5,11 +5,16 @@
   <nav class="nav">
     <!-- Marca -->
     <a class="brand" routerLink="/">
-      <span class="brand-logo">M</span>
+      <span class="brand-logo">
+        <img
+          src="assets/lisume/portal-multisegma.jpeg"
+          alt="Logo MULTISEGMA S.A.C."
+        />
+      </span>
 
       <span class="brand-text">
         <strong>MULTISEGMA S.A.C.</strong>
-        <small>Soluciones tecnológicas empresariales</small>
+        <small>Soluciones tecnológicas </small>
       </span>
     </a>
 
@@ -33,8 +38,11 @@
     <!-- Acciones derecha -->
     <div class="nav-actions">
       <ng-container *ngIf="isLoggedIn && currentUser; else usuarioInvitado">
-        <div class="welcome-user" *ngIf="!isAdmin">
-          Bienvenido, {{ currentUser.name }}
+        <div
+          class="welcome-user"
+          *ngIf="currentUser && currentUser.role !== 'admin'"
+        >
+          Bienvenido, {{ currentUser.name || currentUser.nombre || 'Usuario' }}
         </div>
 
         <button

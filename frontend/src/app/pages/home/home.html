@@ -3,11 +3,9 @@
 ========================= -->
 <section class="hero-empresa" id="inicio">
   <div class="hero-info">
-    <span class="tag">Soluciones tecnológicas empresariales</span>
+    <span class="tag">Soluciones tecnológicas </span>
 
-    <h1>
-      Productos, soporte técnico y servicios digitales para tu empresa
-    </h1>
+    <h1>Productos, soporte técnico y servicios digitales para tu empresa</h1>
 
     <p>
       En <strong>MULTISEGMA S.A.C.</strong> brindamos productos tecnológicos,
@@ -16,13 +14,9 @@
     </p>
 
     <div class="hero-actions">
-      <a href="#productos" class="btn-primary">
-        Ver productos
-      </a>
+      <a href="#productos" class="btn-primary"> Ver productos </a>
 
-      <a href="#servicios" class="btn-outline">
-        Ver servicios
-      </a>
+      <a href="#servicios" class="btn-outline"> Ver servicios </a>
     </div>
 
     <div class="hero-stats">
@@ -45,11 +39,16 @@
 
   <div class="hero-card">
     <div class="hero-card-top">
-      <span class="logo-box">M</span>
+      <span class="hero-card-logo">
+        <img
+          src="assets/lisume/portal-multisegma.jpeg"
+          alt="Logo MULTISEGMA S.A.C."
+        />
+      </span>
 
       <div>
         <h3>MULTISEGMA S.A.C.</h3>
-        <p>Catálogo empresarial conectado al sistema</p>
+        <p>Todo lo que buscas , lo encontraras aqui...</p>
       </div>
     </div>
 
@@ -61,7 +60,6 @@
     </div>
   </div>
 </section>
-
 
 <!-- =========================
      SERVICIOS
@@ -91,129 +89,123 @@
       <h3>Software</h3>
       <p>Instalación, configuración y asistencia para sistemas y programas.</p>
     </article>
+    <article>
+      <div class="icon">🖨️</div>
+      <h3>Tonners</h3>
+      <p>
+        consumible que utilizan las impresoras láser y fotocopiadoras para
+        plasmar texto e imágenes en el papel.
+      </p>
+    </article>
   </div>
 </section>
 
 <!-- PRODUCTOS DESDE BACKEND -->
 <section class="products-section" id="productos">
-
-<!-- =========================
+  <!-- =========================
      PRODUCTOS DESDE BACKEND
 ========================= -->
-<section class="products-section" id="productos">
-  <div class="section-label">Catálogo digital</div>
+  <section class="products-section" id="productos">
+    <div class="section-label">Catálogo digital</div>
 
-  <h2>Productos y servicios disponibles</h2>
+    <h2>Productos y servicios disponibles</h2>
 
-  <p class="section-description">
-    Catálogo conectado al backend Spring Boot y base de datos MySQL. Los precios
-    y productos pueden actualizarse desde el sistema administrativo.
-  </p>
+    <p class="section-description">
+      Catálogo conectado al backend Spring Boot y base de datos MySQL. Los
+      precios y productos pueden actualizarse desde el sistema administrativo.
+    </p>
 
-  <!-- Mensaje cargando -->
-  <div class="loading-box" *ngIf="loading">
-    Cargando productos desde el sistema...
-  </div>
+    <!-- Mensaje cargando -->
+    <div class="loading-box" *ngIf="loading">
+      Cargando productos desde el sistema...
+    </div>
 
-  <!-- Mensaje error -->
-  <div class="error-box" *ngIf="error">
-    {{ error }}
-  </div>
+    <!-- Mensaje error -->
+    <div class="error-box" *ngIf="error">{{ error }}</div>
 
-  <!-- Productos -->
-  <div class="products-grid" *ngIf="!loading && !error">
-    <article class="product-card" *ngFor="let p of products">
-      <img [src]="imageFor(p)" [alt]="p.nombre || p.name" />
+    <!-- Productos -->
+    <div class="products-grid" *ngIf="!loading && !error">
+      <article class="product-card" *ngFor="let p of products">
+        <img [src]="imageFor(p)" [alt]="p.nombre || p.name" />
 
-      <div class="product-body">
-        <span class="product-category">
-          {{ p.category || 'Productos tecnológicos' }}
-        </span>
+        <div class="product-body">
+          <span class="product-category">
+            {{ p.category || 'Productos tecnológicos' }}
+          </span>
 
-        <h3>{{ p.nombre || p.name }}</h3>
+          <h3>{{ p.nombre || p.name }}</h3>
 
-        <p>
-          {{ p.descripcion || p.description }}
-        </p>
+          <p>{{ p.descripcion || p.description }}</p>
 
-        <div class="product-footer">
-          <div>
-            <span class="price-label">Precio desde</span>
-            <strong>
-              S/ {{ (p.precio || p.price) | number:'1.2-2' }}
-            </strong>
+          <div class="product-footer">
+            <div>
+              <span class="price-label">Precio desde</span>
+              <strong> S/ {{ (p.precio || p.price) | number:'1.2-2' }} </strong>
+            </div>
+
+            <button type="button" (click)="add(p)">Agregar</button>
           </div>
-
-          <button type="button" (click)="add(p)">
-            Agregar
-          </button>
         </div>
-      </div>
-    </article>
-  </div>
-</section>
+      </article>
+    </div>
+  </section>
 
-
-<!-- =========================
+  <!-- =========================
      PROCESO DE COMPRA
 ========================= -->
-<section class="flujo">
-  <div class="section-head">
-    <span>Proceso de compra</span>
-    <h2>Compra fácil y con control administrativo</h2>
-  </div>
-
-  <div class="flujo-grid">
-    <div>
-      <b>01</b>
-      <h3>Explora productos</h3>
-      <p>
-        El cliente revisa el catálogo sin necesidad de iniciar sesión primero.
-      </p>
+  <section class="flujo">
+    <div class="section-head">
+      <span>Proceso de compra</span>
+      <h2>Compra fácil y con control administrativo</h2>
     </div>
 
-    <div>
-      <b>02</b>
-      <h3>Agrega al carrito</h3>
-      <p>
-        Selecciona productos o servicios y revisa el resumen del pedido.
-      </p>
+    <div class="flujo-grid">
+      <div>
+        <b>01</b>
+        <h3>Explora productos</h3>
+        <p>
+          El cliente revisa el catálogo sin necesidad de iniciar sesión primero.
+        </p>
+      </div>
+
+      <div>
+        <b>02</b>
+        <h3>Agrega al carrito</h3>
+        <p>Selecciona productos o servicios y revisa el resumen del pedido.</p>
+      </div>
+
+      <div>
+        <b>03</b>
+        <h3>Se registra o inicia sesión</h3>
+        <p>Para confirmar el pedido, el cliente crea una cuenta o ingresa.</p>
+      </div>
+
+      <div>
+        <b>04</b>
+        <h3>Admin confirma</h3>
+        <p>
+          El administrador revisa el pago, voucher, estado y detalle del pedido.
+        </p>
+      </div>
     </div>
+  </section>
 
-    <div>
-      <b>03</b>
-      <h3>Se registra o inicia sesión</h3>
-      <p>
-        Para confirmar el pedido, el cliente crea una cuenta o ingresa.
-      </p>
-    </div>
-
-    <div>
-      <b>04</b>
-      <h3>Admin confirma</h3>
-      <p>
-        El administrador revisa el pago, voucher, estado y detalle del pedido.
-      </p>
-    </div>
-  </div>
-</section>
-
-
-<!-- =========================
+  <!-- =========================
      CTA FINAL
 ========================= -->
-<section class="cta">
-  <h2>¿Necesitas una cotización para tu empresa?</h2>
+  <section class="cta">
+    <h2>¿Necesitas una cotización para tu empresa?</h2>
 
-  <p>
-    Escríbenos y recibe atención personalizada para productos, soporte técnico
-    o servicios digitales.
-  </p>
+    <p>
+      Escríbenos y recibe atención personalizada para productos, soporte técnico
+      o servicios digitales.
+    </p>
 
-  <a
-    href="https://wa.me/51998311743?text=Hola%20Multisegma,%20quiero%20cotizar%20un%20servicio."
-    target="_blank"
-  >
-    Contactar por WhatsApp
-  </a>
+    <a
+      href="https://wa.me/51998311743?text=Hola%20Multisegma,%20quiero%20cotizar%20un%20servicio."
+      target="_blank"
+    >
+      Contactar por WhatsApp
+    </a>
+  </section>
 </section>

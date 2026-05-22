@@ -61,11 +61,11 @@ export class RegisterComponent {
       return;
     }
 
-    this.success = 'Cuenta creada correctamente. Ingresando a tu cuenta...';
+    this.success = 'Cuenta creada correctamente. Ya puedes realizar y consultar tus pedidos.';
 
-    setTimeout(() => {
-      this.router.navigate(['/']);
-    }, 800);
+setTimeout(() => {
+  this.router.navigate(['/']);
+}, 800);
   }
 
   goLogin(): void {

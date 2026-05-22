@@ -13,133 +13,133 @@ export class AuthService {
   private STORAGE_KEY = 'lisume-users';
   private CURRENT_KEY = 'lisume-current-user';
 
- private DEFAULT_ADMIN: User = {
-  name: 'Administrador Multisegma',
-  email: 'admin@multisegma.com',
-  password: 'admin123',
-  role: 'admin',
-  createdAt: new Date().toISOString(),
-};
-
-  private ensureAdmin(): void {
-  const raw = localStorage.getItem(this.STORAGE_KEY);
-
-  if (!raw) {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify([this.DEFAULT_ADMIN]));
-    return;
-  }
-
-  const list = JSON.parse(raw) as User[];
-  let changed = false;
-
-  // Eliminar admin antiguo si existe
-  const oldAdminIndex = list.findIndex(
-    (u) => u.email.toLowerCase() === 'admin@lisume.com'
-  );
-
-  if (oldAdminIndex >= 0) {
-    list.splice(oldAdminIndex, 1);
-    changed = true;
-  }
-
-  // Verificar si ya existe el admin nuevo
-  const adminIndex = list.findIndex(
-    (u) => u.email.toLowerCase() === this.DEFAULT_ADMIN.email.toLowerCase()
-  );
-
-  if (adminIndex >= 0) {
-    // Actualiza la contraseña y datos del admin nuevo
-    list[adminIndex] = {
-      ...list[adminIndex],
-      name: this.DEFAULT_ADMIN.name,
-      email: this.DEFAULT_ADMIN.email,
-      password: this.DEFAULT_ADMIN.password,
-      role: 'admin',
-      createdAt: list[adminIndex].createdAt || new Date().toISOString(),
-    };
-    changed = true;
-  } else {
-    // Si no existe, lo crea
-    list.push(this.DEFAULT_ADMIN);
-    changed = true;
-  }
-
-  // Normalizar usuarios
-  for (const u of list) {
-    if (!u.createdAt) {
-      u.createdAt = new Date().toISOString();
-      changed = true;
-    }
-
-    if (!u.role) {
-      u.role = 'user';
-      changed = true;
-    }
-  }
-
-  if (changed) {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
-  }
-}
-
-  private get users(): User[] {
-    this.ensureAdmin();
-    const raw = localStorage.getItem(this.STORAGE_KEY);
-    return raw ? JSON.parse(raw) as User[] : [];
-  }
-
-  private set users(list: User[]) {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
-  }
-
-register(name: string, email: string, password: string): boolean {
-  const list = this.users;
-
-  const cleanName = (name || '').trim();
-  const cleanEmail = (email || '').trim().toLowerCase();
-  const cleanPassword = (password || '').trim();
-
-  if (!cleanName || !cleanEmail || !cleanPassword) {
-    return false;
-  }
-
-  if (list.some((u) => u.email.toLowerCase().trim() === cleanEmail)) {
-    return false;
-  }
-
-  const nuevo: User = {
-    name: cleanName,
-    email: cleanEmail,
-    password: cleanPassword,
-    role: 'user',
+  private DEFAULT_ADMIN: User = {
+    name: 'Administrador Multisegma',
+    email: 'admin@multisegma.com',
+    password: 'admin123',
+    role: 'admin',
     createdAt: new Date().toISOString(),
   };
 
-  list.push(nuevo);
-  this.users = list;
-
-  localStorage.setItem(this.CURRENT_KEY, JSON.stringify(nuevo));
-
-  return true;
-}
-
-login(email: string, password: string): boolean {
-  const cleanEmail = (email || '').trim().toLowerCase();
-  const cleanPassword = (password || '').trim();
-
-  const user = this.users.find(
-    (u) =>
-      u.email.toLowerCase().trim() === cleanEmail &&
-      String(u.password || '').trim() === cleanPassword
-  );
-
-  if (!user) {
-    return false;
+  private normalizeUser(user: any): User {
+    return {
+      name:
+        user?.name ||
+        user?.nombre ||
+        user?.customerName ||
+        user?.cliente ||
+        'Cliente',
+      email: String(user?.email || user?.correo || user?.customerEmail || '')
+        .trim()
+        .toLowerCase(),
+      password: String(user?.password || ''),
+      role: user?.role === 'admin' ? 'admin' : 'user',
+      createdAt: user?.createdAt || new Date().toISOString(),
+    };
   }
 
-  localStorage.setItem(this.CURRENT_KEY, JSON.stringify(user));
-  return true;
-}
+  private ensureAdmin(): void {
+    const raw = localStorage.getItem(this.STORAGE_KEY);
+    let list: User[] = [];
+
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        list = Array.isArray(parsed) ? parsed.map((u) => this.normalizeUser(u)) : [];
+      } catch {
+        list = [];
+      }
+    }
+
+    // Eliminar admin antiguo
+    list = list.filter(
+      (u) => u.email.toLowerCase() !== 'admin@lisume.com'
+    );
+
+    const adminIndex = list.findIndex(
+      (u) => u.email.toLowerCase() === this.DEFAULT_ADMIN.email.toLowerCase()
+    );
+
+    if (adminIndex >= 0) {
+      list[adminIndex] = {
+        ...list[adminIndex],
+        name: this.DEFAULT_ADMIN.name,
+        email: this.DEFAULT_ADMIN.email,
+        password: this.DEFAULT_ADMIN.password,
+        role: 'admin',
+        createdAt: list[adminIndex].createdAt || new Date().toISOString(),
+      };
+    } else {
+      list.push(this.DEFAULT_ADMIN);
+    }
+
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+  }
+
+  private get users(): User[] {
+    this.ensureAdmin();
+
+    const raw = localStorage.getItem(this.STORAGE_KEY);
+
+    if (!raw) return [];
+
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed.map((u) => this.normalizeUser(u)) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private set users(list: User[]) {
+    const normalized = list.map((u) => this.normalizeUser(u));
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(normalized));
+  }
+
+  register(name: string, email: string, password: string): boolean {
+    const list = this.users;
+    const cleanEmail = String(email).trim().toLowerCase();
+
+    if (list.some((u) => u.email.toLowerCase() === cleanEmail)) {
+      return false;
+    }
+
+    const nuevo: User = {
+      name: name.trim(),
+      email: cleanEmail,
+      password: password.trim(),
+      role: 'user',
+      createdAt: new Date().toISOString(),
+    };
+
+    list.push(nuevo);
+    this.users = list;
+
+    // IMPORTANTE: deja logueado al usuario al registrarse
+    localStorage.setItem(this.CURRENT_KEY, JSON.stringify(nuevo));
+
+    return true;
+  }
+
+  login(email: string, password: string): boolean {
+    const cleanEmail = String(email).trim().toLowerCase();
+    const cleanPassword = String(password).trim();
+
+    const user = this.users.find(
+      (u) =>
+        u.email.toLowerCase() === cleanEmail &&
+        u.password === cleanPassword
+    );
+
+    if (!user) {
+      return false;
+    }
+
+    const normalized = this.normalizeUser(user);
+    localStorage.setItem(this.CURRENT_KEY, JSON.stringify(normalized));
+
+    return true;
+  }
 
   logout(): void {
     localStorage.removeItem(this.CURRENT_KEY);
@@ -147,7 +147,37 @@ login(email: string, password: string): boolean {
 
   getCurrentUser(): User | null {
     const raw = localStorage.getItem(this.CURRENT_KEY);
-    return raw ? JSON.parse(raw) as User : null;
+
+    if (!raw) return null;
+
+    try {
+      const current = this.normalizeUser(JSON.parse(raw));
+
+      if (!current.email) {
+        localStorage.removeItem(this.CURRENT_KEY);
+        return null;
+      }
+
+      // Busca la versión más actual del usuario en lisume-users
+      const userFromList = this.users.find(
+        (u) => u.email.toLowerCase() === current.email.toLowerCase()
+      );
+
+      const finalUser = userFromList
+        ? this.normalizeUser({
+            ...current,
+            ...userFromList,
+          })
+        : current;
+
+      // Regraba el usuario actual bien formado
+      localStorage.setItem(this.CURRENT_KEY, JSON.stringify(finalUser));
+
+      return finalUser;
+    } catch {
+      localStorage.removeItem(this.CURRENT_KEY);
+      return null;
+    }
   }
 
   isLoggedIn(): boolean {
@@ -159,7 +189,11 @@ login(email: string, password: string): boolean {
   }
 
   getUserName(): string {
-    return this.getCurrentUser()?.name ?? '';
+    return this.getCurrentUser()?.name || '';
+  }
+
+  getUserEmail(): string {
+    return this.getCurrentUser()?.email || '';
   }
 
   getAllUsers(): User[] {

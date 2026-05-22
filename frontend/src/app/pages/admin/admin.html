@@ -2,7 +2,12 @@
   <!-- SIDEBAR -->
   <aside class="admin-sidebar">
     <div class="admin-brand">
-      <div class="admin-logo">M</div>
+      <div class="admin-logo">
+        <img
+          src="assets/lisume/portal-multisegma.jpeg"
+          alt="Logo MULTISEGMA S.A.C."
+        />
+      </div>
 
       <div>
         <h3>Multisegma S.A.C.</h3>
@@ -19,7 +24,7 @@
         [class.active]="activeSection === 'dashboard'"
         (click)="setSection('dashboard')"
       >
-        📊 Dashboard
+        📊 Panel
       </button>
 
       <button
@@ -61,7 +66,7 @@
         📈 Reportes
       </button>
 
-      <span class="menu-title">EMPRESARIAL</span>
+      <span class="menu-title">OTROS</span>
 
       <button
         type="button"
@@ -89,7 +94,9 @@
     </nav>
 
     <div class="admin-user-card">
-      <div class="avatar">A</div>
+      <div class="admin-avatar">
+        <img src="assets/lisume/portal-multisegma.jpeg" alt="Administrador" />
+      </div>
       <div>
         <strong>Administrador</strong>
         <span>admin&#64;multisegma.com</span>
@@ -107,7 +114,7 @@
       <!-- CABECERA DASHBOARD -->
       <div class="dashboard-header">
         <div>
-          <h1>Dashboard empresarial</h1>
+          <h1>Panel de administraciòn</h1>
           <p>
             Control central de ventas, pedidos, clientes y operaciones de
             Multisegma S.A.C.
@@ -1963,7 +1970,7 @@
     <section *ngIf="activeSection === 'charts'" class="reports-section">
       <div class="section-header reports-header">
         <div>
-          <h1>Reportes empresariales</h1>
+          <h1>Reportes</h1>
           <p>
             Análisis general de ventas, pedidos, clientes, pagos, consultas,
             productos vendidos y actividad administrativa.
@@ -3178,7 +3185,7 @@
     <section *ngIf="activeSection === 'settings'" class="settings-section">
       <div class="section-header settings-header">
         <div>
-          <h1>Configuración empresarial</h1>
+          <h1>Configuración</h1>
           <p>
             Control general de datos de la empresa, contacto, redes sociales,
             SEO, apariencia, textos visibles y parámetros del sistema.

@@ -53,6 +53,31 @@ interface AdminFileItem {
   styleUrls: ["./admin.scss"],
 })
 export class AdminComponent implements OnInit {
+  private parseDatePeru(value: any): Date | null {
+  if (!value) return null;
+
+  if (value instanceof Date) {
+    return isNaN(value.getTime()) ? null : value;
+  }
+
+  let text = String(value).trim();
+
+  if (!text) return null;
+
+  // Si viene como "2026-05-22T16:03:00" sin Z,
+  // lo tratamos como UTC para convertirlo a hora Perú.
+  if (
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(text) &&
+    !text.endsWith('Z') &&
+    !/[+-]\d{2}:\d{2}$/.test(text)
+  ) {
+    text = text + 'Z';
+  }
+
+  const date = new Date(text);
+
+  return isNaN(date.getTime()) ? null : date;
+}
  activeSection: AdminSection =
   (localStorage.getItem('multisegma-admin-section') as AdminSection) || 'dashboard';
 
@@ -2285,45 +2310,62 @@ Descripción: ${file.description || "-"}
   // ================================
   // HELPERS GENERALES
   // ================================
-  formatDate(value: any): string {
-    if (!value) return "-";
+formatDate(value: any): string {
+  const date = this.parseDatePeru(value);
+  if (!date) return '-';
 
-    const date = new Date(value);
+  return date.toLocaleString('es-PE', {
+    timeZone: 'America/Lima',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
 
-    if (isNaN(date.getTime())) return "-";
+formatOnlyDate(value: any): string {
+  const date = this.parseDatePeru(value);
+  if (!date) return '-';
 
-    return date.toLocaleString("es-PE", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
+  return date.toLocaleDateString('es-PE', {
+    timeZone: 'America/Lima',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+}
 
-  formatOnlyDate(value: any): string {
-    const date = new Date(value);
+formatOnlyTime(value: any): string {
+  const date = this.parseDatePeru(value);
+  if (!date) return '-';
 
-    if (isNaN(date.getTime())) return "-";
+  return date.toLocaleTimeString('es-PE', {
+    timeZone: 'America/Lima',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
 
-    return date.toLocaleDateString("es-PE", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-  }
+toInputDate(value: any): string {
+  const date = this.parseDatePeru(value);
+  if (!date) return '';
 
-  toInputDate(value: any): string {
-    const date = new Date(value);
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Lima',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
 
-    if (isNaN(date.getTime())) return "";
+  const year = parts.find((p) => p.type === 'year')?.value || '';
+  const month = parts.find((p) => p.type === 'month')?.value || '';
+  const day = parts.find((p) => p.type === 'day')?.value || '';
 
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  }
+  return `${year}-${month}-${day}`;
+}
 
   startOfWeek(value: Date): Date {
     const date = new Date(value);
@@ -2794,20 +2836,6 @@ Enviar correos: ${this.emailNotifications ? "Sí" : "No"}
         order?.archivoVoucher,
     );
   }
-
-  formatOnlyTime(value: any): string {
-    if (!value) return "-";
-
-    const date = new Date(value);
-
-    if (isNaN(date.getTime())) return "-";
-
-    return date.toLocaleTimeString("es-PE", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
-
   markNotificationsAsRead(): void {
     this.markNotificationsRead();
   }

@@ -1,7 +1,14 @@
 // src/app/app.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  Router,
+  RouterOutlet,
+  RouterLink,
+  RouterLinkActive,
+  NavigationEnd,
+} from '@angular/router';
+import { filter } from 'rxjs';
 
 import { CartUiService } from './services/cart-ui.service';
 import { CartPanelComponent } from './cart-panel/cart-panel';
@@ -16,13 +23,17 @@ import { AuthService } from './services/auth.service';
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    CartPanelComponent
+    CartPanelComponent,
   ],
   templateUrl: './app.html',
-  styleUrls: ['./app.scss']
+  styleUrls: ['./app.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   year = new Date().getFullYear();
+
+  currentUser: any = null;
+  isLoggedIn = false;
+  isAdmin = false;
 
   constructor(
     public cartUi: CartUiService,
@@ -31,30 +42,44 @@ export class AppComponent {
     private router: Router
   ) {}
 
+  ngOnInit(): void {
+    this.cargarSesion();
+
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.cargarSesion();
+      });
+
+    window.addEventListener('storage', () => {
+      this.cargarSesion();
+    });
+  }
+
+  cargarSesion(): void {
+    const user = this.auth.getCurrentUser();
+
+    this.currentUser = user;
+    this.isLoggedIn = !!user;
+    this.isAdmin = user?.role === 'admin';
+  }
+
   openCart(): void {
     this.cartUi.open();
   }
 
   get cartCount(): number {
-  return this.cart.items().length;
-}
-
-get currentUser() {
-  return this.auth.getCurrentUser();
-}
-
-get isLoggedIn(): boolean {
-  return this.auth.isLoggedIn();
-}
-
-get isAdmin(): boolean {
-  return this.auth.isAdmin();
-}
+    return this.cart.items().length;
+  }
 
   logout(): void {
     const url = this.router.url;
 
     this.auth.logout();
+
+    this.currentUser = null;
+    this.isLoggedIn = false;
+    this.isAdmin = false;
 
     if (url.startsWith('/admin')) {
       this.router.navigate(['/admin-login']);
