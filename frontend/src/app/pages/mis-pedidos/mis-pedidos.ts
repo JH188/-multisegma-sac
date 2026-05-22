@@ -24,27 +24,58 @@ export class MisPedidosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.user = this.auth.getCurrentUser();
+    this.cargarUsuarioYPedidos();
+  }
 
-    if (!this.user?.email) {
+  cargarUsuarioYPedidos(): void {
+    this.loading = true;
+    this.error = '';
+
+    const currentUser = this.auth.getCurrentUser();
+
+    if (!currentUser || !currentUser.email) {
+      this.user = null;
+      this.pedidos = [];
       this.loading = false;
       this.error = 'Debes iniciar sesión para ver tus pedidos.';
       return;
     }
 
+    this.user = {
+      ...currentUser,
+      email: String(currentUser.email).trim().toLowerCase(),
+    };
+
     this.cargarPedidos();
   }
 
   cargarPedidos(): void {
+    if (!this.user?.email) {
+      this.loading = false;
+      this.error = 'No se encontró el correo del usuario.';
+      return;
+    }
+
     this.loading = true;
     this.error = '';
 
-    this.orderService.getByCustomerEmail(this.user.email).subscribe({
+    const email = String(this.user.email).trim().toLowerCase();
+
+    this.orderService.getByCustomerEmail(email).subscribe({
       next: (res) => {
-        this.pedidos = res || [];
+        const data = res || [];
+
+        this.pedidos = data.sort((a: any, b: any) => {
+          const fechaA = new Date(a.createdAt || a.fecha || 0).getTime();
+          const fechaB = new Date(b.createdAt || b.fecha || 0).getTime();
+          return fechaB - fechaA;
+        });
+
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error cargando pedidos del usuario:', err);
+        this.pedidos = [];
         this.error = 'No se pudieron cargar tus pedidos.';
         this.loading = false;
       },
@@ -57,6 +88,7 @@ export class MisPedidosComponent implements OnInit {
     if (estado === 'CONFIRMADO') return 'confirmado';
     if (estado === 'CANCELADO') return 'cancelado';
     if (estado === 'EN PROCESO') return 'proceso';
+
     return 'pendiente';
   }
 

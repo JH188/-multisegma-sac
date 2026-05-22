@@ -36,8 +36,20 @@ export class AppComponent {
   }
 
   get cartCount(): number {
-    return this.cart.items().length;
-  }
+  return this.cart.items().length;
+}
+
+get currentUser() {
+  return this.auth.getCurrentUser();
+}
+
+get isLoggedIn(): boolean {
+  return this.auth.isLoggedIn();
+}
+
+get isAdmin(): boolean {
+  return this.auth.isAdmin();
+}
 
   logout(): void {
     const url = this.router.url;

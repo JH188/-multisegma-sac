@@ -14,6 +14,7 @@ type AdminSection =
   | "products"
   | "orders"
   | "users"
+  | "contacts"
   | "charts"
   | "files"
   | "security"

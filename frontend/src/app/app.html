@@ -32,40 +32,53 @@
 
     <!-- Acciones derecha -->
     <div class="nav-actions">
-      <div class="welcome-user" *ngIf="auth.isLoggedIn() && !auth.isAdmin()">
-        Bienvenido, {{ auth.getUserName() }}
-      </div>
-      <!-- Carrito solo en la tienda, no en login/registro/admin -->
-      <button
-        *ngIf="!isPublicFormRoute()"
-        class="cart-button"
-        type="button"
-        (click)="openCart()"
-      >
-        <span>Carrito</span>
+      <ng-container *ngIf="isLoggedIn && currentUser; else usuarioInvitado">
+        <div class="welcome-user" *ngIf="!isAdmin">
+          Bienvenido, {{ currentUser.name }}
+        </div>
 
-        <span class="cart-badge" *ngIf="cartCount > 0"> {{ cartCount }} </span>
-      </button>
+        <button
+          *ngIf="!isPublicFormRoute()"
+          class="cart-button"
+          type="button"
+          (click)="openCart()"
+        >
+          <span>Carrito</span>
+          <span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+        </button>
 
-      <!-- Ver pedido solo si no estás en login/registro/admin -->
-      <a
-        *ngIf="!isPublicFormRoute()"
-        class="order-link"
-        routerLink="/mis-pedidos"
-      >
-        Ver pedido
-      </a>
-      <!-- Botón login / salir -->
-      <button
-        *ngIf="auth.isLoggedIn(); else loginButton"
-        class="btn-logout"
-        type="button"
-        (click)="logout()"
-      >
-        Salir
-      </button>
+        <a
+          *ngIf="!isPublicFormRoute()"
+          class="order-link"
+          routerLink="/mis-pedidos"
+        >
+          Ver pedido
+        </a>
 
-      <ng-template #loginButton>
+        <button class="btn-logout" type="button" (click)="logout()">
+          Salir
+        </button>
+      </ng-container>
+
+      <ng-template #usuarioInvitado>
+        <button
+          *ngIf="!isPublicFormRoute()"
+          class="cart-button"
+          type="button"
+          (click)="openCart()"
+        >
+          <span>Carrito</span>
+          <span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+        </button>
+
+        <a
+          *ngIf="!isPublicFormRoute()"
+          class="order-link"
+          routerLink="/mis-pedidos"
+        >
+          Ver pedido
+        </a>
+
         <a *ngIf="!isAuthRoute()" class="btn-login" routerLink="/auth">
           Ingresar
         </a>

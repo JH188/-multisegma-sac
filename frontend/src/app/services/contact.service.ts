@@ -22,15 +22,15 @@ export interface ContactResponse {
 
 @Injectable({ providedIn: 'root' })
 export class ContactService {
-  private base = '/api';
+  private base = 'https://multisegma-sac-production.up.railway.app/api/contacts';
 
   constructor(private http: HttpClient) {}
 
   createContact(payload: ContactRequest): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.base}/contacts`, payload);
+    return this.http.post<{ message: string }>(this.base, payload);
   }
 
   listContacts(): Observable<ContactResponse[]> {
-    return this.http.get<ContactResponse[]>(`${this.base}/contacts`);
+    return this.http.get<ContactResponse[]>(this.base);
   }
 }
