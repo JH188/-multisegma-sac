@@ -38,6 +38,14 @@ export class CheckoutComponent implements OnInit {
     direccion: '',
     referencia: ''
   };
+  // Datos para boleta / factura
+datosComprobante = {
+  tipoComprobante: 'BOLETA',
+  clienteTipoDocumento: 'DNI',
+  clienteDocumento: '',
+  clienteRazonSocial: '',
+  clienteDireccionFiscal: ''
+};
 
   // Método de pago (solo Yape en este flujo)
   metodoPago: 'Yape' | 'Transferencia' | 'Tarjeta' | '' = '';
@@ -89,13 +97,14 @@ export class CheckoutComponent implements OnInit {
   // Guardar en localStorage
   private saveState(): void {
     const state = {
-      paso: this.paso,
-      datosCliente: this.datosCliente,
-      datosEnvio: this.datosEnvio,
-      metodoPago: this.metodoPago,
-      wallet: this.wallet,
-      billeteraSeleccionada: this.billeteraSeleccionada
-    };
+  paso: this.paso,
+  datosCliente: this.datosCliente,
+  datosEnvio: this.datosEnvio,
+  datosComprobante: this.datosComprobante,
+  metodoPago: this.metodoPago,
+  wallet: this.wallet,
+  billeteraSeleccionada: this.billeteraSeleccionada
+};
 
     try {
       localStorage.setItem(this.CHECKOUT_STATE_KEY, JSON.stringify(state));
@@ -115,6 +124,7 @@ export class CheckoutComponent implements OnInit {
       this.datosCliente = state.datosCliente ?? this.datosCliente;
       this.datosEnvio   = state.datosEnvio   ?? this.datosEnvio;
       this.metodoPago   = state.metodoPago   ?? '';
+      this.datosComprobante = state.datosComprobante ?? this.datosComprobante;
       this.wallet       = state.wallet       ?? this.wallet;
       this.billeteraSeleccionada = state.billeteraSeleccionada ?? null;
 
@@ -268,6 +278,17 @@ const body = {
   distrito: this.datosEnvio.distrito || '',
   direccion: this.datosEnvio.direccion || '',
   referencia: this.datosEnvio.referencia || '',
+  tipoComprobante: this.datosComprobante.tipoComprobante,
+clienteTipoDocumento: this.datosComprobante.clienteTipoDocumento,
+clienteDocumento: this.datosComprobante.clienteDocumento,
+clienteRazonSocial:
+  this.datosComprobante.tipoComprobante === 'FACTURA'
+    ? this.datosComprobante.clienteRazonSocial
+    : this.datosCliente.nombre,
+clienteDireccionFiscal:
+  this.datosComprobante.tipoComprobante === 'FACTURA'
+    ? this.datosComprobante.clienteDireccionFiscal
+    : this.datosEnvio.direccion,
 
   paymentMethod: `${this.metodoPago} - ${this.billeteraSeleccionada}`,
   total: totalActual,

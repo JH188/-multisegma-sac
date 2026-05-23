@@ -113,6 +113,84 @@
             />
           </div>
         </section>
+        <!-- Comprobante de venta -->
+        <section class="checkout-section">
+          <h2>Comprobante de venta</h2>
+          <p class="section-help">
+            Elige si deseas boleta o factura. Estos datos aparecerán en tu
+            comprobante.
+          </p>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="tipoComprobante">Tipo de comprobante</label>
+              <select
+                id="tipoComprobante"
+                name="tipoComprobante"
+                [(ngModel)]="datosComprobante.tipoComprobante"
+                required
+              >
+                <option value="BOLETA">Boleta</option>
+                <option value="FACTURA">Factura</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="clienteTipoDocumento">Tipo de documento</label>
+              <select
+                id="clienteTipoDocumento"
+                name="clienteTipoDocumento"
+                [(ngModel)]="datosComprobante.clienteTipoDocumento"
+                required
+              >
+                <option value="DNI">DNI</option>
+                <option value="RUC">RUC</option>
+                <option value="CE">Carné de extranjería</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="clienteDocumento">
+                {{ datosComprobante.clienteTipoDocumento === 'RUC' ? 'Número de
+                RUC' : 'Número de documento' }}
+              </label>
+              <input
+                id="clienteDocumento"
+                type="text"
+                name="clienteDocumento"
+                [(ngModel)]="datosComprobante.clienteDocumento"
+                required
+                placeholder="Ej. 12345678"
+              />
+            </div>
+          </div>
+
+          <div *ngIf="datosComprobante.tipoComprobante === 'FACTURA'">
+            <div class="form-group">
+              <label for="clienteRazonSocial">Razón social</label>
+              <input
+                id="clienteRazonSocial"
+                type="text"
+                name="clienteRazonSocial"
+                [(ngModel)]="datosComprobante.clienteRazonSocial"
+                required
+                placeholder="Ej. Empresa S.A.C."
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="clienteDireccionFiscal">Dirección fiscal</label>
+              <input
+                id="clienteDireccionFiscal"
+                type="text"
+                name="clienteDireccionFiscal"
+                [(ngModel)]="datosComprobante.clienteDireccionFiscal"
+                required
+                placeholder="Dirección registrada en SUNAT"
+              />
+            </div>
+          </div>
+        </section>
 
         <!-- Opciones de pago -->
         <section class="checkout-section">
@@ -322,7 +400,11 @@
           </div>
 
           <div class="qr-actions">
-            <button type="button" class="btn-secondary" (click)="cancelarPago()">
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="cancelarPago()"
+            >
               Cancelar compra
             </button>
 
@@ -408,7 +490,11 @@
           </div>
 
           <div class="qr-actions">
-            <button type="button" class="btn-secondary" (click)="cancelarPago()">
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="cancelarPago()"
+            >
               Cancelar compra
             </button>
 
@@ -498,8 +584,8 @@
         <div class="summary-info">
           <strong>{{ it.name || it.nombre }}</strong>
           <div class="summary-qty">
-            Cant. {{ it.qty }} · S/
-            {{ (it.price || it.precio) | number:'1.2-2' }}
+            Cant. {{ it.qty }} · S/ {{ (it.price || it.precio) | number:'1.2-2'
+            }}
           </div>
         </div>
 
