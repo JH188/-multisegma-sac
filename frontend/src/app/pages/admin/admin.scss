@@ -7565,3 +7565,105 @@ tbody tr:last-child td {
     overflow: hidden !important;
   }
 }
+/* ============================================================
+   PEDIDOS EN TARJETAS PARA CELULAR - MULTISEGMA ADMIN
+============================================================ */
+
+.mobile-orders-list {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* En móvil ocultamos tablas grandes de pedidos */
+  .recent-orders-card .table-wrapper,
+  .orders-main .professional-table {
+    display: none !important;
+  }
+
+  .mobile-orders-list {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 16px;
+  }
+
+  .mobile-order-card {
+    width: 100%;
+    max-width: 100%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  }
+
+  .mobile-order-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .mobile-order-top strong {
+    font-size: 17px;
+    color: #020617;
+  }
+
+  .mobile-order-card p {
+    margin: 7px 0;
+    font-size: 14px !important;
+    color: #475569;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+
+  .mobile-order-card p b {
+    color: #0f172a;
+  }
+
+  .mobile-order-total {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 14px;
+    background: #f1f5f9;
+    font-size: 20px;
+    font-weight: 950;
+    color: #020617;
+    text-align: center;
+  }
+
+  .mobile-order-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .mobile-order-btn {
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 14px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  .mobile-order-btn.secondary {
+    background: #0f172a;
+  }
+
+  /* Que el contenido no quede tapado por el menú inferior */
+  .admin-content {
+    padding-bottom: 130px !important;
+  }
+
+  .dashboard-card,
+  .admin-panel-card {
+    overflow: hidden !important;
+  }
+}

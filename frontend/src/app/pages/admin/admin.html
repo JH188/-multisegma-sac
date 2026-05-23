@@ -25,8 +25,8 @@
   <button class="mobile-bell-btn" type="button" (click)="toggleNotifications()">
     🔔
     <span *ngIf="unreadNotificationsCount > 0">
-  {{ unreadNotificationsCount }}
-</span>
+      {{ unreadNotificationsCount }}
+    </span>
   </button>
 </header>
 <div class="admin-layout">
@@ -117,10 +117,15 @@
 
       <button
         type="button"
-        [class.active]="activeSection === 'settings'"
+        [class.active]="
+    activeSection === 'settings' ||
+    activeSection === 'files' ||
+    activeSection === 'security'
+  "
         (click)="setSection('settings')"
       >
-        ⚙️ Configuración
+        <span>⚙️</span>
+        <small>Más</small>
       </button>
     </nav>
 
@@ -501,6 +506,33 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+          <!-- PEDIDOS RECIENTES EN MÓVIL -->
+          <div class="mobile-orders-list">
+            <article class="mobile-order-card" *ngFor="let o of recentOrders">
+              <div class="mobile-order-top">
+                <strong>Pedido #{{ o.id }}</strong>
+                <span class="badge" [ngClass]="statusClass(getOrderStatus(o))">
+                  {{ getOrderStatus(o) }}
+                </span>
+              </div>
+
+              <p><b>Cliente:</b> {{ getOrderClient(o) }}</p>
+              <p><b>Pago:</b> {{ getOrderPayment(o) }}</p>
+              <p><b>Fecha:</b> {{ formatDate(getOrderDate(o)) }}</p>
+
+              <div class="mobile-order-total">
+                S/ {{ o.total | number:'1.2-2' }}
+              </div>
+
+              <button
+                type="button"
+                class="mobile-order-btn"
+                (click)="setSection('orders'); openOrderDetail(o)"
+              >
+                Ver pedido
+              </button>
+            </article>
           </div>
         </article>
 
@@ -1338,6 +1370,52 @@
                   </tr>
                 </tbody>
               </table>
+            </div>
+            <!-- PEDIDOS REGISTRADOS EN MÓVIL -->
+            <div class="mobile-orders-list">
+              <article
+                class="mobile-order-card"
+                *ngFor="let o of filteredOrders"
+              >
+                <div class="mobile-order-top">
+                  <strong>Pedido #{{ o.id }}</strong>
+                  <span
+                    class="badge"
+                    [ngClass]="statusClass(getOrderStatus(o))"
+                  >
+                    {{ getOrderStatus(o) }}
+                  </span>
+                </div>
+
+                <p><b>Cliente:</b> {{ getOrderClient(o) }}</p>
+                <p><b>Correo:</b> {{ getOrderEmail(o) }}</p>
+                <p><b>Teléfono:</b> {{ getOrderPhone(o) }}</p>
+                <p><b>Pago:</b> {{ getOrderPayment(o) }}</p>
+                <p><b>Fecha:</b> {{ formatOnlyDate(getOrderDate(o)) }}</p>
+                <p><b>Hora:</b> {{ formatOnlyTime(getOrderDate(o)) }}</p>
+
+                <div class="mobile-order-total">
+                  S/ {{ o.total | number:'1.2-2' }}
+                </div>
+
+                <div class="mobile-order-actions">
+                  <button
+                    type="button"
+                    class="mobile-order-btn"
+                    (click)="openOrderDetail(o)"
+                  >
+                    Ver detalle
+                  </button>
+
+                  <button
+                    type="button"
+                    class="mobile-order-btn secondary"
+                    (click)="markEditing(o)"
+                  >
+                    Editar
+                  </button>
+                </div>
+              </article>
             </div>
 
             <p class="empty" *ngIf="filteredOrders.length === 0">
@@ -3782,7 +3860,7 @@
   <button
     type="button"
     [class.active]="activeSection === 'dashboard'"
-    (click)="setSection('dashboard')"
+    (click)="setSection('settings')"
   >
     <span>🏠</span>
     <small>Panel</small>
