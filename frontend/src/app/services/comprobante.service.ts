@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export type TipoComprobante = 'BOLETA' | 'FACTURA';
+
 export interface Comprobante {
   id?: number;
   orderId: number;
 
-  tipoComprobante: 'BOLETA' | 'FACTURA';
+  tipoComprobante: TipoComprobante;
   serie: string;
   numero: number;
   numeroCompleto: string;
@@ -48,7 +50,15 @@ export class ComprobanteService {
     return this.http.get<Comprobante[]>(`${this.apiUrl}/order/${orderId}`);
   }
 
+  buscarPorPedido(orderId: number): Observable<Comprobante[]> {
+    return this.listarPorPedido(orderId);
+  }
+
   crear(comprobante: Comprobante): Observable<Comprobante> {
     return this.http.post<Comprobante>(this.apiUrl, comprobante);
+  }
+
+  generar(comprobante: Comprobante): Observable<Comprobante> {
+    return this.crear(comprobante);
   }
 }

@@ -8,6 +8,7 @@ import { ContactService } from "../../services/contact.service";
 import { AuthService } from "../../services/auth.service";
 import { OrderService } from "../../services/order.service";
 import { ProductService } from "../../services/product.service";
+import { ComprobanteService, TipoComprobante } from "../../services/comprobante.service";
 
 type AdminSection =
   | "dashboard"
@@ -106,6 +107,9 @@ export class AdminComponent implements OnInit {
   orders: any[] = [];
   selectedOrder: any | null = null;
   savingEstado = false;
+  comprobanteActual: any | null = null;
+loadingComprobante = false;
+generandoComprobante = false;
 
   totalOrders = 0;
   totalRevenue = 0;
@@ -352,12 +356,13 @@ export class AdminComponent implements OnInit {
   notificationsRead = false;
 
   constructor(
-    private contactApi: ContactService,
-    private auth: AuthService,
-    private router: Router,
-    private orderApi: OrderService,
-    private productApi: ProductService,
-  ) {}
+  private contactApi: ContactService,
+  private auth: AuthService,
+  private router: Router,
+  private orderApi: OrderService,
+  private productApi: ProductService,
+  private comprobanteApi: ComprobanteService,
+) {}
 
   ngOnInit(): void {
     this.loadSettingsFromStorage();
@@ -1079,8 +1084,13 @@ refreshAdminData(): void {
   }
 
   openOrderDetail(order: any): void {
-    this.selectedOrder = { ...order };
+  this.selectedOrder = { ...order };
+  this.comprobanteActual = null;
+
+  if (order?.id) {
+    this.cargarComprobanteDelPedido(order.id);
   }
+}
 
   closeOrderDetail(): void {
     this.selectedOrder = null;
@@ -2934,7 +2944,357 @@ downloadOrderPdf(order: any): void {
   exportDashboardReport(): void {
     this.exportReports();
   }
+cargarComprobanteDelPedido(orderId: number): void {
+  this.loadingComprobante = true;
 
+  this.comprobanteApi.buscarPorPedido(orderId).subscribe({
+    next: (data: any) => {
+      if (Array.isArray(data)) {
+        this.comprobanteActual = data.length > 0 ? data[0] : null;
+      } else {
+        this.comprobanteActual = data || null;
+      }
+
+      this.loadingComprobante = false;
+    },
+    error: () => {
+      this.comprobanteActual = null;
+      this.loadingComprobante = false;
+    },
+  });
+}
+
+generarComprobante(tipo: TipoComprobante): void {
+  if (!this.selectedOrder) {
+    alert('Primero selecciona un pedido.');
+    return;
+  }
+
+  const total = Number(this.selectedOrder.total || 0);
+
+  if (total <= 0) {
+    alert('El pedido no tiene total válido.');
+    return;
+  }
+
+  const subtotal = Number((total / 1.18).toFixed(2));
+  const igv = Number((total - subtotal).toFixed(2));
+
+  const clienteNombre = this.getOrderClient(this.selectedOrder);
+  const clienteCorreo = this.getOrderEmail(this.selectedOrder);
+  const serie = tipo === 'FACTURA' ? 'F001' : 'B001';
+const numero = Math.floor(Date.now() / 1000);
+const numeroCompleto = `${serie}-${String(numero).padStart(8, '0')}`;
+
+const data = {
+  orderId: this.selectedOrder.id,
+  tipoComprobante: tipo,
+
+  serie: serie,
+  numero: numero,
+  numeroCompleto: numeroCompleto,
+
+  empresaRuc: '20547112394',
+  empresaRazonSocial: 'MULTISEGMA S.A.C.',
+  empresaDireccion: 'AV. URUGUAY NRO. 320 INT. 101 LIMA - LIMA - LIMA',
+
+  clienteTipoDocumento: tipo === 'FACTURA' ? 'RUC' : 'DNI',
+  clienteDocumento:
+    this.selectedOrder.numeroDocumento ||
+    this.selectedOrder.documento ||
+    this.selectedOrder.dni ||
+    '00000000',
+
+  clienteNombre: clienteNombre,
+  clienteDireccion:
+    this.selectedOrder.direccion ||
+    this.selectedOrder.address ||
+    'No registrado',
+
+  clienteCorreo: clienteCorreo,
+
+  subtotal: subtotal,
+  igv: igv,
+  total: total,
+
+  estado: 'EMITIDA',
+};
+
+  this.generandoComprobante = true;
+
+  this.comprobanteApi.generar(data).subscribe({
+    next: (resp: any) => {
+      this.comprobanteActual = resp;
+      this.generandoComprobante = false;
+      this.addLog(`${tipo} generada para el pedido #${this.selectedOrder.id}`);
+      alert(`${tipo} generada correctamente.`);
+    },
+    error: (err) => {
+      console.error('Error generando comprobante:', err);
+      this.generandoComprobante = false;
+      alert('No se pudo generar el comprobante. Revisa backend o consola.');
+    },
+  });
+}
+
+verComprobante(): void {
+  if (!this.comprobanteActual) {
+    alert('Primero genera una boleta o factura.');
+    return;
+  }
+
+  this.abrirComprobante(false);
+}
+
+descargarComprobantePDF(): void {
+  if (!this.comprobanteActual) {
+    alert('Primero genera una boleta o factura.');
+    return;
+  }
+
+  this.abrirComprobante(true);
+}
+
+private abrirComprobante(imprimir: boolean): void {
+  const c = this.comprobanteActual;
+  const order = this.selectedOrder;
+
+  const detalle = this.getOrderDetailText(order);
+  const fecha = c.fechaEmision || c.createdAt || new Date().toISOString();
+
+  const html = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>${c.tipoComprobante} ${c.numeroCompleto}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      padding: 30px;
+      color: #111827;
+    }
+
+    .comprobante {
+      max-width: 850px;
+      margin: auto;
+      background: white;
+      border-radius: 18px;
+      padding: 32px;
+      border: 1px solid #dbe3ef;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+
+    .empresa h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .empresa p {
+      margin: 6px 0;
+      color: #475569;
+    }
+
+    .numero {
+      border: 2px solid #0f172a;
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      min-width: 260px;
+    }
+
+    .numero h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    .numero strong {
+      font-size: 20px;
+    }
+
+    .section {
+      margin-top: 22px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .section h3 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .item span {
+      display: block;
+      color: #64748b;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .item strong {
+      font-size: 15px;
+    }
+
+    .detalle {
+      white-space: pre-wrap;
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .totales {
+      margin-left: auto;
+      width: 320px;
+      margin-top: 20px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .totales div {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .totales div:last-child {
+      border-bottom: 0;
+      background: #0f172a;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 28px;
+      text-align: center;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+
+      .comprobante {
+        box-shadow: none;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="comprobante">
+    <div class="header">
+      <div class="empresa">
+        <h1>${c.empresaRazonSocial}</h1>
+        <p><strong>RUC:</strong> ${c.empresaRuc}</p>
+        <p>${c.empresaDireccion}</p>
+      </div>
+
+      <div class="numero">
+        <h2>${c.tipoComprobante}</h2>
+        <strong>${c.numeroCompleto}</strong>
+        <p>Fecha: ${this.formatOnlyDate(fecha)} ${this.formatOnlyTime(fecha)}</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Datos del cliente</h3>
+      <div class="grid">
+        <div class="item">
+          <span>Cliente</span>
+          <strong>${c.clienteNombre || '-'}</strong>
+        </div>
+
+        <div class="item">
+          <span>Documento</span>
+          <strong>${c.clienteTipoDocumento || '-'} ${c.clienteDocumento || '-'}</strong>
+        </div>
+
+        <div class="item">
+          <span>Correo</span>
+          <strong>${c.clienteCorreo || '-'}</strong>
+        </div>
+
+        <div class="item">
+          <span>Dirección</span>
+          <strong>${c.clienteDireccion || '-'}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Detalle del pedido</h3>
+      <div class="detalle">${detalle}</div>
+    </div>
+
+    <div class="totales">
+      <div>
+        <span>Subtotal</span>
+        <strong>S/ ${Number(c.subtotal || 0).toFixed(2)}</strong>
+      </div>
+
+      <div>
+        <span>IGV 18%</span>
+        <strong>S/ ${Number(c.igv || 0).toFixed(2)}</strong>
+      </div>
+
+      <div>
+        <span>Total</span>
+        <strong>S/ ${Number(c.total || 0).toFixed(2)}</strong>
+      </div>
+    </div>
+
+    <div class="footer">
+      Comprobante generado desde el sistema administrativo de MULTISEGMA S.A.C.
+    </div>
+  </div>
+
+  ${
+    imprimir
+      ? `<script>
+          window.onload = function() {
+            window.print();
+          };
+        </script>`
+      : ''
+  }
+</body>
+</html>
+`;
+
+  const win = window.open('', '_blank', 'width=900,height=700');
+
+  if (!win) {
+    alert('El navegador bloqueó la ventana emergente. Permite pop-ups.');
+    return;
+  }
+
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+}
   // ================================
   // SALIR
   // ================================

@@ -1592,6 +1592,84 @@
               Descargar PDF
             </button>
           </div>
+          <div class="detail-section voucher-box">
+            <h3>Comprobante de venta</h3>
+
+            <p>
+              Aquí puedes generar la boleta o factura del pedido confirmado.
+            </p>
+
+            <div *ngIf="loadingComprobante">Cargando comprobante...</div>
+
+            <div *ngIf="comprobanteActual" class="comprobante-info">
+              <div class="detail-row">
+                <span>Tipo</span>
+                <strong>{{ comprobanteActual.tipoComprobante }}</strong>
+              </div>
+
+              <div class="detail-row">
+                <span>Número</span>
+                <strong>{{ comprobanteActual.numeroCompleto }}</strong>
+              </div>
+
+              <div class="detail-row">
+                <span>Subtotal</span>
+                <strong
+                  >S/ {{ comprobanteActual.subtotal | number:'1.2-2' }}</strong
+                >
+              </div>
+
+              <div class="detail-row">
+                <span>IGV</span>
+                <strong>S/ {{ comprobanteActual.igv | number:'1.2-2' }}</strong>
+              </div>
+
+              <div class="detail-row">
+                <span>Total</span>
+                <strong
+                  >S/ {{ comprobanteActual.total | number:'1.2-2' }}</strong
+                >
+              </div>
+            </div>
+
+            <div class="voucher-actions">
+              <button
+                type="button"
+                class="btn-voucher"
+                (click)="generarComprobante('BOLETA')"
+                [disabled]="generandoComprobante"
+              >
+                Generar boleta
+              </button>
+
+              <button
+                type="button"
+                class="btn-voucher"
+                (click)="generarComprobante('FACTURA')"
+                [disabled]="generandoComprobante"
+              >
+                Generar factura
+              </button>
+
+              <button
+                type="button"
+                class="btn-voucher"
+                (click)="verComprobante()"
+                [disabled]="!comprobanteActual"
+              >
+                Ver comprobante
+              </button>
+
+              <button
+                type="button"
+                class="btn-voucher"
+                (click)="descargarComprobantePDF()"
+                [disabled]="!comprobanteActual"
+              >
+                Descargar PDF
+              </button>
+            </div>
+          </div>
 
           <div class="detail-section">
             <h3>Cambiar estado</h3>
