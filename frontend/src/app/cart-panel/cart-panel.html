@@ -113,6 +113,7 @@
           <select
             [(ngModel)]="datosEnvio.tipoComprobante"
             name="tipoComprobante"
+            (ngModelChange)="cambiarTipoComprobante($event)"
           >
             <option value="BOLETA">Boleta</option>
             <option value="FACTURA">Factura</option>

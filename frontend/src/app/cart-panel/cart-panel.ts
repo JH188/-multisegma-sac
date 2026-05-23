@@ -72,6 +72,21 @@ export class CartPanelComponent {
   selectPayment(m: string): void {
     this.metodoPago = m as any;
   }
+  cambiarTipoComprobante(tipo: string): void {
+  this.datosEnvio.tipoComprobante = tipo;
+
+  if (tipo === 'BOLETA') {
+    this.datosEnvio.clienteTipoDocumento = 'DNI';
+    this.datosEnvio.clienteRazonSocial = '';
+    this.datosEnvio.clienteDireccionFiscal = '';
+  }
+
+  if (tipo === 'FACTURA') {
+    this.datosEnvio.clienteTipoDocumento = 'RUC';
+  }
+
+  this.datosEnvio.clienteDocumento = '';
+}
 
   // Botón para ir a página checkout
   irACheckout(): void {

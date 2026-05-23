@@ -287,30 +287,37 @@ export class CartService {
   // POST /api/orders
   // ============================================================
 
-  checkout(data: CheckoutData): Observable<any> {
-    const payload = {
-      customerName: data.customerName,
-      customerEmail: data.customerEmail,
-      customerPhone: data.customerPhone,
+checkout(data: CheckoutData): Observable<any> {
+  const payload = {
+    customerName: data.customerName,
+    customerEmail: data.customerEmail,
+    customerPhone: data.customerPhone,
 
-      departamento: data.departamento,
-      provincia: data.provincia,
-      distrito: data.distrito,
-      direccion: data.direccion,
-      referencia: data.referencia,
+    // Datos de boleta / factura
+    tipoComprobante: data.tipoComprobante,
+    clienteTipoDocumento: data.clienteTipoDocumento,
+    clienteDocumento: data.clienteDocumento,
+    clienteRazonSocial: data.clienteRazonSocial,
+    clienteDireccionFiscal: data.clienteDireccionFiscal,
 
-      paymentMethod: data.paymentMethod,
-      total: this.total(),
+    departamento: data.departamento,
+    provincia: data.provincia,
+    distrito: data.distrito,
+    direccion: data.direccion,
+    referencia: data.referencia,
 
-      items: this.items().map((item) => ({
-        productId: item.productId,
-        nombre: item.name,
-        cantidad: item.qty,
-        precio: item.price,
-        subtotal: item.price * item.qty,
-      })),
-    };
+    paymentMethod: data.paymentMethod,
+    total: this.total(),
 
-    return this.http.post<any>(`${this.base}/orders`, payload);
-  }
+    items: this.items().map((item) => ({
+      productId: item.productId,
+      nombre: item.name,
+      cantidad: item.qty,
+      precio: item.price,
+      subtotal: item.price * item.qty,
+    })),
+  };
+
+  return this.http.post<any>(`${this.base}/orders`, payload);
+}
 }
