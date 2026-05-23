@@ -76,30 +76,41 @@ public List<Order> getByCustomerEmail(@PathVariable String email) {
                 .map(i -> i.getNombre() + " x" + i.getCantidad() + " - S/ " + i.getPrecio())
                 .collect(Collectors.joining("\n"));
 
-        Order order = new Order();
+       Order order = new Order();
 
-        order.setCustomerName(dto.getCustomerName());
-        order.setCustomerEmail(dto.getCustomerEmail());
-        order.setCustomerPhone(dto.getCustomerPhone());
+order.setCustomerName(dto.getCustomerName());
+order.setCustomerEmail(dto.getCustomerEmail());
+order.setCustomerPhone(dto.getCustomerPhone());
 
-        order.setDepartamento(dto.getDepartamento());
-        order.setProvincia(dto.getProvincia());
-        order.setDistrito(dto.getDistrito());
-        order.setDireccion(dto.getDireccion());
-        order.setReferencia(dto.getReferencia());
-        // Datos para boleta / factura
+// Datos de boleta / factura
 order.setTipoComprobante(
-        dto.getTipoComprobante() != null ? dto.getTipoComprobante() : "SIN_COMPROBANTE"
+        dto.getTipoComprobante() != null && !dto.getTipoComprobante().isBlank()
+                ? dto.getTipoComprobante()
+                : "SIN_COMPROBANTE"
 );
-order.setClienteTipoDocumento(dto.getClienteTipoDocumento());
+
+order.setClienteTipoDocumento(
+        dto.getClienteTipoDocumento() != null && !dto.getClienteTipoDocumento().isBlank()
+                ? dto.getClienteTipoDocumento()
+                : null
+);
+
 order.setClienteDocumento(dto.getClienteDocumento());
 order.setClienteRazonSocial(dto.getClienteRazonSocial());
 order.setClienteDireccionFiscal(dto.getClienteDireccionFiscal());
 
-        order.setPaymentMethod(dto.getPaymentMethod());
-        order.setTotal(dto.getTotal());
-        order.setDetail(detail);
-        order.setStatus("PENDIENTE");
+// Dirección de entrega
+order.setDepartamento(dto.getDepartamento());
+order.setProvincia(dto.getProvincia());
+order.setDistrito(dto.getDistrito());
+order.setDireccion(dto.getDireccion());
+order.setReferencia(dto.getReferencia());
+
+// Pago
+order.setPaymentMethod(dto.getPaymentMethod());
+order.setTotal(dto.getTotal());
+order.setDetail(detail);
+order.setStatus("PENDIENTE");
 
         // 1. Guardamos el pedido principal
         Order savedOrder = orderRepository.save(order);
