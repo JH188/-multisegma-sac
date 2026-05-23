@@ -6490,3 +6490,198 @@ tbody tr:last-child td {
   object-fit: contain;
   display: block;
 }
+/* ============================= */
+/* RESPONSIVE ADMIN - CELULAR */
+/* ============================= */
+
+@media (max-width: 768px) {
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .admin-layout,
+  .admin-container,
+  .admin-page,
+  .dashboard,
+  .admin-content {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .admin-sidebar,
+  .sidebar {
+    width: 100%;
+    max-width: 100%;
+    min-height: auto;
+    position: relative;
+    padding: 22px 18px;
+  }
+
+  .admin-main,
+  .main-content,
+  .content {
+    width: 100%;
+    max-width: 100%;
+    padding: 22px 16px;
+  }
+
+  .admin-brand,
+  .brand,
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .admin-brand img,
+  .brand img,
+  .sidebar-header img {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+  }
+
+  .admin-brand h1,
+  .brand h1,
+  .sidebar-header h1 {
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  .admin-brand p,
+  .brand p,
+  .sidebar-header p {
+    font-size: 15px;
+  }
+
+  .menu,
+  .admin-menu,
+  .sidebar-menu {
+    margin-top: 22px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .menu a,
+  .admin-menu a,
+  .sidebar-menu a,
+  .menu button,
+  .admin-menu button,
+  .sidebar-menu button {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    border-radius: 16px;
+  }
+
+  .admin-user,
+  .user-card,
+  .profile-card {
+    margin-top: 20px;
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .logout,
+  .btn-logout,
+  .salir {
+    width: 100%;
+    padding: 14px;
+    border-radius: 18px;
+    margin-top: 14px;
+  }
+
+  h1 {
+    font-size: 30px;
+    line-height: 1.15;
+  }
+
+  h2 {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-size: 20px;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .cards,
+  .stats,
+  .dashboard-cards,
+  .summary-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .card,
+  .admin-card,
+  .stat-card,
+  .panel-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .filters,
+  .filter-card,
+  .search-card,
+  .range-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    max-width: 100%;
+    font-size: 16px;
+    padding: 14px 16px;
+    border-radius: 14px;
+  }
+
+  .btn,
+  button {
+    font-size: 15px;
+    padding: 13px 16px;
+    border-radius: 14px;
+  }
+
+  .actions,
+  .button-group,
+  .form-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .table-wrapper,
+  .admin-table-wrapper,
+  .orders-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 720px;
+  }
+
+  .order-card,
+  .pedido-card {
+    width: 100%;
+    padding: 18px;
+    border-radius: 20px;
+  }
+}
