@@ -2994,22 +2994,39 @@ const data = {
   numero: numero,
   numeroCompleto: numeroCompleto,
 
-  empresaRuc: '20547112394',
+    empresaRuc: '20547112394',
   empresaRazonSocial: 'MULTISEGMA S.A.C.',
   empresaDireccion: 'AV. URUGUAY NRO. 320 INT. 101 LIMA - LIMA - LIMA',
 
-  clienteTipoDocumento: tipo === 'FACTURA' ? 'RUC' : 'DNI',
+  clienteTipoDocumento:
+    this.selectedOrder.clienteTipoDocumento ||
+    (tipo === 'FACTURA' ? 'RUC' : 'DNI'),
+
   clienteDocumento:
+    this.selectedOrder.clienteDocumento ||
     this.selectedOrder.numeroDocumento ||
     this.selectedOrder.documento ||
     this.selectedOrder.dni ||
-    '00000000',
-
-  clienteNombre: clienteNombre,
-  clienteDireccion:
-    this.selectedOrder.direccion ||
-    this.selectedOrder.address ||
     'No registrado',
+
+  clienteNombre:
+    tipo === 'FACTURA'
+      ? (this.selectedOrder.clienteRazonSocial || clienteNombre)
+      : clienteNombre,
+
+  clienteDireccion:
+    tipo === 'FACTURA'
+      ? (
+          this.selectedOrder.clienteDireccionFiscal ||
+          this.selectedOrder.direccion ||
+          this.selectedOrder.address ||
+          'No registrado'
+        )
+      : (
+          this.selectedOrder.direccion ||
+          this.selectedOrder.address ||
+          'No registrado'
+        ),
 
   clienteCorreo: clienteCorreo,
 
