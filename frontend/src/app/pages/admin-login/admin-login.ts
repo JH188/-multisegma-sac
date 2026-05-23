@@ -33,7 +33,7 @@ export class AdminLoginComponent {
     }
 
     if (!this.auth.isAdmin()) {
-      this.auth.logout();
+      this.auth.logoutAdmin();
       this.error = 'Esta cuenta no tiene permisos de administrador.';
       return;
     }
