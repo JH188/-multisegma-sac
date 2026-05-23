@@ -24,6 +24,16 @@ export class AuthService {
     role: 'admin',
     createdAt: new Date().toISOString(),
   };
+  private toSafeUser(user: any): Omit<User, 'password'> {
+  const normalized = this.normalizeUser(user);
+
+  return {
+    name: normalized.name,
+    email: normalized.email,
+    role: normalized.role,
+    createdAt: normalized.createdAt,
+  };
+}
 
   private normalizeUser(user: any): User {
     return {
@@ -111,9 +121,9 @@ export class AuthService {
 
   return this.http.post<any>(`${this.API_URL}/register`, body).pipe(
     tap((user) => {
-      const normalized = this.normalizeUser(user);
-      localStorage.setItem(this.CURRENT_KEY, JSON.stringify(normalized));
-    }),
+  const safeUser = this.toSafeUser(user);
+  localStorage.setItem(this.CURRENT_KEY, JSON.stringify(safeUser));
+}),
     map(() => true),
     catchError((error) => {
       console.error('Error registrando usuario en backend:', error);
@@ -131,9 +141,9 @@ loginBackend(email: string, password: string): Observable<boolean> {
 
   return this.http.post<any>(`${this.API_URL}/login`, body).pipe(
     tap((user) => {
-      const normalized = this.normalizeUser(user);
-      localStorage.setItem(this.CURRENT_KEY, JSON.stringify(normalized));
-    }),
+  const safeUser = this.toSafeUser(user);
+  localStorage.setItem(this.CURRENT_KEY, JSON.stringify(safeUser));
+}),
     map(() => true),
     catchError((error) => {
       console.error('Error iniciando sesión en backend:', error);
@@ -156,8 +166,8 @@ loginBackend(email: string, password: string): Observable<boolean> {
       return false;
     }
 
-    const normalized = this.normalizeUser(user);
-    localStorage.setItem(this.CURRENT_KEY, JSON.stringify(normalized));
+    const safeUser = this.toSafeUser(user);
+localStorage.setItem(this.CURRENT_KEY, JSON.stringify(safeUser));
 
     return true;
   }
@@ -191,10 +201,11 @@ loginBackend(email: string, password: string): Observable<boolean> {
           })
         : current;
 
-      // Regraba el usuario actual bien formado
-      localStorage.setItem(this.CURRENT_KEY, JSON.stringify(finalUser));
+      // Regraba el usuario actual sin contraseña
+const safeUser = this.toSafeUser(finalUser);
+localStorage.setItem(this.CURRENT_KEY, JSON.stringify(safeUser));
 
-      return finalUser;
+return this.normalizeUser(safeUser);
     } catch {
       localStorage.removeItem(this.CURRENT_KEY);
       return null;
