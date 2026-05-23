@@ -1,3 +1,34 @@
+<!-- ========================= -->
+<!-- HEADER MÓVIL ADMIN -->
+<!-- ========================= -->
+<header class="mobile-admin-header">
+  <button
+    class="mobile-menu-btn"
+    type="button"
+    (click)="setSection('dashboard')"
+  >
+    ☰
+  </button>
+
+  <div class="mobile-admin-brand">
+    <img
+      src="assets/lisume/portal-multisegma.jpeg"
+      alt="Logo MULTISEGMA S.A.C."
+    />
+
+    <div>
+      <h3>MULTISEGMA S.A.C.</h3>
+      <p>Panel administrador</p>
+    </div>
+  </div>
+
+  <button class="mobile-bell-btn" type="button" (click)="toggleNotifications()">
+    🔔
+    <span *ngIf="unreadNotificationsCount > 0">
+  {{ unreadNotificationsCount }}
+</span>
+  </button>
+</header>
 <div class="admin-layout">
   <!-- SIDEBAR -->
   <aside class="admin-sidebar">
@@ -3744,3 +3775,52 @@
     </section>
   </main>
 </div>
+<!-- ========================= -->
+<!-- MENÚ INFERIOR MÓVIL ADMIN -->
+<!-- ========================= -->
+<nav class="mobile-admin-bottom">
+  <button
+    type="button"
+    [class.active]="activeSection === 'dashboard'"
+    (click)="setSection('dashboard')"
+  >
+    <span>🏠</span>
+    <small>Panel</small>
+  </button>
+
+  <button
+    type="button"
+    [class.active]="activeSection === 'orders'"
+    (click)="setSection('orders')"
+  >
+    <span>📦</span>
+    <small>Pedidos</small>
+  </button>
+
+  <button
+    type="button"
+    [class.active]="activeSection === 'users'"
+    (click)="setSection('users')"
+  >
+    <span>👥</span>
+    <small>Clientes</small>
+  </button>
+
+  <button
+    type="button"
+    [class.active]="activeSection === 'charts'"
+    (click)="setSection('charts')"
+  >
+    <span>📈</span>
+    <small>Reportes</small>
+  </button>
+
+  <button
+    type="button"
+    [class.active]="activeSection === 'settings'"
+    (click)="setSection('settings')"
+  >
+    <span>☰</span>
+    <small>Más</small>
+  </button>
+</nav>
