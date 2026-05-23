@@ -6685,3 +6685,245 @@ tbody tr:last-child td {
     border-radius: 20px;
   }
 }
+/* ================================================= */
+/* FIX MOBILE ADMIN MULTISEGMA - MÁS CÓMODO CELULAR */
+/* ================================================= */
+
+@media (max-width: 768px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Layout general */
+  .admin-layout {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Menú lateral convertido en bloque compacto */
+  .admin-sidebar,
+  .sidebar {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    height: auto !important;
+    position: relative !important;
+    padding: 18px 16px !important;
+    border-radius: 0 !important;
+  }
+
+  /* Logo y cabecera del admin más pequeños */
+  .admin-brand,
+  .brand,
+  .sidebar-header {
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .admin-brand img,
+  .brand img,
+  .sidebar-header img {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .admin-brand h1,
+  .brand h1,
+  .sidebar-header h1 {
+    font-size: 20px !important;
+    line-height: 1.1 !important;
+  }
+
+  .admin-brand p,
+  .brand p,
+  .sidebar-header p {
+    font-size: 13px !important;
+  }
+
+  /* Menú más compacto */
+  .menu,
+  .admin-menu,
+  .sidebar-menu {
+    margin-top: 10px !important;
+    gap: 6px !important;
+  }
+
+  .menu a,
+  .admin-menu a,
+  .sidebar-menu a,
+  .menu button,
+  .admin-menu button,
+  .sidebar-menu button {
+    min-height: auto !important;
+    padding: 11px 14px !important;
+    font-size: 15px !important;
+    border-radius: 14px !important;
+  }
+
+  .menu-title,
+  .section-title,
+  .sidebar-title {
+    font-size: 12px !important;
+    margin: 14px 0 8px !important;
+    letter-spacing: 3px !important;
+  }
+
+  /* Tarjeta administrador más pequeña */
+  .admin-user,
+  .user-card,
+  .profile-card {
+    margin-top: 12px !important;
+    padding: 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .admin-user img,
+  .user-card img,
+  .profile-card img {
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  .admin-user h3,
+  .user-card h3,
+  .profile-card h3 {
+    font-size: 16px !important;
+  }
+
+  .admin-user p,
+  .user-card p,
+  .profile-card p {
+    font-size: 13px !important;
+  }
+
+  .logout,
+  .btn-logout,
+  .salir {
+    margin-top: 12px !important;
+    padding: 12px !important;
+    font-size: 15px !important;
+    border-radius: 16px !important;
+  }
+
+  /* Contenido principal */
+  .admin-main,
+  .main-content,
+  .content,
+  .admin-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 22px 16px 90px !important;
+    overflow-x: hidden !important;
+  }
+
+  .admin-main h1,
+  .main-content h1,
+  .content h1,
+  .admin-content h1 {
+    font-size: 27px !important;
+    line-height: 1.15 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .admin-main p,
+  .main-content p,
+  .content p,
+  .admin-content p {
+    font-size: 15px !important;
+    line-height: 1.45 !important;
+  }
+
+  /* Botones principales */
+  button,
+  .btn {
+    max-width: 100%;
+    font-size: 14px !important;
+    padding: 12px 16px !important;
+    border-radius: 14px !important;
+  }
+
+  /* Formularios y filtros */
+  input,
+  select,
+  textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 15px !important;
+    padding: 13px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .filters,
+  .filter-card,
+  .search-card,
+  .range-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 16px !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+  }
+
+  /* Arreglar tablas en celular */
+  .table-wrapper,
+  .admin-table-wrapper,
+  .orders-table-wrapper,
+  .clientes-table-wrapper,
+  .products-table-wrapper,
+  .contacts-table-wrapper,
+  .table-responsive,
+  .table-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    display: block !important;
+  }
+
+  table {
+    width: max-content !important;
+    min-width: 760px !important;
+    border-collapse: collapse !important;
+  }
+
+  th,
+  td {
+    white-space: nowrap !important;
+    font-size: 14px !important;
+    padding: 14px 16px !important;
+  }
+
+  /* Corrección para correos largos */
+  td {
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Cards generales */
+  .card,
+  .admin-card,
+  .panel-card,
+  .stat-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 16px !important;
+    border-radius: 20px !important;
+  }
+
+  /* Quitar espacios gigantes */
+  section {
+    margin-top: 18px !important;
+    margin-bottom: 18px !important;
+  }
+}
