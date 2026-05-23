@@ -2426,7 +2426,7 @@ toInputDate(value: any): string {
   addLog(action: string): void {
     this.auditLogs.unshift({
       action,
-      user: this.auth?.getCurrentUser?.()?.email || "Administrador",
+      user: this.auth?.getCurrentAdmin?.()?.email || "Administrador",
       date: new Date().toISOString(),
     });
 
@@ -3312,11 +3312,11 @@ private abrirComprobante(imprimir: boolean): void {
   win.document.write(html);
   win.document.close();
 }
-  // ================================
-  // SALIR
-  // ================================
-  logout(): void {
-    this.auth.logout();
-    this.router.navigate(["/admin-login"]);
-  }
+// ================================
+// SALIR
+// ================================
+logout(): void {
+  this.auth.logoutAdmin();
+  this.router.navigate(["/admin-login"]);
+}
 }

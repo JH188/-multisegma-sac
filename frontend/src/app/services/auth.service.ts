@@ -125,7 +125,7 @@ private ADMIN_KEY = 'multisegma-current-admin';
   return this.http.post<any>(`${this.API_URL}/register`, body).pipe(
     tap((user) => {
   const safeUser = this.toSafeUser(user);
-  localStorage.setItem(this.CURRENT_KEY, JSON.stringify(safeUser));
+  localStorage.setItem(this.USER_KEY, JSON.stringify(safeUser));
 }),
     map(() => true),
     catchError((error) => {
@@ -145,7 +145,12 @@ loginBackend(email: string, password: string): Observable<boolean> {
   return this.http.post<any>(`${this.API_URL}/login`, body).pipe(
     tap((user) => {
   const safeUser = this.toSafeUser(user);
-  localStorage.setItem(this.CURRENT_KEY, JSON.stringify(safeUser));
+
+  if (safeUser.role === 'admin') {
+    localStorage.setItem(this.ADMIN_KEY, JSON.stringify(safeUser));
+  } else {
+    localStorage.setItem(this.USER_KEY, JSON.stringify(safeUser));
+  }
 }),
     map(() => true),
     catchError((error) => {
@@ -170,17 +175,26 @@ loginBackend(email: string, password: string): Observable<boolean> {
     }
 
     const safeUser = this.toSafeUser(user);
-localStorage.setItem(this.CURRENT_KEY, JSON.stringify(safeUser));
+
+    if (safeUser.role === 'admin') {
+      localStorage.setItem(this.ADMIN_KEY, JSON.stringify(safeUser));
+    } else {
+      localStorage.setItem(this.USER_KEY, JSON.stringify(safeUser));
+    }
 
     return true;
   }
 
   logout(): void {
-    localStorage.removeItem(this.CURRENT_KEY);
+    localStorage.removeItem(this.USER_KEY);
+  }
+
+  logoutAdmin(): void {
+    localStorage.removeItem(this.ADMIN_KEY);
   }
 
   getCurrentUser(): User | null {
-    const raw = localStorage.getItem(this.CURRENT_KEY);
+    const raw = localStorage.getItem(this.USER_KEY);
 
     if (!raw) return null;
 
@@ -188,11 +202,10 @@ localStorage.setItem(this.CURRENT_KEY, JSON.stringify(safeUser));
       const current = this.normalizeUser(JSON.parse(raw));
 
       if (!current.email) {
-        localStorage.removeItem(this.CURRENT_KEY);
+        localStorage.removeItem(this.USER_KEY);
         return null;
       }
 
-      // Busca la versión más actual del usuario en lisume-users
       const userFromList = this.users.find(
         (u) => u.email.toLowerCase() === current.email.toLowerCase()
       );
@@ -204,13 +217,32 @@ localStorage.setItem(this.CURRENT_KEY, JSON.stringify(safeUser));
           })
         : current;
 
-      // Regraba el usuario actual sin contraseña
-const safeUser = this.toSafeUser(finalUser);
-localStorage.setItem(this.CURRENT_KEY, JSON.stringify(safeUser));
+      const safeUser = this.toSafeUser(finalUser);
+      localStorage.setItem(this.USER_KEY, JSON.stringify(safeUser));
 
-return this.normalizeUser(safeUser);
+      return this.normalizeUser(safeUser);
     } catch {
-      localStorage.removeItem(this.CURRENT_KEY);
+      localStorage.removeItem(this.USER_KEY);
+      return null;
+    }
+  }
+
+  getCurrentAdmin(): User | null {
+    const raw = localStorage.getItem(this.ADMIN_KEY);
+
+    if (!raw) return null;
+
+    try {
+      const current = this.normalizeUser(JSON.parse(raw));
+
+      if (!current.email || current.role !== 'admin') {
+        localStorage.removeItem(this.ADMIN_KEY);
+        return null;
+      }
+
+      return current;
+    } catch {
+      localStorage.removeItem(this.ADMIN_KEY);
       return null;
     }
   }
@@ -220,7 +252,7 @@ return this.normalizeUser(safeUser);
   }
 
   isAdmin(): boolean {
-    return this.getCurrentUser()?.role === 'admin';
+    return this.getCurrentAdmin()?.role === 'admin';
   }
 
   getUserName(): string {
@@ -230,9 +262,10 @@ return this.normalizeUser(safeUser);
   getUserEmail(): string {
     return this.getCurrentUser()?.email || '';
   }
+
   getBackendUsers(): Observable<any[]> {
-  return this.http.get<any[]>(`${this.API_URL}/users`);
-}
+    return this.http.get<any[]>(`${this.API_URL}/users`);
+  }
 
   getAllUsers(): User[] {
     return this.users;
