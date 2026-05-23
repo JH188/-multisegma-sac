@@ -21,15 +21,22 @@ export class CartPanelComponent {
   metodoPago: 'Yape' | 'Plin' | 'Transferencia' | 'Tarjeta' = 'Yape';
 
   datosEnvio = {
-    nombre: '',
-    email: '',
-    telefono: '',
-    departamento: 'Lima',
-    provincia: 'Lima',
-    distrito: '',
-    direccion: '',
-    referencia: ''
-  };
+  nombre: '',
+  email: '',
+  telefono: '',
+  departamento: 'Lima',
+  provincia: 'Lima',
+  distrito: '',
+  direccion: '',
+  referencia: '',
+
+  // Datos para boleta / factura
+  tipoComprobante: 'BOLETA',
+  clienteTipoDocumento: 'DNI',
+  clienteDocumento: '',
+  clienteRazonSocial: '',
+  clienteDireccionFiscal: ''
+};
 
   constructor(
     public cart: CartService,
@@ -110,6 +117,39 @@ export class CartPanelComponent {
       alert('Ingresa tu teléfono.');
       return;
     }
+    if (this.datosEnvio.tipoComprobante === 'BOLETA') {
+  if (!this.datosEnvio.clienteDocumento.trim()) {
+    alert('Ingresa tu DNI.');
+    return;
+  }
+
+  if (this.datosEnvio.clienteDocumento.trim().length < 8) {
+    alert('El DNI debe tener 8 dígitos.');
+    return;
+  }
+}
+
+if (this.datosEnvio.tipoComprobante === 'FACTURA') {
+  if (!this.datosEnvio.clienteDocumento.trim()) {
+    alert('Ingresa el RUC.');
+    return;
+  }
+
+  if (this.datosEnvio.clienteDocumento.trim().length < 11) {
+    alert('El RUC debe tener 11 dígitos.');
+    return;
+  }
+
+  if (!this.datosEnvio.clienteRazonSocial.trim()) {
+    alert('Ingresa la razón social.');
+    return;
+  }
+
+  if (!this.datosEnvio.clienteDireccionFiscal.trim()) {
+    alert('Ingresa la dirección fiscal.');
+    return;
+  }
+}
 
     if (!this.datosEnvio.direccion.trim()) {
       alert('Ingresa tu dirección.');
@@ -130,30 +170,37 @@ export class CartPanelComponent {
     this.guardarPedido();
   }
 
-  private guardarPedido(): void {
-    this.cart.checkout({
-      customerName: this.datosEnvio.nombre,
-      customerEmail: this.datosEnvio.email,
-      customerPhone: this.datosEnvio.telefono,
+private guardarPedido(): void {
+  this.cart.checkout({
+    customerName: this.datosEnvio.nombre,
+    customerEmail: this.datosEnvio.email,
+    customerPhone: this.datosEnvio.telefono,
 
-      departamento: this.datosEnvio.departamento || 'Lima',
-      provincia: this.datosEnvio.provincia || 'Lima',
-      distrito: this.datosEnvio.distrito || 'Sin distrito',
-      direccion: this.datosEnvio.direccion,
-      referencia: this.datosEnvio.referencia || '',
+    // Datos de boleta / factura
+    tipoComprobante: this.datosEnvio.tipoComprobante,
+    clienteTipoDocumento: this.datosEnvio.clienteTipoDocumento,
+    clienteDocumento: this.datosEnvio.clienteDocumento,
+    clienteRazonSocial: this.datosEnvio.clienteRazonSocial,
+    clienteDireccionFiscal: this.datosEnvio.clienteDireccionFiscal,
 
-      paymentMethod: this.metodoPago
-    }).subscribe({
-      next: (order) => {
-        this.cart.saveLastOrder(order);
-        this.checkoutPaso = 'exito';
-      },
-      error: (err) => {
-        console.error('Error guardando pedido', err);
-        alert('Ocurrió un problema guardando el pedido.');
-      }
-    });
-  }
+    departamento: this.datosEnvio.departamento || 'Lima',
+    provincia: this.datosEnvio.provincia || 'Lima',
+    distrito: this.datosEnvio.distrito || 'Sin distrito',
+    direccion: this.datosEnvio.direccion,
+    referencia: this.datosEnvio.referencia || '',
+
+    paymentMethod: this.metodoPago
+  }).subscribe({
+    next: (order) => {
+      this.cart.saveLastOrder(order);
+      this.checkoutPaso = 'exito';
+    },
+    error: (err) => {
+      console.error('Error guardando pedido', err);
+      alert('Ocurrió un problema guardando el pedido.');
+    }
+  });
+}
 
   cerrarCarrito(): void {
     this.cart.clear();

@@ -13,8 +13,11 @@ export interface User {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly USERS_KEY = 'lisume-users';
+private readonly CURRENT_KEY = 'lisume-current-user';
   private STORAGE_KEY = 'lisume-users';
-  private CURRENT_KEY = 'lisume-current-user';
+  private USER_KEY = 'multisegma-current-user';
+private ADMIN_KEY = 'multisegma-current-admin';
   private API_URL = 'https://multisegma-sac-production.up.railway.app/api/auth';
   constructor(private http: HttpClient) {}
   private DEFAULT_ADMIN: User = {

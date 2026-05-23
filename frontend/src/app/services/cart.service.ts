@@ -18,6 +18,13 @@ export interface CheckoutData {
   customerEmail: string;
   customerPhone: string;
 
+  // Datos de boleta / factura
+  tipoComprobante?: string;
+  clienteTipoDocumento?: string;
+  clienteDocumento?: string;
+  clienteRazonSocial?: string;
+  clienteDireccionFiscal?: string;
+
   departamento: string;
   provincia: string;
   distrito: string;

@@ -109,6 +109,52 @@
             placeholder="999888777"
             required
           />
+          <label>Tipo de comprobante</label>
+          <select
+            [(ngModel)]="datosEnvio.tipoComprobante"
+            name="tipoComprobante"
+          >
+            <option value="BOLETA">Boleta</option>
+            <option value="FACTURA">Factura</option>
+          </select>
+
+          <div *ngIf="datosEnvio.tipoComprobante === 'BOLETA'">
+            <label>DNI</label>
+            <input
+              type="text"
+              name="clienteDocumento"
+              [(ngModel)]="datosEnvio.clienteDocumento"
+              placeholder="Ingresa tu DNI"
+              maxlength="8"
+            />
+          </div>
+
+          <div *ngIf="datosEnvio.tipoComprobante === 'FACTURA'">
+            <label>RUC</label>
+            <input
+              type="text"
+              name="clienteDocumentoFactura"
+              [(ngModel)]="datosEnvio.clienteDocumento"
+              placeholder="Ingresa el RUC"
+              maxlength="11"
+            />
+
+            <label>Razón social</label>
+            <input
+              type="text"
+              name="clienteRazonSocial"
+              [(ngModel)]="datosEnvio.clienteRazonSocial"
+              placeholder="Ej. MULTISEGMA S.A.C."
+            />
+
+            <label>Dirección fiscal</label>
+            <input
+              type="text"
+              name="clienteDireccionFiscal"
+              [(ngModel)]="datosEnvio.clienteDireccionFiscal"
+              placeholder="Dirección fiscal de la empresa"
+            />
+          </div>
 
           <div class="form-row">
             <div>
