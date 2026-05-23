@@ -87,6 +87,14 @@ public List<Order> getByCustomerEmail(@PathVariable String email) {
         order.setDistrito(dto.getDistrito());
         order.setDireccion(dto.getDireccion());
         order.setReferencia(dto.getReferencia());
+        // Datos para boleta / factura
+order.setTipoComprobante(
+        dto.getTipoComprobante() != null ? dto.getTipoComprobante() : "SIN_COMPROBANTE"
+);
+order.setClienteTipoDocumento(dto.getClienteTipoDocumento());
+order.setClienteDocumento(dto.getClienteDocumento());
+order.setClienteRazonSocial(dto.getClienteRazonSocial());
+order.setClienteDireccionFiscal(dto.getClienteDireccionFiscal());
 
         order.setPaymentMethod(dto.getPaymentMethod());
         order.setTotal(dto.getTotal());

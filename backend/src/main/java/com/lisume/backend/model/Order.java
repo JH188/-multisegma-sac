@@ -12,6 +12,21 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "tipo_comprobante")
+private String tipoComprobante;
+
+@Column(name = "cliente_tipo_documento")
+private String clienteTipoDocumento;
+
+@Column(name = "cliente_documento")
+private String clienteDocumento;
+
+@Column(name = "cliente_razon_social")
+private String clienteRazonSocial;
+
+@Column(name = "cliente_direccion_fiscal")
+private String clienteDireccionFiscal;
+
     @Column(name = "customer_id")
     private Long customerId;
 
@@ -81,6 +96,25 @@ public class Order {
     public Long getId() {
         return id;
     }
+    public String getTipoComprobante() {
+    return tipoComprobante;
+}
+
+public String getClienteTipoDocumento() {
+    return clienteTipoDocumento;
+}
+
+public String getClienteDocumento() {
+    return clienteDocumento;
+}
+
+public String getClienteRazonSocial() {
+    return clienteRazonSocial;
+}
+
+public String getClienteDireccionFiscal() {
+    return clienteDireccionFiscal;
+}
 
     public Long getCustomerId() {
         return customerId;
@@ -145,6 +179,26 @@ public class Order {
     public void setId(Long id) {
         this.id = id;
     }
+    public void setTipoComprobante(String tipoComprobante) {
+    this.tipoComprobante = tipoComprobante;
+}
+
+public void setClienteTipoDocumento(String clienteTipoDocumento) {
+    this.clienteTipoDocumento = clienteTipoDocumento;
+}
+
+public void setClienteDocumento(String clienteDocumento) {
+    this.clienteDocumento = clienteDocumento;
+}
+
+public void setClienteRazonSocial(String clienteRazonSocial) {
+    this.clienteRazonSocial = clienteRazonSocial;
+}
+
+public void setClienteDireccionFiscal(String clienteDireccionFiscal) {
+    this.clienteDireccionFiscal = clienteDireccionFiscal;
+}
+
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;

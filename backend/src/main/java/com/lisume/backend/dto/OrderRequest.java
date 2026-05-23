@@ -20,6 +20,12 @@ public class OrderRequest {
     private String distrito;
     private String direccion;
     private String referencia;
+    // Comprobante: boleta / factura
+private String tipoComprobante;
+private String clienteTipoDocumento;
+private String clienteDocumento;
+private String clienteRazonSocial;
+private String clienteDireccionFiscal;
 
     // Pago
     @NotBlank
@@ -66,6 +72,25 @@ public class OrderRequest {
     public String getReferencia() {
         return referencia;
     }
+    public String getTipoComprobante() {
+    return tipoComprobante;
+}
+
+public String getClienteTipoDocumento() {
+    return clienteTipoDocumento;
+}
+
+public String getClienteDocumento() {
+    return clienteDocumento;
+}
+
+public String getClienteRazonSocial() {
+    return clienteRazonSocial;
+}
+
+public String getClienteDireccionFiscal() {
+    return clienteDireccionFiscal;
+}
 
     public String getPaymentMethod() {
         return paymentMethod;
@@ -110,6 +135,25 @@ public class OrderRequest {
     public void setReferencia(String referencia) {
         this.referencia = referencia;
     }
+    public void setTipoComprobante(String tipoComprobante) {
+    this.tipoComprobante = tipoComprobante;
+}
+
+public void setClienteTipoDocumento(String clienteTipoDocumento) {
+    this.clienteTipoDocumento = clienteTipoDocumento;
+}
+
+public void setClienteDocumento(String clienteDocumento) {
+    this.clienteDocumento = clienteDocumento;
+}
+
+public void setClienteRazonSocial(String clienteRazonSocial) {
+    this.clienteRazonSocial = clienteRazonSocial;
+}
+
+public void setClienteDireccionFiscal(String clienteDireccionFiscal) {
+    this.clienteDireccionFiscal = clienteDireccionFiscal;
+}
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
