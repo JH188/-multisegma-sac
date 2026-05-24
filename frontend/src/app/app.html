@@ -47,11 +47,12 @@
 
         <button
           *ngIf="!isPublicFormRoute()"
-          class="cart-button"
+          class="cart-button cart-icon-button"
           type="button"
           (click)="openCart()"
+          title="Carrito de compras"
         >
-          <span>Carrito</span>
+          <span class="cart-icon">🛒</span>
           <span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
         </button>
 
