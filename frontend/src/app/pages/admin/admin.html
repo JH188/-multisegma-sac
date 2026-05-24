@@ -168,11 +168,16 @@
 
           <button
             type="button"
-            class="btn-export excel-btn"
+            class="btn-export excel-icon-btn"
             (click)="exportDashboardReport()"
+            title="Descargar reporte Excel completo"
+            aria-label="Descargar reporte Excel completo"
           >
-            <img src="assets/lisume/excel.png" alt="Excel" class="excel-icon" />
-            <span>Descargar reporte Excel completo</span>
+            <img
+              src="assets/lisume/excel.png"
+              alt="Excel"
+              class="excel-icon-only"
+            />
           </button>
 
           <div class="notification-wrapper">
@@ -2227,8 +2232,18 @@
             🔄 Actualizar datos
           </button>
 
-          <button type="button" class="btn-export" (click)="exportReports()">
-            ⬇ Exportar reporte
+          <button
+            type="button"
+            class="btn-export excel-icon-btn"
+            (click)="exportDashboardReport()"
+            title="Descargar reporte Excel completo"
+            aria-label="Descargar reporte Excel completo"
+          >
+            <img
+              src="assets/lisume/excel.png"
+              alt="Excel"
+              class="excel-icon-only"
+            />
           </button>
         </div>
       </div>
