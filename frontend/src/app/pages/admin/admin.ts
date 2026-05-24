@@ -1,5 +1,5 @@
 // src/app/pages/admin/admin.ts
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
@@ -53,7 +53,7 @@ interface AdminFileItem {
   templateUrl: "./admin.html",
   styleUrls: ["./admin.scss"],
 })
-export class AdminComponent implements OnInit {
+export class AdminComponent implements OnInit, OnDestroy {
   private parseDatePeru(value: any): Date | null {
   if (!value) return null;
 
@@ -107,6 +107,10 @@ export class AdminComponent implements OnInit {
   orders: any[] = [];
   selectedOrder: any | null = null;
   savingEstado = false;
+
+  private ordersPolling: any = null;
+private ordersLoadedFirstTime = false;
+private lastOrderIdDetected = 0;
   comprobanteActual: any | null = null;
 loadingComprobante = false;
 generandoComprobante = false;
@@ -364,14 +368,25 @@ generandoComprobante = false;
   private comprobanteApi: ComprobanteService,
 ) {}
 
-  ngOnInit(): void {
-    this.loadSettingsFromStorage();
-    this.loadContacts();
-    this.loadProducts();
+ngOnInit(): void {
+  this.loadSettingsFromStorage();
+  this.loadContacts();
+  this.loadProducts();
+  this.loadOrders();
+  this.loadUsers();
+  this.addLog("Ingreso al panel administrativo");
+
+  // Revisa pedidos nuevos cada 10 segundos
+  this.ordersPolling = setInterval(() => {
     this.loadOrders();
-    this.loadUsers();
-    this.addLog("Ingreso al panel administrativo");
+  }, 10000);
+}
+
+ngOnDestroy(): void {
+  if (this.ordersPolling) {
+    clearInterval(this.ordersPolling);
   }
+}
 
  setSection(section: AdminSection): void {
   this.activeSection = section;
@@ -959,28 +974,54 @@ refreshAdminData(): void {
   // ================================
   // PEDIDOS
   // ================================
-  loadOrders(): void {
-    this.loadingOrders = true;
+loadOrders(): void {
+  this.loadingOrders = true;
 
-    this.orderApi.getAll().subscribe({
-      next: (data: any[]) => {
-        this.orders = (data || []).map((o: any) => ({
-          ...o,
-          status: this.normalizeStatus(o.status || o.estado),
-        }));
+  const previousLastOrderId = this.lastOrderIdDetected;
 
-        this.calculateOrderStats();
-        this.buildItemsView();
-        this.loadUsers();
-      },
-      error: (err) => {
-        console.error("Error cargando pedidos:", err);
-      },
-      complete: () => {
-        this.loadingOrders = false;
-      },
-    });
-  }
+  this.orderApi.getAll().subscribe({
+    next: (data: any[]) => {
+      this.orders = (data || []).map((o: any) => ({
+        ...o,
+        status: this.normalizeStatus(o.status || o.estado),
+      }));
+
+      const ids = this.orders
+        .map((o: any) => Number(o.id || 0))
+        .filter((id: number) => id > 0);
+
+      const currentLastOrderId = ids.length > 0 ? Math.max(...ids) : 0;
+
+      if (
+        this.ordersLoadedFirstTime &&
+        currentLastOrderId > previousLastOrderId
+      ) {
+        const newOrder = this.orders.find(
+          (o: any) => Number(o.id) === currentLastOrderId
+        );
+
+        this.playNewOrderSound();
+
+        this.addLog(
+          `Nuevo pedido recibido #${currentLastOrderId} de ${this.getOrderClient(newOrder)}`
+        );
+      }
+
+      this.lastOrderIdDetected = currentLastOrderId;
+      this.ordersLoadedFirstTime = true;
+
+      this.calculateOrderStats();
+      this.buildItemsView();
+      this.loadUsers();
+    },
+    error: (err) => {
+      console.error("Error cargando pedidos:", err);
+    },
+    complete: () => {
+      this.loadingOrders = false;
+    },
+  });
+}
 
   calculateOrderStats(): void {
     this.totalOrders = this.orders.length;
@@ -3318,5 +3359,77 @@ private abrirComprobante(imprimir: boolean): void {
 logout(): void {
   this.auth.logoutAdmin();
   this.router.navigate(["/admin-login"]);
+}
+normalizePhoneForWhatsApp(phone: any): string {
+  let clean = String(phone || '').replace(/\D/g, '');
+
+  if (!clean) return '';
+
+  // Si el cliente puso 9 dígitos de Perú, agregamos 51
+  if (clean.length === 9) {
+    clean = '51' + clean;
+  }
+
+  // Si ya viene con 51 y 11 dígitos, lo dejamos
+  if (clean.length < 9) return '';
+
+  return clean;
+}
+
+getWhatsAppUrl(order: any): string {
+  const phone = this.normalizePhoneForWhatsApp(this.getOrderPhone(order));
+
+  if (!phone) return '';
+
+  const orderId = order?.id || '';
+  const client = this.getOrderClient(order);
+  const total = Number(order?.total || 0).toFixed(2);
+  const comprobante = order?.tipoComprobante || order?.tipo_comprobante || 'COMPROBANTE';
+
+  const message =
+    `Hola ${client}, soy MULTISEGMA S.A.C. ` +
+    `Te escribimos por tu pedido #${orderId}. ` +
+    `Tu ${comprobante} ya fue revisado. Total: S/ ${total}.`;
+
+  return `https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+}
+
+openClientWhatsApp(order: any): void {
+  const url = this.getWhatsAppUrl(order);
+
+  if (!url) {
+    alert('Este pedido no tiene un número de teléfono válido.');
+    return;
+  }
+
+  window.open(url, '_blank');
+}
+
+playNewOrderSound(): void {
+  try {
+    const AudioContextClass =
+      (window as any).AudioContext || (window as any).webkitAudioContext;
+
+    if (!AudioContextClass) return;
+
+    const audioContext = new AudioContextClass();
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+
+    gain.gain.setValueAtTime(0.001, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.4, audioContext.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.45);
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.5);
+  } catch (error) {
+    console.warn('No se pudo reproducir el sonido:', error);
+  }
 }
 }

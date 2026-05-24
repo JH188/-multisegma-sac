@@ -1494,9 +1494,21 @@
               <strong>{{ getOrderEmail(selectedOrder) }}</strong>
             </div>
 
-            <div class="detail-row">
+            <div>
               <span>Teléfono</span>
-              <strong>{{ getOrderPhone(selectedOrder) }}</strong>
+              <strong
+                >{{ getOrderPhone(selectedOrder) || 'No registrado' }}</strong
+              >
+
+              <button
+                *ngIf="getOrderPhone(selectedOrder)"
+                type="button"
+                class="btn-small"
+                style="margin-top: 6px"
+                (click)="openClientWhatsApp(selectedOrder)"
+              >
+                💬 Escribir por WhatsApp
+              </button>
             </div>
 
             <div class="detail-row">
