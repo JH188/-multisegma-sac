@@ -9,6 +9,8 @@ import { AuthService } from "../../services/auth.service";
 import { OrderService } from "../../services/order.service";
 import { ProductService } from "../../services/product.service";
 import { ComprobanteService, TipoComprobante } from "../../services/comprobante.service";
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 type AdminSection =
   | "dashboard"
@@ -2982,217 +2984,426 @@ downloadOrderPdf(order: any): void {
     this.markNotificationsRead();
   }
 
-  exportDashboardReport(): void {
+ async exportDashboardReport(): Promise<void> {
+  const workbook = new ExcelJS.Workbook();
+
+  workbook.creator = 'MULTISEGMA S.A.C.';
+  workbook.created = new Date();
+
   const fechaReporte = new Date().toLocaleString('es-PE', {
     timeZone: 'America/Lima',
   });
 
-  const rows: any[] = [];
+  const fechaArchivo = new Date().toISOString().slice(0, 10);
+
+  const azul = '0F2A5F';
+  const azulClaro = 'EAF2FF';
+  const verdeClaro = 'EAF8EF';
+  const amarilloClaro = 'FFF6D8';
+  const rojoClaro = 'FFEAEA';
+  const gris = 'F3F6FA';
+  const borde = 'D9E2EF';
+
+  const money = (value: any) => Number(value || 0);
+
+  const styleTitle = (cell: ExcelJS.Cell) => {
+    cell.font = { bold: true, size: 20, color: { argb: 'FFFFFFFF' } };
+    cell.alignment = { vertical: 'middle', horizontal: 'left' };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: azul },
+    };
+  };
+
+  const styleHeader = (row: ExcelJS.Row) => {
+    row.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: azul },
+      };
+      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      cell.border = {
+        top: { style: 'thin', color: { argb: borde } },
+        left: { style: 'thin', color: { argb: borde } },
+        bottom: { style: 'thin', color: { argb: borde } },
+        right: { style: 'thin', color: { argb: borde } },
+      };
+    });
+  };
+
+  const styleTable = (sheet: ExcelJS.Worksheet) => {
+    sheet.eachRow((row, rowNumber) => {
+      row.eachCell((cell) => {
+        cell.border = {
+          top: { style: 'thin', color: { argb: borde } },
+          left: { style: 'thin', color: { argb: borde } },
+          bottom: { style: 'thin', color: { argb: borde } },
+          right: { style: 'thin', color: { argb: borde } },
+        };
+        cell.alignment = { vertical: 'middle', wrapText: true };
+      });
+
+      if (rowNumber % 2 === 0 && rowNumber > 1) {
+        row.eachCell((cell) => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FAFCFF' },
+          };
+        });
+      }
+    });
+  };
+
+  const addKpi = (
+    sheet: ExcelJS.Worksheet,
+    cell: string,
+    title: string,
+    value: string,
+    color: string
+  ) => {
+    const row = Number(cell.replace(/[A-Z]/g, ''));
+    const col = cell.replace(/[0-9]/g, '');
+
+    sheet.mergeCells(`${cell}:${String.fromCharCode(col.charCodeAt(0) + 1)}${row + 2}`);
+
+    const mainCell = sheet.getCell(cell);
+    mainCell.value = `${title}\n${value}`;
+    mainCell.font = { bold: true, size: 12, color: { argb: '111827' } };
+    mainCell.alignment = {
+      vertical: 'middle',
+      horizontal: 'center',
+      wrapText: true,
+    };
+    mainCell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: color },
+    };
+    mainCell.border = {
+      top: { style: 'thin', color: { argb: borde } },
+      left: { style: 'thin', color: { argb: borde } },
+      bottom: { style: 'thin', color: { argb: borde } },
+      right: { style: 'thin', color: { argb: borde } },
+    };
+  };
 
   // =========================
-  // RESUMEN GENERAL
+  // HOJA 1: RESUMEN
   // =========================
-  rows.push(['REPORTE GENERAL MULTISEGMA S.A.C.']);
-  rows.push(['Fecha de exportación', fechaReporte]);
-  rows.push([]);
-  rows.push(['RESUMEN EJECUTIVO']);
-  rows.push(['Ventas / ingresos estimados', `S/ ${this.totalRevenue}`]);
-  rows.push(['Pedidos totales', this.totalOrders]);
-  rows.push(['Clientes registrados', this.totalUsers]);
-  rows.push(['Consultas recibidas', this.totalContacts]);
-  rows.push(['Pedidos pendientes', this.pendingOrders]);
-  rows.push(['Pedidos confirmados', this.confirmedOrders]);
-  rows.push(['Pedidos en proceso', this.processOrders]);
-  rows.push(['Pedidos cancelados', this.cancelledOrders]);
-  rows.push([]);
+  const resumen = workbook.addWorksheet('Resumen');
 
-  // =========================
-  // PEDIDOS
-  // =========================
-  rows.push(['DETALLE COMPLETO DE PEDIDOS']);
-  rows.push([
-    'ID Pedido',
+  resumen.views = [{ showGridLines: false }];
+  resumen.columns = [
+    { width: 18 },
+    { width: 18 },
+    { width: 18 },
+    { width: 18 },
+    { width: 18 },
+    { width: 18 },
+    { width: 18 },
+    { width: 18 },
+    { width: 18 },
+    { width: 18 },
+  ];
+
+  resumen.mergeCells('A1:E4');
+  resumen.getCell('A1').value =
+    'MULTISEGMA S.A.C.\nREPORTE GENERAL ADMINISTRATIVO';
+  styleTitle(resumen.getCell('A1'));
+
+  resumen.mergeCells('G1:J4');
+  resumen.getCell('G1').value =
+    `Fecha de generación:\n${fechaReporte}\nArchivo:\nreporte_multisegma_${fechaArchivo}.xlsx`;
+  resumen.getCell('G1').font = { bold: true, color: { argb: '111827' } };
+  resumen.getCell('G1').alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+  resumen.getCell('G1').fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: azulClaro },
+  };
+
+  addKpi(resumen, 'A6', 'VENTAS / INGRESOS', `S/ ${this.totalRevenue.toFixed(2)}`, verdeClaro);
+  addKpi(resumen, 'C6', 'PEDIDOS TOTALES', String(this.totalOrders), azulClaro);
+  addKpi(resumen, 'E6', 'CLIENTES REGISTRADOS', String(this.totalUsers), 'F1EAFE');
+  addKpi(resumen, 'G6', 'CONSULTAS RECIBIDAS', String(this.totalContacts), amarilloClaro);
+  addKpi(resumen, 'I6', 'TASA DE CONVERSIÓN', `${this.conversionRate || 0}%`, 'E9FBFF');
+
+  resumen.mergeCells('A11:C11');
+  resumen.getCell('A11').value = 'RESUMEN DE PEDIDOS';
+  styleHeader(resumen.getRow(11));
+
+  resumen.addRow(['Pedidos confirmados', this.confirmedOrders]);
+  resumen.addRow(['Pedidos pendientes', this.pendingOrders]);
+  resumen.addRow(['Pedidos en proceso', this.processOrders]);
+  resumen.addRow(['Pedidos cancelados', this.cancelledOrders]);
+  resumen.addRow(['Total general', this.totalOrders]);
+
+  resumen.mergeCells('E11:G11');
+  resumen.getCell('E11').value = 'RESUMEN ECONÓMICO';
+  styleHeader(resumen.getRow(11));
+
+  const subtotalGeneral = this.totalRevenue / 1.18;
+  const igvGeneral = this.totalRevenue - subtotalGeneral;
+
+  resumen.getCell('E12').value = 'Subtotal sin IGV';
+  resumen.getCell('F12').value = subtotalGeneral;
+  resumen.getCell('E13').value = 'IGV aproximado 18%';
+  resumen.getCell('F13').value = igvGeneral;
+  resumen.getCell('E14').value = 'Total ingresos';
+  resumen.getCell('F14').value = this.totalRevenue;
+  resumen.getCell('E15').value = 'Ticket promedio';
+  resumen.getCell('F15').value = this.totalOrders > 0 ? this.totalRevenue / this.totalOrders : 0;
+
+  ['F12', 'F13', 'F14', 'F15'].forEach((c) => {
+    resumen.getCell(c).numFmt = '"S/ "#,##0.00';
+  });
+
+  resumen.mergeCells('A18:J18');
+  resumen.getCell('A18').value = 'PEDIDOS RECIENTES';
+  styleHeader(resumen.getRow(18));
+
+  resumen.addRow([
+    'ID',
+    'Fecha',
     'Cliente',
-    'Correo',
-    'Teléfono',
-    'Tipo comprobante',
-    'Tipo documento',
-    'Documento',
-    'Razón social',
-    'Dirección fiscal',
     'Método de pago',
     'Estado',
-    'Subtotal aproximado',
-    'IGV aproximado',
     'Total',
-    'Departamento',
-    'Provincia',
+    'Correo',
+    'Teléfono',
     'Distrito',
-    'Dirección',
-    'Referencia',
-    'Detalle del pedido',
-    'Fecha creación',
-    'Última actualización',
+    'Detalle',
   ]);
+  styleHeader(resumen.getRow(19));
+
+  (this.orders || []).slice(-10).reverse().forEach((o: any) => {
+    resumen.addRow([
+      o.id || '',
+      this.formatDate(o.createdAt || o.fecha),
+      this.getOrderClient(o),
+      this.getOrderPayment(o),
+      this.getOrderStatus(o),
+      money(o.total),
+      this.getOrderEmail(o),
+      this.getOrderPhone(o),
+      o.distrito || '',
+      String(this.getOrderDetailText(o) || '').replace(/\r?\n|\r/g, ' | '),
+    ]);
+  });
+
+  styleTable(resumen);
+
+  // =========================
+  // HOJA 2: PEDIDOS
+  // =========================
+  const pedidos = workbook.addWorksheet('Pedidos');
+
+  pedidos.columns = [
+    { header: 'ID Pedido', key: 'id', width: 12 },
+    { header: 'Cliente', key: 'cliente', width: 24 },
+    { header: 'Correo', key: 'correo', width: 30 },
+    { header: 'Teléfono', key: 'telefono', width: 16 },
+    { header: 'Tipo comprobante', key: 'tipoComprobante', width: 18 },
+    { header: 'Tipo documento', key: 'tipoDocumento', width: 18 },
+    { header: 'Documento', key: 'documento', width: 18 },
+    { header: 'Razón social', key: 'razonSocial', width: 26 },
+    { header: 'Dirección fiscal', key: 'direccionFiscal', width: 28 },
+    { header: 'Método de pago', key: 'metodoPago', width: 18 },
+    { header: 'Estado', key: 'estado', width: 16 },
+    { header: 'Subtotal', key: 'subtotal', width: 14 },
+    { header: 'IGV', key: 'igv', width: 14 },
+    { header: 'Total', key: 'total', width: 14 },
+    { header: 'Departamento', key: 'departamento', width: 18 },
+    { header: 'Provincia', key: 'provincia', width: 18 },
+    { header: 'Distrito', key: 'distrito', width: 18 },
+    { header: 'Dirección', key: 'direccion', width: 28 },
+    { header: 'Referencia', key: 'referencia', width: 28 },
+    { header: 'Detalle del pedido', key: 'detalle', width: 45 },
+    { header: 'Fecha creación', key: 'fechaCreacion', width: 22 },
+    { header: 'Última actualización', key: 'fechaActualizacion', width: 22 },
+  ];
+
+  styleHeader(pedidos.getRow(1));
 
   (this.orders || []).forEach((o: any) => {
-    const total = Number(o.total || 0);
+    const total = money(o.total);
     const subtotal = total / 1.18;
     const igv = total - subtotal;
 
-    rows.push([
-      o.id || '',
-      o.customerName || o.cliente || '',
-      o.customerEmail || o.correo || '',
-      o.customerPhone || o.telefono || '',
-      o.tipoComprobante || '',
-      o.clienteTipoDocumento || '',
-      o.clienteDocumento || '',
-      o.clienteRazonSocial || '',
-      o.clienteDireccionFiscal || '',
-      o.paymentMethod || '',
-      o.status || '',
-      subtotal.toFixed(2),
-      igv.toFixed(2),
-      total.toFixed(2),
-      o.departamento || '',
-      o.provincia || '',
-      o.distrito || '',
-      o.direccion || '',
-      o.referencia || '',
-      o.detail || '',
-      this.formatDate(o.createdAt),
-      this.formatDate(o.updatedAt),
-    ]);
+    pedidos.addRow({
+      id: o.id || '',
+      cliente: this.getOrderClient(o),
+      correo: this.getOrderEmail(o),
+      telefono: this.getOrderPhone(o),
+      tipoComprobante: o.tipoComprobante || '',
+      tipoDocumento: o.clienteTipoDocumento || '',
+      documento: o.clienteDocumento || '',
+      razonSocial: o.clienteRazonSocial || '',
+      direccionFiscal: o.clienteDireccionFiscal || '',
+      metodoPago: this.getOrderPayment(o),
+      estado: this.getOrderStatus(o),
+      subtotal: Number(subtotal.toFixed(2)),
+      igv: Number(igv.toFixed(2)),
+      total: Number(total.toFixed(2)),
+      departamento: o.departamento || '',
+      provincia: o.provincia || '',
+      distrito: o.distrito || '',
+      direccion: o.direccion || '',
+      referencia: o.referencia || '',
+      detalle: String(this.getOrderDetailText(o) || '').replace(/\r?\n|\r/g, ' | '),
+      fechaCreacion: this.formatDate(o.createdAt || o.fecha),
+      fechaActualizacion: this.formatDate(o.updatedAt),
+    });
   });
 
-  rows.push([]);
+  pedidos.getColumn('subtotal').numFmt = '"S/ "#,##0.00';
+  pedidos.getColumn('igv').numFmt = '"S/ "#,##0.00';
+  pedidos.getColumn('total').numFmt = '"S/ "#,##0.00';
+  pedidos.autoFilter = 'A1:V1';
+  pedidos.views = [{ state: 'frozen', ySplit: 1 }];
+  styleTable(pedidos);
 
   // =========================
-  // CLIENTES REGISTRADOS
+  // HOJA 3: CLIENTES
   // =========================
-  rows.push(['CLIENTES REGISTRADOS']);
-  rows.push([
-    'Nombre',
-    'Correo',
-    'Rol',
-    'Estado',
-    'Fecha registro',
-  ]);
+  const clientes = workbook.addWorksheet('Clientes');
+
+  clientes.columns = [
+    { header: 'Nombre', key: 'nombre', width: 25 },
+    { header: 'Correo', key: 'correo', width: 32 },
+    { header: 'Rol', key: 'rol', width: 14 },
+    { header: 'Estado', key: 'estado', width: 14 },
+    { header: 'Fecha registro', key: 'fecha', width: 25 },
+  ];
+
+  styleHeader(clientes.getRow(1));
 
   (this.registeredUsers || []).forEach((u: any) => {
-    rows.push([
-      u.name || u.nombre || '',
-      u.email || u.correo || '',
-      u.role || '',
-      u.status || 'Activo',
-      u.createdAt || '',
-    ]);
+    clientes.addRow({
+      nombre: u.name || u.nombre || '',
+      correo: u.email || u.correo || '',
+      rol: u.role || u.rol || 'user',
+      estado: u.estado || 'ACTIVO',
+      fecha: this.formatDate(u.createdAt || u.fechaRegistro),
+    });
   });
 
-  rows.push([]);
+  clientes.autoFilter = 'A1:E1';
+  clientes.views = [{ state: 'frozen', ySplit: 1 }];
+  styleTable(clientes);
 
   // =========================
-  // PRODUCTOS
+  // HOJA 4: PRODUCTOS
   // =========================
-  rows.push(['PRODUCTOS / PRECIOS']);
-  rows.push([
-    'ID',
-    'Producto',
-    'Descripción',
-    'Precio',
-    'Categoría',
-    'Estado',
-    'Stock',
-  ]);
+  const productos = workbook.addWorksheet('Productos');
+
+  productos.columns = [
+    { header: 'ID', key: 'id', width: 10 },
+    { header: 'Producto', key: 'producto', width: 30 },
+    { header: 'Descripción', key: 'descripcion', width: 42 },
+    { header: 'Precio', key: 'precio', width: 14 },
+    { header: 'Categoría', key: 'categoria', width: 18 },
+    { header: 'Estado', key: 'estado', width: 16 },
+    { header: 'Stock', key: 'stock', width: 12 },
+    { header: 'Última actualización', key: 'fecha', width: 24 },
+  ];
+
+  styleHeader(productos.getRow(1));
 
   (this.products || []).forEach((p: any) => {
-    rows.push([
-      p.id || '',
-      p.name || p.nombre || '',
-      p.description || p.descripcion || '',
-      p.price || p.precio || '',
-      p.category || p.categoria || '',
-      p.status || p.estado || '',
-      p.stock || '',
-    ]);
+    productos.addRow({
+      id: p.id || '',
+      producto: this.getProductName(p),
+      descripcion: p.descripcion || p.description || '',
+      precio: this.getProductPrice(p),
+      categoria: this.getProductCategory(p),
+      estado: this.getProductStatus(p),
+      stock: this.getProductStock(p),
+      fecha: this.formatDate(this.getProductUpdatedAt(p)),
+    });
   });
 
-  rows.push([]);
+  productos.getColumn('precio').numFmt = '"S/ "#,##0.00';
+  productos.autoFilter = 'A1:H1';
+  productos.views = [{ state: 'frozen', ySplit: 1 }];
+  styleTable(productos);
 
   // =========================
-  // CONTACTOS / SOLICITUDES
+  // HOJA 5: CONTACTOS
   // =========================
-  rows.push(['CONTACTOS / SOLICITUDES']);
-  rows.push([
-    'Nombre',
-    'Correo',
-    'Teléfono',
-    'Servicio',
-    'Mensaje',
-    'Fecha',
-  ]);
+  const contactos = workbook.addWorksheet('Contactos');
+
+  contactos.columns = [
+    { header: 'Nombre', key: 'nombre', width: 25 },
+    { header: 'Correo', key: 'correo', width: 32 },
+    { header: 'Teléfono', key: 'telefono', width: 18 },
+    { header: 'Servicio', key: 'servicio', width: 28 },
+    { header: 'Mensaje', key: 'mensaje', width: 45 },
+    { header: 'Fecha', key: 'fecha', width: 25 },
+  ];
+
+  styleHeader(contactos.getRow(1));
 
   (this.contacts || []).forEach((c: any) => {
-    rows.push([
-      c.name || c.nombre || '',
-      c.email || c.correo || '',
-      c.phone || c.telefono || '',
-      c.service || c.servicio || '',
-      c.message || c.mensaje || '',
-      this.formatDate(c.createdAt || c.fecha),
-    ]);
+    contactos.addRow({
+      nombre: c.name || c.nombre || '',
+      correo: c.email || c.correo || '',
+      telefono: c.phone || c.telefono || '',
+      servicio: c.service || c.servicio || '',
+      mensaje: c.message || c.mensaje || '',
+      fecha: this.formatDate(c.createdAt || c.fecha),
+    });
   });
 
-  rows.push([]);
+  contactos.autoFilter = 'A1:F1';
+  contactos.views = [{ state: 'frozen', ySplit: 1 }];
+  styleTable(contactos);
 
   // =========================
-  // HISTORIAL / AUDITORÍA
+  // HOJA 6: AUDITORÍA
   // =========================
-  rows.push(['HISTORIAL DE CAMBIOS / AUDITORÍA']);
-  rows.push(['Acción', 'Usuario', 'Fecha']);
+  const auditoria = workbook.addWorksheet('Auditoría');
+
+  auditoria.columns = [
+    { header: 'Acción', key: 'accion', width: 45 },
+    { header: 'Usuario', key: 'usuario', width: 32 },
+    { header: 'Fecha', key: 'fecha', width: 25 },
+  ];
+
+  styleHeader(auditoria.getRow(1));
 
   (this.auditLogs || []).forEach((log: any) => {
-    rows.push([
-      log.action || '',
-      log.user || '',
-      this.formatDate(log.date),
-    ]);
+    auditoria.addRow({
+      accion: log.action || '',
+      usuario: log.user || 'Administrador',
+      fecha: this.formatDate(log.date),
+    });
   });
 
-  const csvContent = rows
-  .map((row) =>
-    row
-      .map((cell: any) => {
-        const value = String(cell ?? '')
-          .replace(/"/g, '""')
-          .replace(/\r?\n|\r/g, ' | ')
-          .replace(/\s+/g, ' ')
-          .trim();
+  auditoria.autoFilter = 'A1:C1';
+  auditoria.views = [{ state: 'frozen', ySplit: 1 }];
+  styleTable(auditoria);
 
-        return `"${value}"`;
-      })
-      .join(';')
-  )
-  .join('\n');
+  // =========================
+  // DESCARGA XLSX
+  // =========================
+  const buffer = await workbook.xlsx.writeBuffer();
 
-  const blob = new Blob(['\ufeff' + csvContent], {
-    type: 'text/csv;charset=utf-8;',
-  });
+  saveAs(
+    new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    }),
+    `reporte_multisegma_${fechaArchivo}.xlsx`
+  );
 
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-
-  link.href = url;
-  link.download = `reporte_multisegma_${new Date()
-  .toISOString()
-  .slice(0, 10)}.csv`;
-
-  link.click();
-  window.URL.revokeObjectURL(url);
-
-  this.addLog('Exportó reporte completo para Excel');
+  this.addLog('Exportó reporte gerencial en Excel XLSX');
 }
+
+ 
 cargarComprobanteDelPedido(orderId: number): void {
   this.loadingComprobante = true;
 
@@ -3325,10 +3536,14 @@ private abrirComprobante(imprimir: boolean): void {
   const c = this.comprobanteActual;
   const order = this.selectedOrder;
 
-  const detalle = this.getOrderDetailText(order);
-  const fecha = c.fechaEmision || c.createdAt || new Date().toISOString();
+ const detalle = this.getOrderDetailText(order);
+const fecha = c.fechaEmision || c.createdAt || new Date().toISOString();
 
-  const html = `
+const scriptPrint = imprimir
+  ? '<script>window.onload = function() { window.print(); };</script>'
+  : '';
+
+const html = `
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -3537,15 +3752,7 @@ private abrirComprobante(imprimir: boolean): void {
     </div>
   </div>
 
-  ${
-    imprimir
-      ? `<script>
-          window.onload = function() {
-            window.print();
-          };
-        </script>`
-      : ''
-  }
+  ${scriptPrint}
 </body>
 </html>
 `;
@@ -3624,7 +3831,6 @@ openClientWhatsApp(order: any): void {
 
   window.open(url, '_blank');
 }
-
 playNewOrderSound(): void {
   try {
     const AudioContextClass =
@@ -3640,8 +3846,14 @@ playNewOrderSound(): void {
     oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
 
     gain.gain.setValueAtTime(0.001, audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.4, audioContext.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.45);
+    gain.gain.exponentialRampToValueAtTime(
+      0.4,
+      audioContext.currentTime + 0.02
+    );
+    gain.gain.exponentialRampToValueAtTime(
+      0.001,
+      audioContext.currentTime + 0.45
+    );
 
     oscillator.connect(gain);
     gain.connect(audioContext.destination);
