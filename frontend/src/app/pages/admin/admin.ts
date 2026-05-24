@@ -3161,15 +3161,20 @@ downloadOrderPdf(order: any): void {
   });
 
   const csvContent = rows
-    .map((row) =>
-      row
-        .map((cell: any) => {
-          const value = String(cell ?? '').replace(/"/g, '""');
-          return `"${value}"`;
-        })
-        .join(';')
-    )
-    .join('\n');
+  .map((row) =>
+    row
+      .map((cell: any) => {
+        const value = String(cell ?? '')
+          .replace(/"/g, '""')
+          .replace(/\r?\n|\r/g, ' | ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        return `"${value}"`;
+      })
+      .join(';')
+  )
+  .join('\n');
 
   const blob = new Blob(['\ufeff' + csvContent], {
     type: 'text/csv;charset=utf-8;',
@@ -3179,9 +3184,9 @@ downloadOrderPdf(order: any): void {
   const link = document.createElement('a');
 
   link.href = url;
-  link.download = `reporte_completo_multisegma_${new Date()
-    .toISOString()
-    .slice(0, 10)}.csv`;
+  link.download = `reporte_multisegma_${new Date()
+  .toISOString()
+  .slice(0, 10)}.csv`;
 
   link.click();
   window.URL.revokeObjectURL(url);
