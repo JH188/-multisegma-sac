@@ -7746,3 +7746,14 @@ tbody tr:last-child td {
     font-size: 13px;
   }
 }
+.excel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.excel-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}

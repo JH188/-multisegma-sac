@@ -2983,8 +2983,211 @@ downloadOrderPdf(order: any): void {
   }
 
   exportDashboardReport(): void {
-    this.exportReports();
-  }
+  const fechaReporte = new Date().toLocaleString('es-PE', {
+    timeZone: 'America/Lima',
+  });
+
+  const rows: any[] = [];
+
+  // =========================
+  // RESUMEN GENERAL
+  // =========================
+  rows.push(['REPORTE GENERAL MULTISEGMA S.A.C.']);
+  rows.push(['Fecha de exportación', fechaReporte]);
+  rows.push([]);
+  rows.push(['RESUMEN EJECUTIVO']);
+  rows.push(['Ventas / ingresos estimados', `S/ ${this.totalRevenue}`]);
+  rows.push(['Pedidos totales', this.totalOrders]);
+  rows.push(['Clientes registrados', this.totalUsers]);
+  rows.push(['Consultas recibidas', this.totalContacts]);
+  rows.push(['Pedidos pendientes', this.pendingOrders]);
+  rows.push(['Pedidos confirmados', this.confirmedOrders]);
+  rows.push(['Pedidos en proceso', this.processOrders]);
+  rows.push(['Pedidos cancelados', this.cancelledOrders]);
+  rows.push([]);
+
+  // =========================
+  // PEDIDOS
+  // =========================
+  rows.push(['DETALLE COMPLETO DE PEDIDOS']);
+  rows.push([
+    'ID Pedido',
+    'Cliente',
+    'Correo',
+    'Teléfono',
+    'Tipo comprobante',
+    'Tipo documento',
+    'Documento',
+    'Razón social',
+    'Dirección fiscal',
+    'Método de pago',
+    'Estado',
+    'Subtotal aproximado',
+    'IGV aproximado',
+    'Total',
+    'Departamento',
+    'Provincia',
+    'Distrito',
+    'Dirección',
+    'Referencia',
+    'Detalle del pedido',
+    'Fecha creación',
+    'Última actualización',
+  ]);
+
+  (this.orders || []).forEach((o: any) => {
+    const total = Number(o.total || 0);
+    const subtotal = total / 1.18;
+    const igv = total - subtotal;
+
+    rows.push([
+      o.id || '',
+      o.customerName || o.cliente || '',
+      o.customerEmail || o.correo || '',
+      o.customerPhone || o.telefono || '',
+      o.tipoComprobante || '',
+      o.clienteTipoDocumento || '',
+      o.clienteDocumento || '',
+      o.clienteRazonSocial || '',
+      o.clienteDireccionFiscal || '',
+      o.paymentMethod || '',
+      o.status || '',
+      subtotal.toFixed(2),
+      igv.toFixed(2),
+      total.toFixed(2),
+      o.departamento || '',
+      o.provincia || '',
+      o.distrito || '',
+      o.direccion || '',
+      o.referencia || '',
+      o.detail || '',
+      this.formatDate(o.createdAt),
+      this.formatDate(o.updatedAt),
+    ]);
+  });
+
+  rows.push([]);
+
+  // =========================
+  // CLIENTES REGISTRADOS
+  // =========================
+  rows.push(['CLIENTES REGISTRADOS']);
+  rows.push([
+    'Nombre',
+    'Correo',
+    'Rol',
+    'Estado',
+    'Fecha registro',
+  ]);
+
+  (this.registeredUsers || []).forEach((u: any) => {
+    rows.push([
+      u.name || u.nombre || '',
+      u.email || u.correo || '',
+      u.role || '',
+      u.status || 'Activo',
+      u.createdAt || '',
+    ]);
+  });
+
+  rows.push([]);
+
+  // =========================
+  // PRODUCTOS
+  // =========================
+  rows.push(['PRODUCTOS / PRECIOS']);
+  rows.push([
+    'ID',
+    'Producto',
+    'Descripción',
+    'Precio',
+    'Categoría',
+    'Estado',
+    'Stock',
+  ]);
+
+  (this.products || []).forEach((p: any) => {
+    rows.push([
+      p.id || '',
+      p.name || p.nombre || '',
+      p.description || p.descripcion || '',
+      p.price || p.precio || '',
+      p.category || p.categoria || '',
+      p.status || p.estado || '',
+      p.stock || '',
+    ]);
+  });
+
+  rows.push([]);
+
+  // =========================
+  // CONTACTOS / SOLICITUDES
+  // =========================
+  rows.push(['CONTACTOS / SOLICITUDES']);
+  rows.push([
+    'Nombre',
+    'Correo',
+    'Teléfono',
+    'Servicio',
+    'Mensaje',
+    'Fecha',
+  ]);
+
+  (this.contacts || []).forEach((c: any) => {
+    rows.push([
+      c.name || c.nombre || '',
+      c.email || c.correo || '',
+      c.phone || c.telefono || '',
+      c.service || c.servicio || '',
+      c.message || c.mensaje || '',
+      this.formatDate(c.createdAt || c.fecha),
+    ]);
+  });
+
+  rows.push([]);
+
+  // =========================
+  // HISTORIAL / AUDITORÍA
+  // =========================
+  rows.push(['HISTORIAL DE CAMBIOS / AUDITORÍA']);
+  rows.push(['Acción', 'Usuario', 'Fecha']);
+
+  (this.auditLogs || []).forEach((log: any) => {
+    rows.push([
+      log.action || '',
+      log.user || '',
+      this.formatDate(log.date),
+    ]);
+  });
+
+  const csvContent = rows
+    .map((row) =>
+      row
+        .map((cell: any) => {
+          const value = String(cell ?? '').replace(/"/g, '""');
+          return `"${value}"`;
+        })
+        .join(';')
+    )
+    .join('\n');
+
+  const blob = new Blob(['\ufeff' + csvContent], {
+    type: 'text/csv;charset=utf-8;',
+  });
+
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = `reporte_completo_multisegma_${new Date()
+    .toISOString()
+    .slice(0, 10)}.csv`;
+
+  link.click();
+  window.URL.revokeObjectURL(url);
+
+  this.addLog('Exportó reporte completo para Excel');
+}
 cargarComprobanteDelPedido(orderId: number): void {
   this.loadingComprobante = true;
 
