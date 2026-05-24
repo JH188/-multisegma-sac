@@ -1819,30 +1819,9 @@ loadUsers(): void {
     this.reportChartMode = "sales";
   }
 
-  exportReports(): void {
-    const report = {
-      empresa: "MULTISEGMA S.A.C.",
-      fechaExportacion: new Date().toISOString(),
-      ingresos: this.reportTotalRevenue,
-      pedidos: this.reportTotalOrders,
-      clientes: this.totalUsers,
-      consultas: this.totalContacts,
-      estados: {
-        pendientes: this.reportPendingOrders,
-        confirmados: this.reportConfirmedOrders,
-        proceso: this.reportProcessOrders,
-        cancelados: this.reportCancelledOrders,
-      },
-      metodosPago: this.reportPaymentMethods,
-      pedidosDetalle: this.reportFilteredOrders,
-    };
-
-    this.downloadJson(
-      report,
-      `reporte-empresarial-multisegma-${this.toInputDate(new Date())}.json`,
-    );
-  }
-
+async exportReports(): Promise<void> {
+  await this.exportDashboardReport();
+}
   getReportStatusPercent(value: number): number {
     if (this.reportTotalOrders <= 0) return 0;
     return Math.round((value / this.reportTotalOrders) * 100);
