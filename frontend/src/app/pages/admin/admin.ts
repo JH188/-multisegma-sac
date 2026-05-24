@@ -3384,14 +3384,26 @@ getWhatsAppUrl(order: any): string {
   const orderId = order?.id || '';
   const client = this.getOrderClient(order);
   const total = Number(order?.total || 0).toFixed(2);
-  const comprobante = order?.tipoComprobante || order?.tipo_comprobante || 'COMPROBANTE';
+  const comprobante =
+    order?.tipoComprobante ||
+    order?.tipo_comprobante ||
+    'comprobante';
 
   const message =
     `Hola ${client}, soy MULTISEGMA S.A.C. ` +
     `Te escribimos por tu pedido #${orderId}. ` +
-    `Tu ${comprobante} ya fue revisado. Total: S/ ${total}.`;
+    `Tu ${String(comprobante).toLowerCase()} ya fue revisado. ` +
+    `Total: S/ ${total}.`;
 
-  return `https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+  const encodedMessage = encodeURIComponent(message);
+
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    return `whatsapp://send?phone=${phone}&text=${encodedMessage}`;
+  }
+
+  return `https://web.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
 }
 
 openClientWhatsApp(order: any): void {
