@@ -7667,3 +7667,82 @@ tbody tr:last-child td {
     overflow: hidden !important;
   }
 }
+.phone-whatsapp-row {
+  align-items: flex-start;
+}
+
+.phone-whatsapp-box {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.phone-number {
+  font-weight: 900;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+.whatsapp-admin-btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 8px 13px;
+  border-radius: 999px;
+  background: #25d366;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 8px 18px rgba(37, 211, 102, 0.28);
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.whatsapp-admin-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.96);
+  box-shadow: 0 10px 22px rgba(37, 211, 102, 0.35);
+}
+
+.whatsapp-admin-btn:active {
+  transform: scale(0.98);
+}
+
+.whatsapp-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Responsive para celular */
+@media (max-width: 768px) {
+  .phone-whatsapp-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .phone-whatsapp-box {
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .phone-number {
+    font-size: 14px;
+  }
+
+  .whatsapp-admin-btn {
+    width: 100%;
+    max-width: 220px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
