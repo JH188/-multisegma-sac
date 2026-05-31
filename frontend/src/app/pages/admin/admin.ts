@@ -170,7 +170,7 @@ generandoComprobante = false;
   // CONFIGURACIÓN EMPRESARIAL
   // ================================
   siteTitle = "MULTISEGMA S.A.C.";
-  siteSubtitle = "Soluciones tecnológicas empresariales";
+  siteSubtitle = "Soluciones tecnológicas ";
   whatsappNumber = "51998311743";
 
   companyRuc = "20600000000";
@@ -187,7 +187,7 @@ generandoComprobante = false;
   primaryButtonText = "Consultar por WhatsApp";
   secondaryButtonText = "Ver catálogo";
 
-  seoTitle = "Multisegma S.A.C. | Soluciones tecnológicas empresariales";
+  seoTitle = "Multisegma S.A.C. | Soluciones tecnológicas ";
   seoDescription =
     "Venta de tintas, tonners, mantenimiento de equipos, instalación de software y soporte técnico empresarial.";
   seoKeywords =
@@ -2827,7 +2827,7 @@ Enviar correos: ${this.emailNotifications ? "Sí" : "No"}
     if (!confirmReset) return;
 
     this.siteTitle = "MULTISEGMA S.A.C.";
-    this.siteSubtitle = "Soluciones tecnológicas empresariales";
+    this.siteSubtitle = "Soluciones tecnológicas ";
     this.whatsappNumber = "51998311743";
 
     this.companyRuc = "20600000000";
@@ -2844,7 +2844,7 @@ Enviar correos: ${this.emailNotifications ? "Sí" : "No"}
     this.primaryButtonText = "Consultar por WhatsApp";
     this.secondaryButtonText = "Ver catálogo";
 
-    this.seoTitle = "Multisegma S.A.C. | Soluciones tecnológicas empresariales";
+    this.seoTitle = "Multisegma S.A.C. | Soluciones tecnológicas ";
     this.seoDescription =
       "Venta de tintas, tonners, mantenimiento de equipos, instalación de software y soporte técnico empresarial.";
     this.seoKeywords =
