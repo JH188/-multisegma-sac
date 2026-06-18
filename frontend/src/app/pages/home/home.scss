@@ -568,3 +568,40 @@ section {
   height: 100%;
   object-fit: contain;
 }
+.category-filter {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 28px 0 12px;
+}
+
+.category-filter button {
+  border: 1px solid #d7e2ef;
+  background: #ffffff;
+  color: #06152d;
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.category-filter button:hover {
+  transform: translateY(-2px);
+  border-color: #ff7a1a;
+  color: #ff7a1a;
+}
+
+.category-filter button.active {
+  background: #ff7a1a;
+  color: #ffffff;
+  border-color: #ff7a1a;
+  box-shadow: 0 10px 25px rgba(255, 122, 26, 0.25);
+}
+
+.filter-result {
+  color: #49617e;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}

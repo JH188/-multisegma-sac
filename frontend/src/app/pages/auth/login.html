@@ -1,16 +1,18 @@
 <div class="login-page">
   <div class="login-shell">
-
     <!-- LADO IZQUIERDO: PRESENTACIÓN EMPRESARIAL -->
     <section class="login-brand">
       <div class="brand-top">
         <div class="brand-logo">
-          <img src="assets/lisume/portal-multisegma.jpeg" alt="Multisegma S.A.C.">
+          <img
+            src="assets/lisume/portal-multisegma.jpeg"
+            alt="Multisegma S.A.C."
+          />
         </div>
 
         <div>
           <h1>MULTISEGMA S.A.C.</h1>
-          <p>Soluciones tecnológicas </p>
+          <p>Soluciones tecnológicas</p>
         </div>
       </div>
 
@@ -22,8 +24,9 @@
         </h2>
 
         <p>
-          Puedes revisar el catálogo sin iniciar sesión. Para confirmar un pedido,
-          registrar tus datos y hacer seguimiento, debes ingresar o crear una cuenta.
+          Puedes revisar el catálogo sin iniciar sesión. Para confirmar un
+          pedido, registrar tus datos y hacer seguimiento, debes ingresar o
+          crear una cuenta.
         </p>
 
         <div class="brand-features">
@@ -74,8 +77,11 @@
           />
         </label>
 
-        <button type="submit" class="btn-login">
-          Iniciar sesión
+        <button type="submit" class="btn-login">Iniciar sesión</button>
+
+        <!-- NUEVO: RESTABLECER CONTRASEÑA -->
+        <button type="button" class="forgot-link" (click)="goResetPassword()">
+          ¿Olvidaste tu contraseña?
         </button>
 
         <p class="error" *ngIf="error">{{ error }}</p>
@@ -87,6 +93,5 @@
         </button>
       </div>
     </section>
-
   </div>
 </div>

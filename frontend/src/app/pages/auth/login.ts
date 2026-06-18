@@ -33,6 +33,9 @@ export class LoginComponent {
   goRegister(): void {
     this.router.navigate(['/register']);
   }
+  goResetPassword(): void {
+  this.router.navigate(['/reset-password']);
+}
 
   // login normal (usuarios)
 onSubmit(): void {

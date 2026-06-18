@@ -1,0 +1,69 @@
+<section class="detalle-page">
+  <div class="detalle-loading" *ngIf="loading">
+    Cargando detalle del producto...
+  </div>
+
+  <div class="detalle-error" *ngIf="!loading && error">
+    <h2>{{ error }}</h2>
+    <button type="button" (click)="volver()">Volver al catálogo</button>
+  </div>
+
+  <div class="detalle-container" *ngIf="!loading && !error && producto">
+    <button class="btn-volver" type="button" (click)="volver()">
+      ← Volver al catálogo
+    </button>
+
+    <div class="detalle-grid">
+      <div class="detalle-imagen-card">
+        <div class="badge">{{ tipo }}</div>
+
+        <img [src]="imageFor(producto)" [alt]="producto.nombre" />
+
+        <div class="miniaturas">
+          <button type="button" class="miniatura activa">
+            <img [src]="imageFor(producto)" [alt]="producto.nombre" />
+          </button>
+        </div>
+      </div>
+
+      <div class="detalle-info-card">
+        <span class="marca">MULTISEGMA S.A.C.</span>
+
+        <h1>{{ producto.nombre }}</h1>
+
+        <div class="precio">S/ {{ producto.precio | number: "1.2-2" }}</div>
+
+        <p class="descripcion-corta">
+          {{ producto.descripcion }}
+        </p>
+
+        <div class="estado">Disponible para compra o cotización</div>
+
+        <div class="detalle-box">
+          <h3>Descripción</h3>
+          <p>{{ descripcionLarga }}</p>
+        </div>
+
+        <div class="detalle-box">
+          <h3>Características</h3>
+
+          <ul>
+            <li *ngFor="let item of caracteristicas">
+              {{ item }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="acciones">
+          <button type="button" class="btn-agregar" (click)="agregar(producto)">
+            Agregar al carrito
+          </button>
+
+          <a class="btn-whatsapp" [href]="whatsappUrl()" target="_blank">
+            Consultar por WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

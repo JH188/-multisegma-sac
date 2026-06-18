@@ -270,4 +270,27 @@ loginBackend(email: string, password: string): Observable<boolean> {
   getAllUsers(): User[] {
     return this.users;
   }
+  // ==============================
+// CLIENTE: RESTABLECER CONTRASEÑA
+// ==============================
+resetPassword(email: string, newPassword: string): Observable<boolean> {
+  const cleanEmail = email.trim().toLowerCase();
+
+  const usersRaw = localStorage.getItem(this.USERS_KEY);
+  const users = usersRaw ? JSON.parse(usersRaw) : [];
+
+  const index = users.findIndex(
+    (u: any) => (u.email || '').trim().toLowerCase() === cleanEmail
+  );
+
+  if (index === -1) {
+    return of(false);
+  }
+
+  users[index].password = newPassword;
+
+  localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
+
+  return of(true);
+}
 }

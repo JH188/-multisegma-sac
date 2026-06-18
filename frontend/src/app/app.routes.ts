@@ -11,6 +11,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { CheckoutComponent } from './checkout/checkout';
 import { MisPedidosComponent } from './pages/mis-pedidos/mis-pedidos';
+import { ProductoDetalleComponent } from './pages/producto-detalle/producto-detalle.component';
+import { ResetPasswordComponent } from './pages/auth/reset-password/reset-password.component';
 
 export const routes: Routes = [
   // Página pública principal
@@ -19,7 +21,11 @@ export const routes: Routes = [
   // Cliente
   { path: 'auth', component: AuthComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'contacto', component: ContactComponent },
+
+  // Detalle de producto
+  { path: 'producto/:id', component: ProductoDetalleComponent },
 
   // Admin login separado
   { path: 'admin-login', component: AdminLoginComponent },
@@ -28,6 +34,7 @@ export const routes: Routes = [
   { path: 'carrito', component: CartComponent, canActivate: [AuthGuard] },
   { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
   { path: 'mis-pedidos', component: MisPedidosComponent, canActivate: [AuthGuard] },
+
   // Panel administrador protegido
   { path: 'admin', component: AdminComponent, canActivate: [AdminGuard] },
 

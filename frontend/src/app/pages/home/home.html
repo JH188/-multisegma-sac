@@ -3,7 +3,7 @@
 ========================= -->
 <section class="hero-empresa" id="inicio">
   <div class="hero-info">
-    <span class="tag">Soluciones tecnológicas </span>
+    <span class="tag">Soluciones tecnológicas</span>
 
     <h1>Productos, soporte técnico y servicios digitales para tu empresa</h1>
 
@@ -14,9 +14,8 @@
     </p>
 
     <div class="hero-actions">
-      <a href="#productos" class="btn-primary"> Ver productos </a>
-
-      <a href="#servicios" class="btn-outline"> Ver servicios </a>
+      <a href="#productos" class="btn-primary">Ver productos</a>
+      <a href="#servicios" class="btn-outline">Ver servicios</a>
     </div>
 
     <div class="hero-stats">
@@ -48,7 +47,7 @@
 
       <div>
         <h3>MULTISEGMA S.A.C.</h3>
-        <p>Todo lo que buscas , lo encontraras aqui...</p>
+        <p>Todo lo que buscas, lo encontrarás aquí...</p>
       </div>
     </div>
 
@@ -64,7 +63,6 @@
 <!-- =========================
      SERVICIOS
 ========================= -->
-<!-- CATEGORÍAS / SERVICIOS -->
 <section class="categorias" id="servicios">
   <div class="section-head">
     <span>Servicios principales</span>
@@ -89,123 +87,159 @@
       <h3>Software</h3>
       <p>Instalación, configuración y asistencia para sistemas y programas.</p>
     </article>
+
     <article>
       <div class="icon">🖨️</div>
       <h3>Tonners</h3>
       <p>
-        consumible que utilizan las impresoras láser y fotocopiadoras para
+        Consumible que utilizan las impresoras láser y fotocopiadoras para
         plasmar texto e imágenes en el papel.
       </p>
     </article>
   </div>
 </section>
 
-<!-- PRODUCTOS DESDE BACKEND -->
-<section class="products-section" id="productos">
-  <!-- =========================
+<!-- =========================
      PRODUCTOS DESDE BACKEND
 ========================= -->
-  <section class="products-section" id="productos">
-    <div class="section-label">Catálogo digital</div>
+<section class="products-section" id="productos">
+  <div class="section-label">Catálogo digital</div>
 
-    <h2>Productos y servicios disponibles</h2>
+  <h2>Productos y servicios disponibles</h2>
 
-    <p class="section-description">
-      Catálogo conectado al backend Spring Boot y base de datos MySQL. Los
-      precios y productos pueden actualizarse desde el sistema administrativo.
-    </p>
+  <p class="section-description">
+    Catálogo conectado al backend Spring Boot y base de datos MySQL. Los precios
+    y productos pueden actualizarse desde el sistema administrativo.
+  </p>
 
-    <!-- Mensaje cargando -->
-    <div class="loading-box" *ngIf="loading">
-      Cargando productos desde el sistema...
-    </div>
+  <!-- Mensaje cargando -->
+  <div class="loading-box" *ngIf="loading">
+    Cargando productos desde el sistema...
+  </div>
 
-    <!-- Mensaje error -->
-    <div class="error-box" *ngIf="error">{{ error }}</div>
+  <!-- Mensaje error -->
+  <div class="error-box" *ngIf="error">
+    {{ error }}
+  </div>
 
-    <!-- Productos -->
-    <div class="products-grid" *ngIf="!loading && !error">
-      <article class="product-card" *ngFor="let p of products">
-        <img [src]="imageFor(p)" [alt]="p.nombre || p.name" />
+  <!-- Filtro por categoría -->
+  <div class="category-filter" *ngIf="!loading && !error">
+    <button
+      type="button"
+      *ngFor="let cat of categories"
+      [class.active]="selectedCategory === cat.value"
+      (click)="setCategory(cat.value)"
+    >
+      {{ cat.label }}
+    </button>
+  </div>
 
-        <div class="product-body">
-          <span class="product-category">
-            {{ p.category || 'Productos tecnológicos' }}
-          </span>
+  <div class="filter-result" *ngIf="!loading && !error">
+    Mostrando {{ filteredProducts.length }} resultado(s)
+  </div>
 
-          <h3>{{ p.nombre || p.name }}</h3>
+  <!-- Productos -->
+  <div class="products-grid" *ngIf="!loading && !error">
+    <article
+      class="product-card"
+      *ngFor="let p of filteredProducts"
+      (click)="verDetalle(p)"
+    >
+      <img [src]="imageFor(p)" [alt]="p.nombre" />
 
-          <p>{{ p.descripcion || p.description }}</p>
+      <div class="product-body">
+        <span class="product-category">
+          {{ p.category || 'Productos tecnológicos' }}
+        </span>
 
-          <div class="product-footer">
-            <div>
-              <span class="price-label">Precio desde</span>
-              <strong> S/ {{ (p.precio || p.price) | number:'1.2-2' }} </strong>
-            </div>
+        <h3>{{ p.nombre }}</h3>
 
-            <button type="button" (click)="add(p)">Agregar</button>
+        <p>{{ p.descripcion }}</p>
+
+        <div class="product-footer">
+          <div>
+            <span class="price-label">Precio desde</span>
+            <strong>S/ {{ p.precio | number:'1.2-2' }}</strong>
+          </div>
+
+          <div class="product-actions">
+            <button
+              type="button"
+              class="btn-detalle"
+              (click)="verDetalle(p); $event.stopPropagation()"
+            >
+              Ver detalle
+            </button>
+
+            <button
+              type="button"
+              class="btn-agregar"
+              (click)="add(p); $event.stopPropagation()"
+            >
+              Agregar
+            </button>
           </div>
         </div>
-      </article>
-    </div>
-  </section>
+      </div>
+    </article>
+  </div>
+</section>
 
-  <!-- =========================
+<!-- =========================
      PROCESO DE COMPRA
 ========================= -->
-  <section class="flujo">
-    <div class="section-head">
-      <span>Proceso de compra</span>
-      <h2>Compra fácil y con control administrativo</h2>
+<section class="flujo">
+  <div class="section-head">
+    <span>Proceso de compra</span>
+    <h2>Compra fácil y con control administrativo</h2>
+  </div>
+
+  <div class="flujo-grid">
+    <div>
+      <b>01</b>
+      <h3>Explora productos</h3>
+      <p>
+        El cliente revisa el catálogo sin necesidad de iniciar sesión primero.
+      </p>
     </div>
 
-    <div class="flujo-grid">
-      <div>
-        <b>01</b>
-        <h3>Explora productos</h3>
-        <p>
-          El cliente revisa el catálogo sin necesidad de iniciar sesión primero.
-        </p>
-      </div>
-
-      <div>
-        <b>02</b>
-        <h3>Agrega al carrito</h3>
-        <p>Selecciona productos o servicios y revisa el resumen del pedido.</p>
-      </div>
-
-      <div>
-        <b>03</b>
-        <h3>Se registra o inicia sesión</h3>
-        <p>Para confirmar el pedido, el cliente crea una cuenta o ingresa.</p>
-      </div>
-
-      <div>
-        <b>04</b>
-        <h3>Admin confirma</h3>
-        <p>
-          El administrador revisa el pago, voucher, estado y detalle del pedido.
-        </p>
-      </div>
+    <div>
+      <b>02</b>
+      <h3>Agrega al carrito</h3>
+      <p>Selecciona productos o servicios y revisa el resumen del pedido.</p>
     </div>
-  </section>
 
-  <!-- =========================
+    <div>
+      <b>03</b>
+      <h3>Se registra o inicia sesión</h3>
+      <p>Para confirmar el pedido, el cliente crea una cuenta o ingresa.</p>
+    </div>
+
+    <div>
+      <b>04</b>
+      <h3>Admin confirma</h3>
+      <p>
+        El administrador revisa el pago, voucher, estado y detalle del pedido.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================
      CTA FINAL
 ========================= -->
-  <section class="cta">
-    <h2>¿Necesitas una cotización para tu empresa?</h2>
+<section class="cta">
+  <h2>¿Necesitas una cotización para tu empresa?</h2>
 
-    <p>
-      Escríbenos y recibe atención personalizada para productos, soporte técnico
-      o servicios digitales.
-    </p>
+  <p>
+    Escríbenos y recibe atención personalizada para productos, soporte técnico o
+    servicios digitales.
+  </p>
 
-    <a
-      href="https://wa.me/51998311743?text=Hola%20Multisegma,%20quiero%20cotizar%20un%20servicio."
-      target="_blank"
-    >
-      Contactar por WhatsApp
-    </a>
-  </section>
+  <a
+    href="https://wa.me/51998311743?text=Hola%20Multisegma,%20quiero%20cotizar%20un%20servicio."
+    target="_blank"
+  >
+    Contactar por WhatsApp
+  </a>
 </section>
