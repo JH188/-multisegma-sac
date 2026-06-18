@@ -7,10 +7,10 @@ import com.lisume.backend.model.User;
 import com.lisume.backend.repository.PasswordResetCodeRepository;
 import com.lisume.backend.repository.UserRepository;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -24,18 +24,25 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final PasswordResetCodeRepository passwordResetCodeRepository;
-    private final JavaMailSender mailSender;
 
     private final SecureRandom random = new SecureRandom();
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    @Value("${brevo.api.key}")
+    private String brevoApiKey;
+
+    @Value("${app.mail.from}")
+    private String mailFrom;
+
+    @Value("${app.mail.from-name:MULTISEGMA S.A.C.}")
+    private String mailFromName;
 
     public AuthController(
             UserRepository userRepository,
-            PasswordResetCodeRepository passwordResetCodeRepository,
-            JavaMailSender mailSender
+            PasswordResetCodeRepository passwordResetCodeRepository
     ) {
         this.userRepository = userRepository;
         this.passwordResetCodeRepository = passwordResetCodeRepository;
-        this.mailSender = mailSender;
         crearAdminSiNoExiste();
     }
 
@@ -133,10 +140,6 @@ public class AuthController {
         return ResponseEntity.ok(usuarioSeguro(user));
     }
 
-    // ==============================
-    // RECUPERAR CONTRASEÑA - ENVIAR CÓDIGO
-    // POST /api/auth/forgot-password
-    // ==============================
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         String email = limpiar(request.getEmail()).toLowerCase();
@@ -172,10 +175,6 @@ public class AuthController {
         );
     }
 
-    // ==============================
-    // RESTABLECER CONTRASEÑA CON CÓDIGO
-    // POST /api/auth/reset-password
-    // ==============================
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
         String email = limpiar(request.getEmail()).toLowerCase();
@@ -245,19 +244,43 @@ public class AuthController {
     }
 
     private void enviarCorreoRecuperacion(String email, String code) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Código de recuperación - MULTISEGMA S.A.C.");
-        message.setText(
-                "Hola,\n\n" +
-                "Recibimos una solicitud para restablecer tu contraseña en MULTISEGMA S.A.C.\n\n" +
-                "Tu código de recuperación es: " + code + "\n\n" +
-                "Este código vence en 10 minutos.\n\n" +
-                "Si no solicitaste este cambio, ignora este mensaje.\n\n" +
-                "MULTISEGMA S.A.C."
+        String url = "https://api.brevo.com/v3/smtp/email";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("api-key", brevoApiKey);
+
+        String htmlContent =
+                "<h2>Recuperación de contraseña - MULTISEGMA S.A.C.</h2>" +
+                "<p>Recibimos una solicitud para restablecer tu contraseña.</p>" +
+                "<p>Tu código de recuperación es:</p>" +
+                "<h1 style='color:#ff7a1a;'>" + code + "</h1>" +
+                "<p>Este código vence en 10 minutos.</p>" +
+                "<p>Si no solicitaste este cambio, ignora este mensaje.</p>";
+
+        Map<String, Object> body = Map.of(
+                "sender", Map.of(
+                        "name", mailFromName,
+                        "email", mailFrom
+                ),
+                "to", List.of(
+                        Map.of("email", email)
+                ),
+                "subject", "Código de recuperación - MULTISEGMA S.A.C.",
+                "htmlContent", htmlContent
         );
 
-        mailSender.send(message);
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                url,
+                request,
+                String.class
+        );
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("No se pudo enviar el correo de recuperación.");
+        }
     }
 
     private String limpiar(String value) {
