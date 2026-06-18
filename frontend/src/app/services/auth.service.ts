@@ -293,4 +293,21 @@ resetPassword(email: string, newPassword: string): Observable<boolean> {
 
   return of(true);
 }
+forgotPassword(email: string): Observable<any> {
+  return this.http.post<any>(`${this.API_URL}/forgot-password`, {
+    email,
+  });
+}
+
+resetPasswordWithCode(
+  email: string,
+  code: string,
+  newPassword: string
+): Observable<any> {
+  return this.http.post<any>(`${this.API_URL}/reset-password`, {
+    email,
+    code,
+    newPassword,
+  });
+}
 }

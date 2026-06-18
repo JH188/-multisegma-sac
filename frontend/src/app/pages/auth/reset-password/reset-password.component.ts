@@ -13,7 +13,10 @@ import { AuthService } from '../../../services/auth.service';
   styleUrls: ['./reset-password.component.css'],
 })
 export class ResetPasswordComponent {
+  step: 1 | 2 = 1;
+
   email = '';
+  code = '';
   newPassword = '';
   confirmPassword = '';
 
@@ -23,12 +26,43 @@ export class ResetPasswordComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  resetPassword(): void {
+  sendCode(): void {
     this.error = '';
     this.success = '';
 
     if (!this.email.trim()) {
       this.error = 'Ingresa tu correo electrónico.';
+      return;
+    }
+
+    if (!this.email.includes('@')) {
+      this.error = 'Ingresa un correo válido.';
+      return;
+    }
+
+    this.loading = true;
+
+    this.authService.forgotPassword(this.email).subscribe({
+      next: (res) => {
+        this.loading = false;
+        this.success =
+          res?.message || 'Si el correo está registrado, recibirás un código.';
+        this.step = 2;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.error =
+          err?.error?.message || 'No se pudo enviar el código de recuperación.';
+      },
+    });
+  }
+
+  resetPassword(): void {
+    this.error = '';
+    this.success = '';
+
+    if (!this.code.trim()) {
+      this.error = 'Ingresa el código que llegó a tu correo.';
       return;
     }
 
@@ -49,25 +83,33 @@ export class ResetPasswordComponent {
 
     this.loading = true;
 
-    this.authService.resetPassword(this.email, this.newPassword).subscribe({
-      next: (ok) => {
-        this.loading = false;
+    this.authService
+      .resetPasswordWithCode(this.email, this.code, this.newPassword)
+      .subscribe({
+        next: (res) => {
+          this.loading = false;
+          this.success =
+            res?.message || 'Contraseña actualizada correctamente.';
 
-        if (!ok) {
-          this.error = 'No existe una cuenta registrada con ese correo.';
-          return;
-        }
+          setTimeout(() => {
+            this.router.navigate(['/auth']);
+          }, 1800);
+        },
+        error: (err) => {
+          this.loading = false;
+          this.error =
+            err?.error?.message ||
+            'No se pudo restablecer la contraseña. Verifica el código.';
+        },
+      });
+  }
 
-        this.success = 'Contraseña actualizada correctamente. Ahora puedes iniciar sesión.';
-
-        setTimeout(() => {
-          this.router.navigate(['/auth']);
-        }, 1500);
-      },
-      error: () => {
-        this.loading = false;
-        this.error = 'No se pudo restablecer la contraseña.';
-      },
-    });
+  backToEmail(): void {
+    this.step = 1;
+    this.code = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
+    this.error = '';
+    this.success = '';
   }
 }
