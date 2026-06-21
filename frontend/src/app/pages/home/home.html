@@ -118,9 +118,7 @@
   </div>
 
   <!-- Mensaje error -->
-  <div class="error-box" *ngIf="error">
-    {{ error }}
-  </div>
+  <div class="error-box" *ngIf="error">{{ error }}</div>
 
   <!-- Filtro por categoría -->
   <div class="category-filter" *ngIf="!loading && !error">
@@ -221,6 +219,64 @@
       <p>
         El administrador revisa el pago, voucher, estado y detalle del pedido.
       </p>
+    </div>
+  </div>
+</section>
+<!-- =========================
+     UBICACIÓN
+========================= -->
+<section class="ubicacion" id="contacto">
+  <div class="section-head">
+    <span>Dirección legal</span>
+    <h2>Ubícanos en Lima</h2>
+    <p>
+      Encuentra la ubicación de MULTISEGMA S.A.C. y contáctanos para productos,
+      soporte técnico o servicios digitales.
+    </p>
+  </div>
+
+  <div class="ubicacion-container">
+    <div class="ubicacion-info">
+      <h3>MULTISEGMA S.A.C.</h3>
+
+      <p>
+        <strong>Dirección:</strong>
+        Av. Uruguay Nro. 320 Int. 101
+      </p>
+
+      <p>
+        <strong>Distrito / Ciudad:</strong>
+        Lima
+      </p>
+
+      <p>
+        <strong>Departamento:</strong>
+        Lima
+      </p>
+
+      <p>
+        <strong>País:</strong>
+        Perú
+      </p>
+
+      <a
+        href="https://www.google.com/maps/search/?api=1&query=Av.+Uruguay+320+Int.+101,+Lima,+Peru"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-mapa"
+      >
+        Ver en Google Maps
+      </a>
+    </div>
+
+    <div class="mapa-box">
+      <iframe
+        src="https://www.google.com/maps?q=Av.%20Uruguay%20320%20Int.%20101,%20Lima,%20Peru&output=embed"
+        loading="lazy"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+      >
+      </iframe>
     </div>
   </div>
 </section>
