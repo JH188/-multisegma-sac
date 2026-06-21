@@ -8,7 +8,6 @@
   color: #061735;
 }
 
-/* Para que al bajar por Productos/Servicios no quede tapado por el nav */
 section {
   scroll-margin-top: 110px;
 }
@@ -25,8 +24,8 @@ section {
   gap: 40px;
   align-items: center;
   background:
-    radial-gradient(circle at top left, rgba(255, 120, 32, 0.22), transparent 34%),
-    linear-gradient(135deg, #0b1220 0%, #101a2e 55%, #15223a 100%);
+    radial-gradient(circle at top left, rgba(244, 123, 32, 0.18), transparent 34%),
+    linear-gradient(135deg, #061735 0%, #0a2348 58%, #0d315f 100%);
   color: #ffffff;
 }
 
@@ -42,19 +41,19 @@ section {
   width: fit-content;
   padding: 9px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 120, 32, 0.45);
-  background: rgba(255, 120, 32, 0.08);
-  color: #ff7a1a;
-  font-weight: 800;
+  border: 1px solid rgba(244, 123, 32, 0.38);
+  background: rgba(244, 123, 32, 0.08);
+  color: #f47b20;
+  font-weight: 900;
   font-size: 0.85rem;
   letter-spacing: 0.2px;
 }
 
 .hero-info h1 {
   margin: 24px 0 20px;
-  font-size: clamp(2.4rem, 5vw, 4.7rem);
+  font-size: clamp(2.3rem, 5vw, 4.5rem);
   line-height: 1.03;
-  letter-spacing: -2.5px;
+  letter-spacing: -2.4px;
   max-width: 820px;
 }
 
@@ -86,18 +85,18 @@ section {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #ff7417, #ff9b3d);
-  color: #08111f;
-  box-shadow: 0 18px 32px rgba(255, 116, 23, 0.28);
+  background: #f47b20;
+  color: #ffffff;
+  box-shadow: 0 18px 32px rgba(244, 123, 32, 0.25);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 22px 36px rgba(255, 116, 23, 0.38);
+  box-shadow: 0 22px 36px rgba(244, 123, 32, 0.34);
 }
 
 .btn-outline {
-  border: 1px solid rgba(255, 255, 255, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   color: #ffffff;
   background: rgba(255, 255, 255, 0.05);
 }
@@ -123,7 +122,7 @@ section {
 
 .hero-stats strong {
   display: block;
-  color: #ff7a1a;
+  color: #f47b20;
   font-size: 1.8rem;
   margin-bottom: 5px;
 }
@@ -138,16 +137,15 @@ section {
 ========================= */
 
 .hero-card {
-  position: relative;
   min-height: 480px;
   padding: 34px;
   border-radius: 30px;
   overflow: hidden;
   background:
-    linear-gradient(rgba(20, 30, 50, 0.88), rgba(20, 30, 50, 0.88)),
+    linear-gradient(rgba(6, 23, 53, 0.86), rgba(6, 23, 53, 0.9)),
     url('/assets/lisume/portal-multisegma.jpeg') center/cover no-repeat;
   border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.32);
 }
 
 .hero-card-top {
@@ -158,17 +156,22 @@ section {
   border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 }
 
-.logo-box {
-  width: 62px;
-  height: 62px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  color: #071120;
-  font-size: 1.7rem;
-  font-weight: 1000;
-  background: linear-gradient(135deg, #bde8ff, #ff8a2a);
-  box-shadow: 0 15px 30px rgba(255, 125, 32, 0.22);
+.hero-card-logo {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hero-card-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .hero-card-top h3 {
@@ -205,12 +208,13 @@ section {
 .categorias,
 .products-section,
 .flujo,
-.cta {
-  padding: 70px 32px;
+.ubicacion {
+  padding: 72px 32px;
 }
 
 .section-head {
-  margin-bottom: 34px;
+  max-width: 1280px;
+  margin: 0 auto 34px;
 }
 
 .section-head h2,
@@ -230,32 +234,34 @@ section {
 }
 
 /* =========================
-   CATEGORÍAS / SERVICIOS
+   SERVICIOS
 ========================= */
 
 .categorias {
-  background: #f8fafc;
+  background: #ffffff;
 }
 
 .categorias-grid {
+  max-width: 1280px;
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
 }
 
 .categorias-grid article {
   min-height: 210px;
-  padding: 32px;
-  border-radius: 24px;
+  padding: 30px;
+  border-radius: 22px;
   background: #ffffff;
-  border: 1px solid #e1e8f2;
-  box-shadow: 0 22px 45px rgba(15, 23, 42, 0.06);
+  border: 1px solid #dfe8f3;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
   transition: 0.2s ease;
 }
 
 .categorias-grid article:hover {
   transform: translateY(-5px);
-  box-shadow: 0 28px 55px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.1);
 }
 
 .icon {
@@ -266,7 +272,7 @@ section {
 .categorias-grid h3 {
   margin: 0 0 12px;
   color: #061735;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
 .categorias-grid p {
@@ -274,13 +280,13 @@ section {
   color: #52627a;
   line-height: 1.7;
 }
+
 /* =========================
    PRODUCTOS
 ========================= */
 
 .products-section {
   background: linear-gradient(180deg, #f4f8fc 0%, #eef3f9 100%);
-  padding: 72px 32px;
 }
 
 .products-section .section-label {
@@ -419,8 +425,7 @@ section {
   gap: 10px;
 }
 
-.product-actions button,
-.product-footer button {
+.product-actions button {
   width: 100%;
   border: none;
   padding: 12px 14px;
@@ -431,14 +436,14 @@ section {
 }
 
 .btn-detalle {
-  background: #ffffff !important;
-  color: #061735 !important;
+  background: #ffffff;
+  color: #061735;
   border: 1px solid #061735 !important;
 }
 
 .btn-agregar {
-  background: #f47b20 !important;
-  color: #ffffff !important;
+  background: #f47b20;
+  color: #ffffff;
 }
 
 .btn-detalle:hover,
@@ -447,17 +452,37 @@ section {
 }
 
 /* =========================
+   MENSAJES
+========================= */
+
+.loading-box,
+.error-box {
+  max-width: 1280px;
+  margin: 0 auto 24px;
+  padding: 20px 24px;
+  border-radius: 18px;
+  font-weight: 700;
+}
+
+.loading-box {
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+}
+
+.error-box {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* =========================
    FLUJO DE COMPRA
 ========================= */
 
 .flujo {
   background: #ffffff;
-  padding: 72px 32px 58px;
-}
-
-.flujo .section-head {
-  max-width: 1280px;
-  margin: 0 auto 30px;
+  padding-bottom: 58px;
 }
 
 .flujo-grid {
@@ -469,7 +494,6 @@ section {
 }
 
 .flujo-grid div {
-  position: relative;
   min-height: 150px;
   padding: 26px 24px;
   border-radius: 18px;
@@ -505,19 +529,7 @@ section {
 ========================= */
 
 .ubicacion {
-  padding: 72px 32px;
   background: #f4f8fc;
-}
-
-.ubicacion .section-head {
-  max-width: 1280px;
-  margin: 0 auto 30px;
-}
-
-.ubicacion .section-head h2 {
-  margin: 14px 0 8px;
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
-  color: #061735;
 }
 
 .ubicacion .section-head p {
@@ -649,7 +661,12 @@ section {
 ========================= */
 
 @media (max-width: 1180px) {
-  .products-grid {
+  .hero-empresa {
+    grid-template-columns: 1fr;
+  }
+
+  .products-grid,
+  .categorias-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
@@ -672,10 +689,14 @@ section {
   }
 
   .hero-stats,
-  .categorias-grid,
   .products-grid,
+  .categorias-grid,
   .flujo-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-info h1 {
+    letter-spacing: -1.4px;
   }
 
   .products-section h2,

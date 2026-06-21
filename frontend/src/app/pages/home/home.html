@@ -5,7 +5,7 @@
   <div class="hero-info">
     <span class="tag">Soluciones tecnológicas</span>
 
-    <h1>Productos, soporte técnico y servicios digitales para tu empresa</h1>
+    <h1>Productos tecnológicos y soporte para tu negocio</h1>
 
     <p>
       En <strong>MULTISEGMA S.A.C.</strong> brindamos productos tecnológicos,
@@ -52,10 +52,10 @@
     </div>
 
     <div class="hero-service-list">
-      <span>Tintas para impresora</span>
-      <span>Toners</span>
-      <span>Mantenimiento técnico</span>
-      <span>Instalación de software</span>
+      <span>🖨️ Tintas para impresora</span>
+      <span>📦 Toners</span>
+      <span>🛠️ Mantenimiento técnico</span>
+      <span>💻 Instalación de software</span>
     </div>
   </div>
 </section>
@@ -66,7 +66,7 @@
 <section class="categorias" id="servicios">
   <div class="section-head">
     <span>Servicios principales</span>
-    <h2>Todo lo que tu empresa necesita en un solo lugar</h2>
+    <h2>Todo lo que tu negocio necesita en un solo lugar</h2>
   </div>
 
   <div class="categorias-grid">
@@ -89,11 +89,11 @@
     </article>
 
     <article>
-      <div class="icon">🖨️</div>
-      <h3>Tonners</h3>
+      <div class="icon">📦</div>
+      <h3>Toners</h3>
       <p>
-        Consumible que utilizan las impresoras láser y fotocopiadoras para
-        plasmar texto e imágenes en el papel.
+        Consumibles para impresoras láser y fotocopiadoras, ideales para oficina
+        y uso diario.
       </p>
     </article>
   </div>
@@ -108,19 +108,16 @@
   <h2>Productos y servicios disponibles</h2>
 
   <p class="section-description">
-    Catálogo conectado al backend Spring Boot y base de datos MySQL. Los precios
-    y productos pueden actualizarse desde el sistema administrativo.
+    Revisa nuestro catálogo de productos y servicios. Los precios y datos se
+    actualizan desde el sistema administrativo.
   </p>
 
-  <!-- Mensaje cargando -->
   <div class="loading-box" *ngIf="loading">
     Cargando productos desde el sistema...
   </div>
 
-  <!-- Mensaje error -->
   <div class="error-box" *ngIf="error">{{ error }}</div>
 
-  <!-- Filtro por categoría -->
   <div class="category-filter" *ngIf="!loading && !error">
     <button
       type="button"
@@ -136,7 +133,6 @@
     Mostrando {{ filteredProducts.length }} resultado(s)
   </div>
 
-  <!-- Productos -->
   <div class="products-grid" *ngIf="!loading && !error">
     <article
       class="product-card"
@@ -189,39 +185,40 @@
 <section class="flujo">
   <div class="section-head">
     <span>Proceso de compra</span>
-    <h2>Compra fácil y con control administrativo</h2>
+    <h2>Compra fácil y con atención personalizada</h2>
   </div>
 
   <div class="flujo-grid">
     <div>
       <b>01</b>
       <h3>Explora productos</h3>
-      <p>
-        El cliente revisa el catálogo sin necesidad de iniciar sesión primero.
-      </p>
+      <p>Revisa el catálogo y elige el producto o servicio que necesitas.</p>
     </div>
 
     <div>
       <b>02</b>
       <h3>Agrega al carrito</h3>
-      <p>Selecciona productos o servicios y revisa el resumen del pedido.</p>
+      <p>Selecciona productos o servicios y revisa el resumen de tu pedido.</p>
     </div>
 
     <div>
       <b>03</b>
-      <h3>Se registra o inicia sesión</h3>
-      <p>Para confirmar el pedido, el cliente crea una cuenta o ingresa.</p>
+      <h3>Confirma tus datos</h3>
+      <p>
+        Inicia sesión o crea una cuenta para registrar correctamente tu pedido.
+      </p>
     </div>
 
     <div>
       <b>04</b>
-      <h3>Admin confirma</h3>
+      <h3>Atención administrativa</h3>
       <p>
-        El administrador revisa el pago, voucher, estado y detalle del pedido.
+        Revisamos el pedido, voucher, pago y estado para coordinar la atención.
       </p>
     </div>
   </div>
 </section>
+
 <!-- =========================
      UBICACIÓN
 ========================= -->
@@ -285,16 +282,19 @@
      CTA FINAL
 ========================= -->
 <section class="cta">
-  <h2>¿Necesitas una cotización para tu empresa?</h2>
+  <div>
+    <h2>¿Necesitas una cotización para tu empresa?</h2>
 
-  <p>
-    Escríbenos y recibe atención personalizada para productos, soporte técnico o
-    servicios digitales.
-  </p>
+    <p>
+      Escríbenos y recibe atención personalizada para productos, soporte técnico
+      o servicios digitales.
+    </p>
+  </div>
 
   <a
     href="https://wa.me/51998311743?text=Hola%20Multisegma,%20quiero%20cotizar%20un%20servicio."
     target="_blank"
+    rel="noopener noreferrer"
   >
     Contactar por WhatsApp
   </a>
