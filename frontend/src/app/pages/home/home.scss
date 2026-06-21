@@ -1967,3 +1967,13 @@ section {
     padding: 14px !important;
   }
 }
+/* Quitar tarjeta derecha del hero y centrar mejor el contenido */
+.hero-empresa {
+  grid-template-columns: 1fr !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.hero-info {
+  max-width: 720px !important;
+}
