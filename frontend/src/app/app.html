@@ -204,6 +204,24 @@
     <span>Desarrollado con ❤️ para Multisegma</span>
   </div>
 </footer>
+<!-- BOTÓN FLOTANTE WHATSAPP -->
+<a
+  class="whatsapp-help"
+  href="https://wa.me/51998311743?text=Hola%20Multisegma,%20quiero%20hacer%20una%20consulta."
+  target="_blank"
+  rel="noopener noreferrer"
+  *ngIf="!isAdminRoute()"
+  aria-label="Contactar por WhatsApp"
+>
+  <div class="whatsapp-help-text">
+    <strong>¿Necesitas ayuda?</strong>
+    <span>Escríbenos por WhatsApp</span>
+  </div>
+
+  <div class="whatsapp-help-icon">
+    <img src="assets/lisume/whatsapp..png" alt="WhatsApp" />
+  </div>
+</a>
 
 <!-- PANEL CARRITO -->
 <app-cart-panel *ngIf="cartUi.isOpen()"></app-cart-panel>
