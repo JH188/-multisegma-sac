@@ -1451,3 +1451,135 @@ section {
       url('/assets/lisume/hero-multisegma.jpg') center/cover no-repeat;
   }
 }
+/* =========================================================
+   HERO FINAL CON FOTO DE FONDO - MULTISEGMA
+   Pegar al final de home.scss
+========================================================= */
+
+.hero-empresa {
+  position: relative !important;
+  overflow: hidden !important;
+  min-height: 620px !important;
+  padding: 72px 32px 56px !important;
+  display: grid !important;
+  grid-template-columns: 1.05fr 0.95fr !important;
+  gap: 40px !important;
+  align-items: center !important;
+  background: #061735 !important;
+  color: #ffffff !important;
+}
+
+.hero-bg-image {
+  position: absolute !important;
+  inset: 0 !important;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 23, 53, 0.86) 0%,
+      rgba(6, 23, 53, 0.70) 42%,
+      rgba(6, 23, 53, 0.52) 100%
+    ),
+    url('/assets/lisume/hero-multisegma.jpg') center/cover no-repeat !important;
+  z-index: 0 !important;
+}
+
+.hero-bg-image::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background:
+    radial-gradient(circle at top left, rgba(244, 123, 32, 0.16), transparent 32%),
+    linear-gradient(180deg, rgba(6, 23, 53, 0.10), rgba(6, 23, 53, 0.36)) !important;
+}
+
+.hero-info,
+.hero-card {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.hero-info {
+  max-width: 720px !important;
+}
+
+.hero-info h1 {
+  margin: 24px 0 20px !important;
+  max-width: 760px !important;
+  font-size: clamp(2.8rem, 4.4vw, 4.6rem) !important;
+  line-height: 1.05 !important;
+  letter-spacing: -2.4px !important;
+  color: #ffffff !important;
+}
+
+.hero-info p {
+  max-width: 690px !important;
+  color: #f2f6fb !important;
+  line-height: 1.8 !important;
+  font-size: 1.05rem !important;
+}
+
+.hero-card {
+  min-height: 420px !important;
+  padding: 34px !important;
+  border-radius: 30px !important;
+  overflow: hidden !important;
+  background:
+    linear-gradient(rgba(13, 31, 61, 0.68), rgba(13, 31, 61, 0.74)),
+    url('/assets/lisume/portal-multisegma.jpeg') center/cover no-repeat !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.26) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.hero-service-list span {
+  padding: 18px 20px !important;
+  border-radius: 16px !important;
+  font-weight: 900 !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  border: 1px solid rgba(255, 255, 255, 0.20) !important;
+  color: #ffffff !important;
+}
+
+/* MÓVIL */
+@media (max-width: 820px) {
+  .hero-empresa {
+    min-height: auto !important;
+    padding: 42px 16px 46px !important;
+    grid-template-columns: 1fr !important;
+    gap: 26px !important;
+  }
+
+  .hero-bg-image {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(6, 23, 53, 0.88) 0%,
+        rgba(6, 23, 53, 0.80) 55%,
+        rgba(6, 23, 53, 0.72) 100%
+      ),
+      url('/assets/lisume/hero-multisegma.jpg') center/cover no-repeat !important;
+  }
+
+  .hero-info h1 {
+    font-size: 2.25rem !important;
+    line-height: 1.08 !important;
+    letter-spacing: -1.2px !important;
+  }
+
+  .hero-info p {
+    font-size: 0.98rem !important;
+    line-height: 1.7 !important;
+  }
+
+  .hero-card {
+    min-height: auto !important;
+    padding: 20px !important;
+    border-radius: 22px !important;
+  }
+
+  .hero-service-list span {
+    padding: 14px 16px !important;
+    border-radius: 15px !important;
+    font-size: 0.9rem !important;
+  }
+}
