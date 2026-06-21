@@ -1,10 +1,10 @@
 <!-- =========================
-     NAVBAR EMPRESARIAL
+     NAVBAR PRINCIPAL
 ========================= -->
 <header class="site-header" *ngIf="!isAdminRoute()">
   <nav class="nav">
     <!-- Marca -->
-    <a class="brand" routerLink="/">
+    <a class="brand" routerLink="/" (click)="closeMenu()">
       <span class="brand-logo">
         <img
           src="assets/lisume/portal-multisegma.jpeg"
@@ -14,88 +14,135 @@
 
       <span class="brand-text">
         <strong>MULTISEGMA S.A.C.</strong>
-        <small>Soluciones tecnológicas </small>
+        <small>Soluciones tecnológicas</small>
       </span>
     </a>
 
-    <!-- Menú principal -->
-    <div class="nav-links">
-      <a
-        routerLink="/"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
-        Inicio
-      </a>
+    <!-- Botón hamburguesa móvil -->
+    <button
+      type="button"
+      class="menu-toggle"
+      [class.open]="menuOpen"
+      (click)="toggleMenu()"
+      aria-label="Abrir menú"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
-      <a routerLink="/" fragment="productos"> Productos </a>
-
-      <a routerLink="/" fragment="servicios"> Servicios </a>
-
-      <a routerLink="/contacto" routerLinkActive="active"> Contacto </a>
-    </div>
-
-    <!-- Acciones derecha -->
-    <div class="nav-actions">
-      <ng-container *ngIf="isLoggedIn && currentUser; else usuarioInvitado">
-        <div
-          class="welcome-user"
-          *ngIf="currentUser && currentUser.role !== 'admin'"
+    <!-- Menú -->
+    <div class="nav-panel" [class.open]="menuOpen">
+      <div class="nav-links">
+        <a
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeMenu()"
         >
-          Bienvenido, {{ currentUser.name || currentUser.nombre || 'Usuario' }}
-        </div>
+          Inicio
+        </a>
 
-        <button
-          *ngIf="!isPublicFormRoute()"
-          class="cart-button cart-icon-button"
-          type="button"
-          (click)="openCart()"
-          title="Carrito de compras"
-        >
-          <span class="cart-icon">🛒</span>
-          <span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
-        </button>
+        <a routerLink="/" fragment="productos" (click)="closeMenu()">
+          Productos
+        </a>
+
+        <a routerLink="/" fragment="servicios" (click)="closeMenu()">
+          Servicios
+        </a>
 
         <a
-          *ngIf="!isPublicFormRoute()"
-          class="order-link"
-          routerLink="/mis-pedidos"
+          routerLink="/contacto"
+          routerLinkActive="active"
+          (click)="closeMenu()"
         >
-          Ver pedido
+          Contacto
         </a>
+      </div>
 
-        <button class="btn-logout" type="button" (click)="logout()">
-          Salir
-        </button>
-      </ng-container>
+      <div class="nav-actions">
+        <ng-container *ngIf="isLoggedIn && currentUser; else usuarioInvitado">
+          <div
+            class="welcome-user"
+            *ngIf="currentUser && currentUser.role !== 'admin'"
+          >
+            Hola, {{ currentUser.name || currentUser.nombre || 'Usuario' }}
+          </div>
 
-      <ng-template #usuarioInvitado>
-        <button
-          *ngIf="!isPublicFormRoute()"
-          class="cart-button cart-icon-button"
-          type="button"
-          (click)="openCart()"
-          title="Carrito de compras"
-        >
-          <span class="cart-icon">🛒</span>
-          <span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
-        </button>
+          <button
+            *ngIf="!isPublicFormRoute()"
+            class="cart-button cart-icon-button"
+            type="button"
+            (click)="openCart(); closeMenu()"
+            title="Carrito de compras"
+          >
+            <span class="cart-icon">🛒</span>
+            <span class="cart-badge" *ngIf="cartCount > 0"
+              >{{ cartCount }}</span
+            >
+          </button>
 
-        <a
-          *ngIf="!isPublicFormRoute()"
-          class="order-link"
-          routerLink="/mis-pedidos"
-        >
-          Ver pedido
-        </a>
+          <a
+            *ngIf="!isPublicFormRoute()"
+            class="order-link"
+            routerLink="/mis-pedidos"
+            (click)="closeMenu()"
+          >
+            Ver pedido
+          </a>
 
-        <a *ngIf="!isAuthRoute()" class="btn-login" routerLink="/auth">
-          Ingresar
-        </a>
-      </ng-template>
+          <button
+            class="btn-logout"
+            type="button"
+            (click)="logout(); closeMenu()"
+          >
+            Salir
+          </button>
+        </ng-container>
+
+        <ng-template #usuarioInvitado>
+          <button
+            *ngIf="!isPublicFormRoute()"
+            class="cart-button cart-icon-button"
+            type="button"
+            (click)="openCart(); closeMenu()"
+            title="Carrito de compras"
+          >
+            <span class="cart-icon">🛒</span>
+            <span class="cart-badge" *ngIf="cartCount > 0"
+              >{{ cartCount }}</span
+            >
+          </button>
+
+          <a
+            *ngIf="!isPublicFormRoute()"
+            class="order-link"
+            routerLink="/mis-pedidos"
+            (click)="closeMenu()"
+          >
+            Ver pedido
+          </a>
+
+          <a
+            *ngIf="!isAuthRoute()"
+            class="btn-login"
+            routerLink="/auth"
+            (click)="closeMenu()"
+          >
+            Ingresar
+          </a>
+        </ng-template>
+      </div>
     </div>
   </nav>
 </header>
+
+<!-- Fondo oscuro móvil cuando el menú está abierto -->
+<div
+  class="menu-backdrop"
+  *ngIf="menuOpen && !isAdminRoute()"
+  (click)="closeMenu()"
+></div>
 
 <!-- =========================
      CONTENIDO PRINCIPAL
@@ -105,23 +152,36 @@
 </main>
 
 <!-- =========================
-     FOOTER EMPRESARIAL
+     FOOTER PRINCIPAL
 ========================= -->
 <footer class="site-footer" *ngIf="!isAdminRoute()">
   <div class="footer-grid">
-    <div>
-      <h3>MULTISEGMA S.A.C.</h3>
+    <div class="footer-brand">
+      <div class="footer-logo-row">
+        <span class="footer-logo">
+          <img
+            src="assets/lisume/portal-multisegma.jpeg"
+            alt="Logo MULTISEGMA S.A.C."
+          />
+        </span>
+
+        <div>
+          <h3>MULTISEGMA S.A.C.</h3>
+          <small>Soluciones tecnológicas</small>
+        </div>
+      </div>
+
       <p>
-        Empresa orientada a brindar productos tecnológicos, soporte técnico,
-        mantenimiento e instalación de software para clientes y organizaciones.
+        Brindamos productos tecnológicos, soporte técnico, mantenimiento e
+        instalación de software para clientes, negocios e instituciones.
       </p>
     </div>
 
     <div>
       <h4>Servicios</h4>
-      <p>Tintas y toners</p>
-      <p>Mantenimiento técnico</p>
-      <p>Instalación de software</p>
+      <a routerLink="/" fragment="productos">Tintas y toners</a>
+      <a routerLink="/" fragment="servicios">Mantenimiento técnico</a>
+      <a routerLink="/" fragment="servicios">Instalación de software</a>
     </div>
 
     <div>
@@ -130,10 +190,18 @@
       <p>Pagos por Yape, Plin o transferencia</p>
       <p>Confirmación administrativa</p>
     </div>
+
+    <div>
+      <h4>Contacto</h4>
+      <p>📞 998 311 743</p>
+      <p>📍 Av. Uruguay Nro. 320 Int. 101</p>
+      <p>Lima, Perú</p>
+    </div>
   </div>
 
   <div class="footer-bottom">
-    © {{ year }} MULTISEGMA S.A.C. - Todos los derechos reservados
+    <span>© {{ year }} MULTISEGMA S.A.C. - Todos los derechos reservados</span>
+    <span>Desarrollado con ❤️ para Multisegma</span>
   </div>
 </footer>
 

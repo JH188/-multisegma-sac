@@ -35,6 +35,8 @@ export class AppComponent implements OnInit {
   isLoggedIn = false;
   isAdmin = false;
 
+  menuOpen = false;
+
   constructor(
     public cartUi: CartUiService,
     public cart: CartService,
@@ -49,6 +51,8 @@ export class AppComponent implements OnInit {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
         this.cargarSesion();
+        this.closeMenu();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
 
     window.addEventListener('storage', () => {
@@ -62,6 +66,14 @@ export class AppComponent implements OnInit {
     this.currentUser = user;
     this.isLoggedIn = !!user;
     this.isAdmin = user?.role === 'admin';
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
   }
 
   openCart(): void {
@@ -80,6 +92,7 @@ export class AppComponent implements OnInit {
     this.currentUser = null;
     this.isLoggedIn = false;
     this.isAdmin = false;
+    this.closeMenu();
 
     if (url.startsWith('/admin')) {
       this.router.navigate(['/admin-login']);
