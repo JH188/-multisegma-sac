@@ -430,3 +430,236 @@ tr:hover td {
 html {
   scroll-behavior: smooth;
 }
+/* =========================================================
+   FIX GLOBAL MÓVIL MULTISEGMA
+   Forzar menú, productos y secciones en celular
+========================================================= */
+
+@media (max-width: 820px) {
+  /* NAVBAR */
+  app-root .nav {
+    min-height: 70px !important;
+    padding: 0 14px !important;
+  }
+
+  app-root .brand-logo {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 12px !important;
+  }
+
+  app-root .brand-text strong {
+    font-size: 0.86rem !important;
+  }
+
+  app-root .brand-text small {
+    display: none !important;
+  }
+
+  app-root .nav-panel {
+    top: 70px !important;
+    left: 10px !important;
+    right: 10px !important;
+    padding: 14px !important;
+    gap: 12px !important;
+    border-radius: 0 0 20px 20px !important;
+  }
+
+  app-root .nav-links {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 9px !important;
+  }
+
+  app-root .nav-links a {
+    padding: 12px 8px !important;
+    font-size: 0.86rem !important;
+    border-radius: 13px !important;
+  }
+
+  app-root .nav-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 9px !important;
+    width: 100% !important;
+  }
+
+  app-root .cart-icon-button {
+    grid-column: span 2 !important;
+    width: 100% !important;
+    min-height: 46px !important;
+    border-radius: 13px !important;
+  }
+
+  app-root .cart-icon-button::after {
+    content: "Carrito" !important;
+    margin-left: 8px !important;
+    font-weight: 900 !important;
+  }
+
+  app-root .order-link,
+  app-root .btn-login,
+  app-root .btn-logout {
+    width: 100% !important;
+    min-height: 46px !important;
+    border-radius: 13px !important;
+    font-size: 0.84rem !important;
+  }
+
+  /* HOME GENERAL */
+  app-home .hero-empresa,
+  app-home .categorias,
+  app-home .products-section,
+  app-home .flujo,
+  app-home .ubicacion {
+    padding: 42px 14px !important;
+  }
+
+  app-home .section-head h2,
+  app-home .products-section h2 {
+    font-size: 1.8rem !important;
+    line-height: 1.12 !important;
+  }
+
+  /* SERVICIOS EN 2 COLUMNAS */
+  app-home .categorias-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  app-home .categorias-grid article {
+    padding: 16px 12px !important;
+    border-radius: 18px !important;
+    min-height: auto !important;
+  }
+
+  app-home .categorias-grid h3 {
+    font-size: 0.9rem !important;
+    line-height: 1.25 !important;
+  }
+
+  app-home .categorias-grid p {
+    font-size: 0.78rem !important;
+    line-height: 1.45 !important;
+  }
+
+  app-home .icon {
+    font-size: 1.45rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* PRODUCTOS EN 2 COLUMNAS */
+  app-home .products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  app-home .product-card {
+    border-radius: 18px !important;
+    overflow: hidden !important;
+  }
+
+  app-home .product-card img {
+    height: 125px !important;
+    object-fit: contain !important;
+    padding: 10px !important;
+    background: #ffffff !important;
+  }
+
+  app-home .product-body {
+    padding: 13px !important;
+  }
+
+  app-home .product-category {
+    font-size: 0.6rem !important;
+    margin-bottom: 7px !important;
+  }
+
+  app-home .product-body h3 {
+    font-size: 0.82rem !important;
+    line-height: 1.25 !important;
+    min-height: 38px !important;
+    margin-bottom: 7px !important;
+  }
+
+  app-home .product-body p {
+    font-size: 0.72rem !important;
+    line-height: 1.4 !important;
+    min-height: 44px !important;
+    margin-bottom: 10px !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 3 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  app-home .price-label {
+    font-size: 0.65rem !important;
+  }
+
+  app-home .product-footer strong {
+    font-size: 0.95rem !important;
+  }
+
+  app-home .product-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+  }
+
+  app-home .product-actions button {
+    min-height: 36px !important;
+    padding: 8px 8px !important;
+    font-size: 0.72rem !important;
+    border-radius: 10px !important;
+  }
+
+  /* PROCESO EN 2 COLUMNAS */
+  app-home .flujo-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  app-home .flujo-grid div {
+    padding: 16px 12px !important;
+    border-radius: 18px !important;
+    min-height: auto !important;
+  }
+
+  app-home .flujo-grid b {
+    font-size: 1rem !important;
+  }
+
+  app-home .flujo-grid h3 {
+    font-size: 0.85rem !important;
+  }
+
+  app-home .flujo-grid p {
+    font-size: 0.72rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* MAPA Y CTA */
+  app-home .ubicacion-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  app-home .mapa-box,
+  app-home .mapa-box iframe {
+    min-height: 280px !important;
+  }
+
+  app-home .cta {
+    margin: 0 14px !important;
+    padding: 26px 20px !important;
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
+  }
+
+  app-home .cta a {
+    width: 100% !important;
+  }
+}
