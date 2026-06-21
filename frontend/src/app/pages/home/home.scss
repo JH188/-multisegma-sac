@@ -1017,3 +1017,383 @@ section {
     min-height: 54px;
   }
 }
+/* =========================================================
+   AJUSTE FINAL CELULAR - MULTISEGMA
+   Productos en 2 columnas y diseño compacto
+========================================================= */
+
+@media (max-width: 820px) {
+  :host {
+    background: #f5f8fc;
+    overflow-x: hidden;
+  }
+
+  section {
+    scroll-margin-top: 82px;
+  }
+
+  /* HERO */
+  .hero-empresa {
+    min-height: auto;
+    padding: 38px 16px 44px;
+    grid-template-columns: 1fr;
+    gap: 26px;
+    background:
+      radial-gradient(circle at top left, rgba(244, 123, 32, 0.16), transparent 34%),
+      linear-gradient(135deg, #061735 0%, #0a2348 100%);
+  }
+
+  .hero-info h1 {
+    font-size: 2.15rem;
+    line-height: 1.08;
+    letter-spacing: -1.2px;
+    margin: 18px 0 14px;
+  }
+
+  .hero-info p {
+    font-size: 0.98rem;
+    line-height: 1.7;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 26px 0;
+  }
+
+  .btn-primary,
+  .btn-outline {
+    width: 100%;
+    min-height: 52px;
+    border-radius: 16px;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .hero-stats div {
+    padding: 14px 10px;
+    text-align: center;
+    border-radius: 16px;
+  }
+
+  .hero-stats strong {
+    font-size: 1.25rem;
+  }
+
+  .hero-stats span {
+    font-size: 0.72rem;
+    line-height: 1.3;
+  }
+
+  .hero-card {
+    min-height: auto;
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .hero-card-top {
+    display: none;
+  }
+
+  .hero-service-list {
+    margin-top: 0;
+    gap: 10px;
+  }
+
+  .hero-service-list span {
+    padding: 14px 16px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+  }
+
+  /* SECCIONES */
+  .categorias,
+  .products-section,
+  .flujo,
+  .ubicacion {
+    padding: 44px 14px;
+  }
+
+  .tag,
+  .section-label,
+  .section-head span {
+    padding: 8px 14px;
+    font-size: 0.72rem;
+  }
+
+  .section-head {
+    margin-bottom: 22px;
+  }
+
+  .section-head h2,
+  .products-section h2 {
+    font-size: 1.9rem;
+    line-height: 1.12;
+    letter-spacing: -0.8px;
+  }
+
+  .section-description {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  /* SERVICIOS MÁS COMPACTOS */
+  .categorias-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .categorias-grid article {
+    min-height: auto;
+    padding: 18px 14px;
+    border-radius: 18px;
+  }
+
+  .icon {
+    font-size: 1.55rem;
+    margin-bottom: 12px;
+  }
+
+  .categorias-grid h3 {
+    font-size: 0.95rem;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+
+  .categorias-grid p {
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  /* PRODUCTOS */
+  .products-section {
+    background: #eef4fb;
+  }
+
+  .products-section .section-label {
+    margin: 0 0 12px;
+  }
+
+  .products-section h2,
+  .products-section .section-description {
+    text-align: left;
+  }
+
+  .category-filter {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 10px;
+    margin: 22px 0 18px;
+    padding-bottom: 10px;
+  }
+
+  .category-filter button {
+    flex: 0 0 auto;
+    padding: 10px 18px;
+    font-size: 0.84rem;
+    border-radius: 999px;
+  }
+
+  .filter-result {
+    margin: 0 0 16px;
+    font-size: 0.86rem;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px;
+  }
+
+  .product-card {
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .product-card img {
+    width: 100%;
+    height: 135px !important;
+    object-fit: contain;
+    background: #ffffff;
+    padding: 10px;
+  }
+
+  .product-body {
+    padding: 14px;
+  }
+
+  .product-category {
+    font-size: 0.62rem;
+    margin-bottom: 8px;
+  }
+
+  .product-body h3 {
+    min-height: 38px;
+    font-size: 0.88rem;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+
+  .product-body p {
+    min-height: 52px;
+    font-size: 0.76rem;
+    line-height: 1.45;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .price-label {
+    font-size: 0.68rem;
+  }
+
+  .product-footer strong {
+    font-size: 1rem;
+  }
+
+  .product-footer {
+    gap: 10px;
+  }
+
+  .product-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .product-actions button {
+    min-height: 38px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    font-size: 0.78rem;
+  }
+
+  /* PROCESO DE COMPRA */
+  .flujo {
+    background: #ffffff;
+  }
+
+  .flujo-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .flujo-grid div {
+    min-height: auto;
+    padding: 18px 14px;
+    border-radius: 18px;
+  }
+
+  .flujo-grid b {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+  }
+
+  .flujo-grid h3 {
+    font-size: 0.9rem;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+
+  .flujo-grid p {
+    font-size: 0.76rem;
+    line-height: 1.45;
+  }
+
+  /* UBICACIÓN */
+  .ubicacion-container {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .ubicacion-info {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .ubicacion-info h3 {
+    font-size: 1.1rem;
+  }
+
+  .ubicacion-info p {
+    font-size: 0.9rem;
+  }
+
+  .btn-mapa {
+    width: 100%;
+    justify-content: center;
+    border-radius: 14px;
+  }
+
+  .mapa-box,
+  .mapa-box iframe {
+    min-height: 280px;
+    border-radius: 18px;
+  }
+
+  /* CTA */
+  .cta {
+    margin: 0 14px;
+    padding: 26px 20px;
+    grid-template-columns: 1fr;
+    text-align: center;
+    border-radius: 20px;
+  }
+
+  .cta h2 {
+    font-size: 1.45rem;
+    line-height: 1.2;
+  }
+
+  .cta p {
+    font-size: 0.9rem;
+  }
+
+  .cta a {
+    width: 100%;
+    min-height: 50px;
+    border-radius: 14px;
+  }
+}
+
+/* CELULAR MUY PEQUEÑO */
+@media (max-width: 380px) {
+  .products-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px;
+  }
+
+  .product-card img {
+    height: 120px !important;
+  }
+
+  .product-body {
+    padding: 12px;
+  }
+
+  .product-body h3 {
+    font-size: 0.82rem;
+  }
+
+  .product-body p {
+    font-size: 0.72rem;
+  }
+
+  .product-actions button {
+    font-size: 0.72rem;
+  }
+
+  .categorias-grid,
+  .flujo-grid {
+    grid-template-columns: 1fr;
+  }
+}
