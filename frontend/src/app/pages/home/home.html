@@ -1,7 +1,9 @@
 <!-- =========================
-     HERO EMPRESARIAL
+     HERO PRINCIPAL
 ========================= -->
 <section class="hero-empresa" id="inicio">
+  <div class="hero-bg-image"></div>
+
   <div class="hero-info">
     <span class="tag">Soluciones tecnológicas</span>
 
@@ -116,7 +118,9 @@
     Cargando productos desde el sistema...
   </div>
 
-  <div class="error-box" *ngIf="error">{{ error }}</div>
+  <div class="error-box" *ngIf="error">
+    {{ error }}
+  </div>
 
   <div class="category-filter" *ngIf="!loading && !error">
     <button

@@ -1397,3 +1397,57 @@ section {
     grid-template-columns: 1fr;
   }
 }
+.hero-empresa {
+  position: relative;
+  overflow: hidden;
+  min-height: 640px;
+  padding: 72px 32px 56px;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 40px;
+  align-items: center;
+  background: #061735;
+  color: #ffffff;
+}
+
+.hero-bg-image {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 23, 53, 0.94) 0%,
+      rgba(6, 23, 53, 0.84) 42%,
+      rgba(6, 23, 53, 0.68) 100%
+    ),
+    url('/assets/lisume/hero-multisegma.jpg') center/cover no-repeat;
+  z-index: 0;
+}
+
+.hero-bg-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(244, 123, 32, 0.18), transparent 34%),
+    linear-gradient(135deg, rgba(6, 23, 53, 0.22), rgba(8, 36, 77, 0.34));
+}
+
+.hero-info,
+.hero-card {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 820px) {
+  .hero-bg-image {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(6, 23, 53, 0.96) 0%,
+        rgba(6, 23, 53, 0.88) 55%,
+        rgba(6, 23, 53, 0.82) 100%
+      ),
+      url('/assets/lisume/hero-multisegma.jpg') center/cover no-repeat;
+  }
+}
